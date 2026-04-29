@@ -1,0 +1,107 @@
+import { Timestamp } from 'firebase/firestore';
+
+export type UserRole = 'super' | 'admin' | 'support';
+
+export interface UserRoleDoc {
+  email: string;
+  role: UserRole;
+  assignedBy: string;
+}
+
+export type LayoutType = 'vertical' | 'horizontal';
+export type MediaType = 'image' | 'video' | 'text' | 'link' | 'iframe';
+
+export interface Overlay {
+  id: string;
+  type: 'color' | 'image' | 'video';
+  color?: string;
+  url?: string;
+  top: string;
+  left: string;
+  width: string;
+  height: string;
+}
+
+export interface MediaItem {
+  type: MediaType;
+  layout?: 'gshow' | 'standard';
+  url?: string;
+  thumbnail?: string;
+  order: number;
+  label?: string;
+  title?: string;
+  subtitle?: string;
+  credits?: string;
+  content?: string;
+  images?: string[];
+  zoom?: number;
+  yOffset?: number;
+  xOffset?: number;
+  objectFit?: 'cover' | 'contain';
+  allowScroll?: boolean;
+  overlays?: Overlay[];
+}
+
+export interface FeedItem {
+  id: string;
+  media: MediaItem;
+  stories?: MediaItem[];
+  aspectRatio: number; // 0.56 ou 0.80
+}
+
+export interface Project {
+  id: string;
+  title: string;
+  description: string;
+  layoutType: LayoutType | '2d';
+  audioUrl?: string;
+  galleryThumbnail: string;
+  coverImage: string;
+  thumbnailFit?: 'cover' | 'contain';
+  cardBg?: string;
+  mediaItems: MediaItem[]; // Para compatibilidade com projetos antigos
+  feed?: FeedItem[]; // Nova estrutura 2D
+  order: number;
+}
+
+export interface Service {
+  id: string;
+  title: string;
+  items: string[];
+  order: number;
+}
+
+export interface Testimonial {
+  id: string;
+  author: string;
+  role: string;
+  text: string;
+  photoUrl: string;
+  order: number;
+}
+
+export interface SiteSettings {
+  whatsappNumber: string;
+  accentColor: string;
+  maintenanceMode?: boolean;
+  maintenanceTitle?: string;
+  cor1?: string;
+  cor2?: string;
+  cor3?: string;
+  cor4?: string;
+  cor5?: string;
+  cor6?: string;
+  white?: string;
+  grayLight?: string;
+  textDark?: string;
+  shadow?: string;
+  fontSizeH1?: string;
+  fontSizeH2?: string;
+  fontSizeH3?: string;
+  fontSizeH4?: string;
+}
+
+export interface AboutMe {
+  videoUrl: string;
+  description: string;
+}

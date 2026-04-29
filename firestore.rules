@@ -1,0 +1,59 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/ai-studio-57a5e081-4b30-4bf4-9abf-af56b4ca8ae0/documents {
+    // 1. MASTER GATE & Catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // HELPER FUNCTIONS
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.email in ['sinkando@gmail.com', 'ingridsinkovitz@gmail.com'];
+    }
+
+    // Projects
+    match /projects/{projectId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Services
+    match /services/{serviceId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Testimonials
+    match /testimonials/{testimonialId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Settings
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // About
+    match /about/{aboutId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Users Roles
+    match /users_roles/{email} {
+      allow read: if isSignedIn() && (request.auth.token.email == email || isAdmin());
+      allow write: if isAdmin();
+    }
+  }
+}

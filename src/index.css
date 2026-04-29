@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  
+  --color-primary: var(--primary-color, #000000);
+  --color-accent: var(--accent-color, #f2bb32);
+
+  --color-cor1: var(--cor1, #f2bb32);
+  --color-cor2: var(--cor2, #203F44);
+  --color-cor3: var(--cor3, #BE735E);
+  --color-cor4: var(--cor4, #6B3028);
+  --color-cor5: var(--cor5, #B35227);
+  --color-cor6: var(--cor6, #C1908A);
+  --color-white: var(--white, #ffffff);
+  --color-gray-light: var(--gray-light, #f8f9fa);
+  --color-text-dark: var(--text-dark, #1a1a1a);
+  
+  --shadow: var(--shadow, 0 2px 8px rgba(0, 0, 0, 0.05));
+
+  --font-size-h1: var(--font-size-h1, 48px);
+  --font-size-h2: var(--font-size-h2, 36px);
+  --font-size-h3: var(--font-size-h3, 24px);
+  --font-size-h4: var(--font-size-h4, 20px);
+}
+
+@layer base {
+  body {
+    @apply bg-zinc-950 text-white font-sans antialiased;
+    background-color: var(--bg-color, #09090b);
+  }
+
+  h1 { font-size: var(--font-size-h1); }
+  h2 { font-size: var(--font-size-h2); }
+  h3 { font-size: var(--font-size-h3); @apply leading-tight; }
+  h4 { font-size: var(--font-size-h4); }
+}
+
+/* Custom Utilities for the "Cards" */
+.section-container {
+  @apply flex items-center justify-center py-[10px] px-4 md:px-8;
+}
+
+.section-card {
+  @apply w-full max-w-[1008px] bg-zinc-900/40 backdrop-blur-md rounded-[8px] border border-white/5 overflow-hidden shadow-2xl;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-vertical {
+  @apply relative overflow-hidden aspect-square w-full rounded-[8px];
+}
+
+.card-horizontal {
+  @apply relative overflow-hidden aspect-square w-full rounded-[8px];
+}
+
+.glass-morphism {
+  @apply bg-black/40 backdrop-blur-md border border-white/10;
+}
+
+.card-player-vertical {
+  @apply w-full max-w-[380px] mx-auto;
+  height: min(85vh, 660px);
+}
+
+.card-player-horizontal {
+  @apply w-full max-w-[800px] mx-auto aspect-[5/4];
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
