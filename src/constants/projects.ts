@@ -186,6 +186,7 @@ export const LION_JUMP_PROJECT: Project = {
   mediaItems: [],
   theme: {
     accentColor: '#FEF200',
+    playerBg: 'bg-black',
     playerShadow: 'shadow-[0_0_8px_rgba(254,242,0,0.3),0_0_15px_rgba(254,242,0,0.1),0_0_2px_rgba(254,242,0,0.4)_inset]',
     playerBorder: 'border-[#FEF200]/40 border',
     navButtonBg: 'bg-[#FEF200]/40',

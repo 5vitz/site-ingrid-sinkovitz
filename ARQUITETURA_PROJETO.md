@@ -1,36 +1,30 @@
 # Documento de Arquitetura Master - Portfólio Ingrid Sinkovitz
 
 ## 1. Visão Geral
-Este documento serve como a "Fonte da Verdade" para a reconstrução do site. O objetivo é migrar de uma estrutura "remendada" para um código limpo, semântico e escalável, utilizando React, Vite, Firebase (Auth, Firestore, Storage) e Tailwind CSS.
+Este documento é a "Fonte da Verdade" do projeto. O sistema evoluiu para um modelo de portfólio de alta performance, focando em minimalismo extremo, transições de "corte seco" (sem animações de fade que causem lag visual) e personalização profunda por projeto.
 
-## 2. Identidade Visual (Mood: Profissional e Elegante)
-*   **Tipografia Base:** Poppins (Sans-serif) - Fonte oficial do site.
-*   **Gestão Dinâmica:** O sistema deve permitir a alteração das fontes (Primária e Títulos) via Painel Administrativo.
-*   **Cores Estruturais:**
-    *   `--cor1`: #465D53 (Verde Escuro - Acento Primário)
-    *   `--cor2`: #203F44 (Teal Profundo - Cabeçalhos e Textos Escuros)
-    *   `--cor3`: #BE735E (Terra Cota - Acento Secundário)
-    *   `--cor4`: #6B3028 (Marrom/Vermelho Escuro - Terciário)
-    *   `--cor5`: #B35227 (Laranja Queimado - Acento Vívido)
-    *   `--cor6`: #C1908A (Rosa Suave - Acento Soft)
-    *   `--white`: #FFFFFF
-    *   `--gray-light`: #F8F9FA
-    *   `--text-dark`: #1A1A1A
-    *   `--shadow`: 0 2px 8px rgba(0, 0, 0, 0.05)
-*   **Configurações de Layout:**
-    *   `section-container`: py-[10px] (Reduzido para um design mais compacto).
-    *   `section-card`: bg-zinc-900/40 backdrop-blur-md.
+## 2. Identidade Visual (Mood: Minimalista, Cinematográfico e Técnico)
+*   **Filosofia de Design:** Minimalismo Fervoroso. Cada elemento deve ter um propósito.
+*   **Transições:** "Corte Seco" (Dry Cut). As mídias e modais mudam instantaneamente, sem efeitos de escala ou opacidade que distraiam ou causem percepção de travamento.
+*   **Tipografia Base:** Inter/Poppins (Sans-serif). Foco em legibilidade e espaçamento técnico.
+*   **Cores Estruturais (Base):**
+    *   Fundo principal: `bg-[#050510]` (Preto profundo azulado).
+    *   Cards e Seções: `bg-zinc-900/40` com `backdrop-blur-md`.
+    *   Bordas: `border-white/5` ou `border-white/10`.
+    *   Acento Padrão: `#00D154` (Verde Neon/Digital).
+    *   Acento Alternativo: `#FEF200` (Amarelo Vibrant - Ex: Projeto Lion Jump).
 
 ## 3. Módulos do Sistema
 
-### 3.1. Motor de Temas Dinâmico (Novo)
-O sistema utiliza um mecanismo de "Injectable CSS Variables" para permitir personalização em tempo real sem necessidade de novos builds:
-*   **Persistência:** As configurações são salvas no Firestore (`settings/global`).
-*   **Aplicação:** O `App.tsx` escuta as mudanças e injeta as variáveis no `:root`.
-*   **Capacidades:**
-    *   **Cores:** Mapeamento de 6 acentos e tons de texto/fundo.
-    *   **Tipografia:** Controle dinâmico do tamanho das fontes (h1, h2, h3, h4) via sliders no dashboard.
-*   **Tailwind Integration:** O `index.css` mapeia essas variáveis para classes utilitárias e tags base.
+### 3.1. Personalização por Projeto (Sistema de Temas v2)
+Ao contrário de um template fixo, cada projeto no portfólio pode "herdar" um universo visual próprio:
+*   **Injectable Theme:** Cada objeto `Project` possui uma propriedade `theme` opcional.
+*   **Propriedades Customizáveis:**
+    *   `playerBg`: Cor de fundo do player (Ex: `bg-black` para vídeos, `bg-white` para certas marcas).
+    *   `playerBorder`: Estilo de borda (Ex: `border-[#FEF200]/40`).
+    *   `playerShadow`: Efeito de brilho externo (Glow) personalizado.
+    *   `accentColor`: Cor dos botões de navegação e indicadores.
+    *   `navButtonBg` e `navButtonColor`: Customização total dos controles.
 
 ### 3.2. Controle de Acesso (ACL)
 Níveis de acesso para manter a integridade do site:
@@ -124,14 +118,14 @@ A formatação é rígida para garantir a estética do portfólio. O usuário se
     *   `thumbnailFit`: Suporte para 'cover' (padrão) ou 'contain' (para logos com transparência).
     *   `cardBg`: Capacidade de definir cores de fundo específicas por card (Ex: branco para logos escuros).
 
-### Experiência de Navegação (Transição Natural):
-O termo **Card** é apropriado para cada unidade de mídia (imagem/vídeo) dentro do reel. A transição deve ser fluida:
-1.  **Entrada (Quick View):** O card apresenta o resumo e o botão "Saiba Mais".
-2.  **Ação (Clique):** Ao clicar, o sistema navega para o **Player de Projetos** (Modal).
-3.  **Navegação Inteligente:**
-    *   **Navegação Vertical (Reels):** Suporte a scroll de mouse e touch para navegar entre vídeos verticais e mídias do projeto.
-    *   **Sensor de Âncora:** O sistema encerra o player instantaneamente se o usuário clicar em qualquer item do menu global ou footer, garantindo uma navegação sem travamentos.
-    *   **Bloqueio de Scroll Externo:** Impede que a página principal role enquanto o usuário está imerso no conteúdo do projeto.
+### Experiência de Navegação (Mergulho e Performance):
+1.  **Ação (Clique):** Ao clicar, o sistema abre o **Player de Projetos** imediatamente.
+2.  **Navegação 2D (Feed/Stories):**
+    *   **Vertical (Eixo Y):** Navega entre "Feeds" ou categorias principais do projeto.
+    *   **Horizontal (Eixo X):** Navega entre "Stories" ou sub-mídias de um feed específico.
+3.  **Lógica de Redimensionamento Síncrono:** O player calcula sua largura instantaneamente baseada no `aspectRatio` da mídia atual, evitando "pulos" visuais ou bordas pretas indesejadas (letterboxing) quando configurado corretamente.
+4.  **Corte Seco (Zero Latência):** Desativação completa de `framer-motion` em transições críticas para garantir que a mudança de mídia seja instantânea.
+5.  **Imposto sobre Identidade:** O player força o foco na mídia, utilizando `object-cover` para preencher o espaço definido e `aspectRatio` preciso para manter a fidelidade do material original.
 
 ### Design Sonoro (Trilha Sonora Adaptativa):
 Para evitar o "silêncio branco" em cards estáticos, o site implementa uma experiência imersiva de áudio:
@@ -175,19 +169,15 @@ O sistema decidirá o layout automaticamente com base na densidade do conteúdo 
 ### Coleção: `projects`
 *   `id`: string (slug)
 *   `title`: string
-*   `description`: string (para o Quick View)
 *   `layoutType`: enum ('vertical', 'horizontal')
-*   `audioUrl`: string (Link da trilha sonora em loop do projeto)
-*   `galleryThumbnail`: string (Foto-link)
-*   `coverImage`: string (Foto-capa no Saiba Mais)
-*   `thumbnailFit`: enum ('cover', 'contain')
-*   `cardBg`: string (Classe de fundo do Tailwind, ex: 'bg-white')
-*   `mediaItems`: array de objetos:
-    *   `type`: enum ('image', 'video', 'text', 'link')
-    *   `url`: string
-    *   `thumbnail`: string (para links/vídeos)
-    *   `order`: number
-*   `order`: number (posição na galeria geral)
+*   `audioUrl`: string (trilha sonora do projeto)
+*   `theme`: Objeto de tema (playerBg, playerBorder, playerShadow, etc.)
+*   `feed`: array de objetos:
+    *   `id`: string
+    *   `aspectRatio`: number (0.56, 0.8, 1.77, etc.)
+    *   `media`: objeto de mídia principal
+    *   `stories`: array de objetos de mídia secundários
+*   `order`: number
 
 ### Coleção: `services`
 *   `id`: string (gerado automaticamente)

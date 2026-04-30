@@ -345,7 +345,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                   >
                     {/* O Player propriamente dito */}
                     <div 
-                      className={`w-full h-full bg-black rounded-[8px] overflow-hidden relative shadow-2xl !transition-none ${theme.playerBorder || 'border border-white/10'} ${theme.playerShadow || ''}`}
+                      className={`w-full h-full ${theme.playerBg || 'bg-black'} rounded-[8px] overflow-hidden relative shadow-2xl ${theme.playerBorder || 'border border-white/10'} ${theme.playerShadow || ''} !transition-none`}
                       style={{ transition: 'none !important' }}
                     >
                       {/* Conteúdo interno com corte seco */}
@@ -520,7 +520,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
     return (
       <div 
         key={media.url}
-        className={`w-full h-full bg-black flex items-center justify-center !transition-none ${media.allowScroll ? 'overflow-y-auto custom-scrollbar items-start' : 'overflow-hidden'}`}
+        className={`w-full h-full ${theme.playerBg || 'bg-black'} flex items-center justify-center !transition-none ${media.allowScroll ? 'overflow-y-auto custom-scrollbar items-start' : 'overflow-hidden'}`}
         style={{ transition: 'none' }}
       >
         <img 
@@ -541,7 +541,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
 
   if (media.type === 'iframe') {
     return (
-      <div className="w-full h-full bg-white relative overflow-hidden">
+      <div className={`w-full h-full ${theme.playerBg || 'bg-black'} relative overflow-hidden`}>
         <iframe 
           src={media.url}
           className="w-full h-full border-none"

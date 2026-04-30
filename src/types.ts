@@ -52,6 +52,7 @@ export interface FeedItem {
 }
 
 export interface ProjectTheme {
+  playerBg?: string;
   playerBorder?: string;
   playerShadow?: string;
   modalOverlayBg?: string;
