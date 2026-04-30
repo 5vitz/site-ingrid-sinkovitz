@@ -339,8 +339,8 @@ export const LION_JUMP_PROJECT: Project = {
 
 export const AUDDAR_PROJECT: Project = {
   id: 'projeto-auddar',
-  title: 'Audaar - Techospitality',
-  description: 'Estruturação de Marketing e Materiais de Venda para a Audaar.',
+  title: 'Auddar - Techospitality',
+  description: 'Estruturação de Marketing e Materiais de Venda para a Auddar.',
   layoutType: '2d',
   galleryThumbnail: '',
   coverImage: '',
@@ -357,14 +357,14 @@ export const AUDDAR_PROJECT: Project = {
   feed: [
     {
       id: 'auddar-f01',
-      title: 'Audaar - Techospitality',
+      title: 'Auddar - Techospitality',
       aspectRatio: 1, // 540x540 (1:1)
       media: { 
         type: 'text', 
         order: 1, 
         title: 'Techospitality',
-        subtitle: 'Estruturação de Marketing e Materiais de Venda | Audaar',
-        content: `Projeto de estruturação da comunicação e dos serviços da Audaar, empresa de tecnologia para o setor de hospedagem.
+        subtitle: 'Estruturação de Marketing e Materiais de Venda | Auddar',
+        content: `Projeto de estruturação da comunicação e dos serviços da Auddar, empresa de tecnologia para o setor de hospedagem.
 Objetivo de organizar a proposta de valor da marca, desenvolver narrativa e materiais estratégicos de venda, com foco em clareza, consistência e conversão.
 
 Meu papel:

@@ -160,7 +160,9 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
 
   // Cálculo síncrono da largura baseado no aspecto da mídia atual
   let currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || (9/16);
-  if (isNaN(currentAspectRatio) || currentAspectRatio <= 0) currentAspectRatio = 9/16;
+  if (typeof currentAspectRatio !== 'number' || isNaN(currentAspectRatio) || currentAspectRatio <= 0) {
+    currentAspectRatio = 9/16;
+  }
   
   const isAuddar = project?.id === 'projeto-auddar';
 
@@ -170,12 +172,16 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     ? (currentMedia?.type === 'text' ? Math.min(viewportHeight - 120, 700) : 540) 
     : maxPlayerHeight;
 
+  // Garantir que não temos valores negativos ou absurdos
+  playerWidth = Math.max(300, playerWidth);
+  playerHeight = Math.max(400, playerHeight);
+
   // Se a largura ultrapassar o limite da tela (95% da largura), reduzimos proporcionalmente
   const maxAllowedWidth = viewportWidth * 0.95;
   if (playerWidth > maxAllowedWidth) {
-    const ratio = playerHeight / playerWidth;
+    const scaleFactor = maxAllowedWidth / playerWidth;
     playerWidth = maxAllowedWidth;
-    playerHeight = playerWidth * ratio;
+    playerHeight = playerHeight * scaleFactor;
   }
 
   // Controla o "ducking" do áudio se a mídia atual for vídeo
@@ -610,12 +616,13 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
 
               {media.content && (
                 <div className="space-y-8 text-[15px] md:text-[17px] leading-relaxed font-light">
-                  {(media.content || '').split('\n\n').map((block, idx) => {
+                  {(media?.content || '').split('\n\n').map((block, idx) => {
+                     if (!block) return null;
                      const lines = block.split('\n');
-                     const firstLine = lines[0] || '';
+                     const firstLine = (lines[0] || '').trim();
                      
                      // Se for um título de seção (termina com :)
-                     if (firstLine.trim().endsWith(':')) {
+                     if (firstLine.endsWith(':')) {
                        return (
                          <div key={idx} className="space-y-4">
                            <h4 className="font-black uppercase tracking-widest text-xs text-white/50 mb-4 flex items-center gap-3">
@@ -623,16 +630,20 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
                              {firstLine}
                            </h4>
                            <div className="space-y-3 pl-0 md:pl-0">
-                             {lines.slice(1).map((line, li) => (
-                               <p key={li} className="flex gap-4">
-                                 {line.trim().startsWith('•') ? (
-                                   <span className="text-white/40 mt-1 shrink-0">•</span>
-                                 ) : null}
-                                 <span className="text-white/90">
-                                   {line.replace(/^•\s*/, '')}
-                                 </span>
-                               </p>
-                             ))}
+                             {lines.slice(1).map((line, li) => {
+                               if (!line) return null;
+                               const trimmedLine = line.trim();
+                               return (
+                                 <p key={li} className="flex gap-4">
+                                   {trimmedLine.startsWith('•') ? (
+                                     <span className="text-white/40 mt-1 shrink-0">•</span>
+                                   ) : null}
+                                   <span className="text-white/90">
+                                     {trimmedLine.replace(/^•\s*/, '')}
+                                   </span>
+                                 </p>
+                               );
+                             })}
                            </div>
                          </div>
                        );
