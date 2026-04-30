@@ -654,7 +654,7 @@ const MaintenanceGuard = ({ children, settings }: { children: React.ReactNode, s
   const isMaintenanceActive = true;
 
   if (isMaintenanceActive && !isAdmin) {
-    return <MaintenanceMode title={settings?.maintenanceTitle || 'Sob manutenção, até breve!'} />;
+    return <MaintenanceMode title={settings?.maintenanceTitle || 'Sob manutenção'} />;
   }
 
   return <>{children}</>;

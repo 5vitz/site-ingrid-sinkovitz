@@ -23,6 +23,7 @@ export interface Overlay {
 }
 
 export interface MediaItem {
+  id?: string;
   type: MediaType;
   layout?: 'gshow' | 'standard';
   url?: string;
@@ -44,6 +45,7 @@ export interface MediaItem {
 
 export interface FeedItem {
   id: string;
+  title?: string;
   media: MediaItem;
   stories?: MediaItem[];
   aspectRatio: number; // 0.56 ou 0.80
