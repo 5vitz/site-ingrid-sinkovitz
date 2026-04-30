@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, LogIn } from 'lucide-react';
+import { LogIn } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useAuth } from '../hooks/useAuth';
 
@@ -12,12 +12,13 @@ export const MaintenanceMode: React.FC<MaintenanceModeProps> = ({ title }) => {
 
   return (
     <div className="h-screen w-full relative flex items-center justify-center overflow-hidden bg-black">
-      {/* Cabeçalho de Marca Superior */}
+      {/* Cabeçalho de Marca Superior (Logo pulsante) */}
       <div className="absolute top-12 left-0 w-full text-center z-20">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
+          className="animate-pulse"
         >
           <h2 className="text-xl md:text-2xl font-bold tracking-tighter uppercase text-white">
             Ingrid <span className="text-accent">Sinkovitz</span>
@@ -43,12 +44,8 @@ export const MaintenanceMode: React.FC<MaintenanceModeProps> = ({ title }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="space-y-8"
+          className="space-y-12"
         >
-          <div className="w-20 h-20 bg-accent/20 text-accent mx-auto rounded-full flex items-center justify-center animate-pulse">
-            <ShieldCheck size={40} />
-          </div>
-
           <div className="space-y-4">
             <h1 className="text-4xl md:text-6xl font-bold tracking-tighter text-white uppercase">
               {title || 'Sob manutenção'}
