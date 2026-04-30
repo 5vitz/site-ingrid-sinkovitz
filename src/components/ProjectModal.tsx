@@ -124,6 +124,10 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     const handleKeyDown = (e: KeyboardEvent) => {
       const isVertical = project.layoutType === 'vertical';
 
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        e.preventDefault();
+      }
+
       if (isVertical) {
         if (e.key === 'ArrowDown') navigateFeed(1);
         if (e.key === 'ArrowUp') navigateFeed(-1);
@@ -329,21 +333,23 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                 <div className="relative flex items-center justify-center" style={{ perspective: '2000px' }}>
                   {/* Player Principal Container - Agora sem animação para corte seco */}
                   <div 
-                    className="relative z-10"
+                    className="relative z-10 !transition-none"
                     key={`${feedIndex}-${storyIndex}`} // Força a recriação de todo o container nas transições
                     style={{ 
                       maxWidth: '98vw', 
                       maxHeight: 'calc(100svh - 60px)', 
                       width: playerWidth,
-                      height: playerHeight
+                      height: playerHeight,
+                      transition: 'none !important'
                     }}
                   >
                     {/* O Player propriamente dito */}
                     <div 
-                      className={`w-full h-full bg-black rounded-[8px] overflow-hidden relative shadow-2xl ${theme.playerBorder || 'border border-white/10'} ${theme.playerShadow || ''}`}
+                      className={`w-full h-full bg-black rounded-[8px] overflow-hidden relative shadow-2xl !transition-none ${theme.playerBorder || 'border border-white/10'} ${theme.playerShadow || ''}`}
+                      style={{ transition: 'none !important' }}
                     >
                       {/* Conteúdo interno com corte seco */}
-                      <div className="w-full h-full overflow-hidden">
+                      <div className="w-full h-full overflow-hidden !transition-none" style={{ transition: 'none !important' }}>
                         {/* Media Renderer */}
                         <MediaRenderer media={currentMedia} isActive={showPlayer} isMuted={isMuted} />
                       </div>
@@ -514,15 +520,17 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
     return (
       <div 
         key={media.url}
-        className={`w-full h-full bg-black flex items-center justify-center ${media.allowScroll ? 'overflow-y-auto custom-scrollbar items-start' : 'overflow-hidden'}`}
+        className={`w-full h-full bg-black flex items-center justify-center !transition-none ${media.allowScroll ? 'overflow-y-auto custom-scrollbar items-start' : 'overflow-hidden'}`}
+        style={{ transition: 'none' }}
       >
         <img 
           src={media.url} 
-          className={`w-full ${media.allowScroll ? 'h-auto block min-h-full' : 'h-full object-cover'}`}
+          className={`w-full !transition-none ${media.allowScroll ? 'h-auto block min-h-full' : 'h-full object-cover'}`}
           style={{ 
             transform: `scale(${media.zoom || 1}) translateX(${media.xOffset || 0}px) translateY(${media.yOffset || 0}px)`,
             transformOrigin: 'center center',
-            display: 'block'
+            display: 'block',
+            transition: 'none'
           }}
           alt={media.title || ''}
           referrerPolicy="no-referrer"
