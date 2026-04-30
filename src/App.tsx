@@ -638,11 +638,14 @@ const MaintenanceGuard = ({ children, settings }: { children: React.ReactNode, s
   const { role, loading } = useAuth();
   const isAdmin = ['super', 'admin'].includes(role || '');
 
-  if (loading) return null;
-
-  // Forçamos o modo manutenção via código para TODOS na Home conforme solicitado
-  // Mas permitimos que ADM ignore para poder trabalhar
+  // Forçamos o modo manutenção via código
   const isMaintenanceActive = true;
+
+  // Se estiver carregando, mostramos a tela de manutenção preventivamente 
+  // para evitar o flash de conteúdo ou tela preta
+  if (loading) {
+    return <MaintenanceMode title={settings?.maintenanceTitle || 'Sob manutenção'} />;
+  }
 
   if (isMaintenanceActive && !isAdmin) {
     return <MaintenanceMode title={settings?.maintenanceTitle || 'Sob manutenção'} />;

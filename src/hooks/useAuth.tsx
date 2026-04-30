@@ -21,18 +21,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [authActionLoading, setAuthActionLoading] = useState(false);
 
   useEffect(() => {
+    if (!auth) {
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
       if (user?.email) {
         try {
-          if (['sinkando@gmail.com', 'ingridsinkovitz@gmail.com'].includes(user.email)) {
+          const authorizedEmails = ['sinkando@gmail.com', 'ingridsinkovitz@gmail.com'];
+          if (authorizedEmails.includes(user.email)) {
             setRole('super');
           } else {
             const roleDoc = await getDoc(doc(db, 'users_roles', user.email));
             if (roleDoc.exists()) {
               setRole(roleDoc.data().role as UserRole);
             } else {
+              // Se não estiver na whitelist nem no DB, deslogar automaticamente por segurança
+              await signOut(auth);
+              setUser(null);
               setRole(null);
+              alert('Acesso restrito. Este e-mail não tem permissão para acessar o painel administrativo.');
             }
           }
         } catch (err) {

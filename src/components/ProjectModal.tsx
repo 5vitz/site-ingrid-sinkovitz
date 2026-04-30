@@ -25,6 +25,9 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const isScrollingRef = useRef(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  // Early return if no project is selected
+  if (!project) return null;
+
   // Zera o estado ao trocar de projeto
   useEffect(() => {
     setFeedIndex(0);
@@ -158,7 +161,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   // Cálculo síncrono da largura baseado no aspecto da mídia atual
   const currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || (9/16);
   
-  const isAuddar = project.id === 'projeto-auddar';
+  const isAuddar = project?.id === 'projeto-auddar';
 
   // Calculamos a largura ideal baseada na altura máxima padrão
   let playerWidth = isAuddar ? 540 : (maxPlayerHeight * currentAspectRatio);
@@ -236,7 +239,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     };
 
     const handleTouchEnd = (e: TouchEvent) => {
-      if (!touchStartRef.current) return;
+      if (!touchStartRef.current || !project) return;
       
       const touchEnd = {
         x: e.changedTouches[0].clientX,
@@ -288,8 +291,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       window.removeEventListener('touchend', handleTouchEnd);
     };
   }, [project, showPlayer, navigateFeed, navigateStory, currentMedia]);
-
-  if (!project) return null;
 
   const handleStartTour = (e: React.MouseEvent) => {
     e.stopPropagation();
