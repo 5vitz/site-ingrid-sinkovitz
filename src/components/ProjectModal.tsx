@@ -283,7 +283,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   };
 
   return (
-    <AnimatePresence>
+    <>
       {project && (
         <div 
           className="fixed inset-0 z-[9999] bg-[#050510]/95 backdrop-blur-xl flex items-center justify-center p-4 md:p-10 select-none overflow-hidden"
@@ -317,42 +317,25 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                 </div>
               ) : (
                 <div className="relative flex items-center justify-center" style={{ perspective: '2000px' }}>
-                  {/* Player Principal Container - Dimensões animadas via motion */}
-                  <motion.div 
-                    animate={{ 
-                      width: playerWidth, 
-                      height: playerHeight 
-                    }}
-                    transition={{ 
-                      duration: 0.6, 
-                      ease: [0.22, 1, 0.36, 1] 
-                    }}
+                  {/* Player Principal Container - Agora sem animação para corte seco */}
+                  <div 
                     className="relative z-10"
                     style={{ 
                       maxWidth: '98vw', 
                       maxHeight: 'calc(100svh - 60px)', 
-                      width: 'min(playerWidth, 98vw)',
-                      height: 'min(playerHeight, 95vh)'
+                      width: playerWidth,
+                      height: playerHeight
                     }}
                   >
                     {/* O Player propriamente dito */}
                     <div 
                       className={`w-full h-full bg-black rounded-[8px] overflow-hidden relative shadow-2xl ${project.id === 'projeto-lion-jump' ? 'border-[#FEF200]/40 border shadow-[0_0_8px_rgba(254,242,0,0.3),0_0_15px_rgba(254,242,0,0.1),0_0_2px_rgba(254,242,0,0.4)_inset]' : 'border border-white/10'}`}
                     >
-                      {/* Transição de conteúdo interna */}
-                      <AnimatePresence mode="wait" initial={false}>
-                        <motion.div
-                          key={`${feedIndex}-${storyIndex}`}
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          transition={{ duration: 0.4, ease: "easeInOut" }}
-                          className="w-full h-full overflow-hidden"
-                        >
-                          {/* Media Renderer */}
-                          <MediaRenderer media={currentMedia} isActive={showPlayer} isMuted={isMuted} />
-                        </motion.div>
-                      </AnimatePresence>
+                      {/* Conteúdo interno com corte seco */}
+                      <div className="w-full h-full overflow-hidden">
+                        {/* Media Renderer */}
+                        <MediaRenderer media={currentMedia} isActive={showPlayer} isMuted={isMuted} />
+                      </div>
                     </div>
 
                     {/* Setas de Navegação interna (Stories) - FORA do overflow-hidden */}
@@ -401,7 +384,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                         <ChevronDown size={16} />
                       </button>
                     </div>
-                  </motion.div>
+                  </div>
 
 
                   {/* Mobile navigation controls removed for minimalism */}
@@ -428,7 +411,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
           )}
         </div>
       )}
-    </AnimatePresence>
+    </>
   );
 };
 

@@ -32,12 +32,8 @@ export const ProjectSection: React.FC<{ onSelectProject: (p: Project) => void }>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-[1008px] mb-12">
           {displayProjects.map((project: any, idx) => (
-            <motion.div
+            <div
               key={project.id}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ delay: idx * 0.1 }}
-              viewport={{ once: true }}
               className={`relative group ${project.isPlaceholder ? 'cursor-default' : 'cursor-pointer'}`}
               onClick={() => !project.isPlaceholder ? onSelectProject(project as Project) : null}
             >
@@ -51,7 +47,7 @@ export const ProjectSection: React.FC<{ onSelectProject: (p: Project) => void }>
                 {/* Mirror effect */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

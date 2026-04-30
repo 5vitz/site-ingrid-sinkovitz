@@ -73,16 +73,13 @@ const AccordionItem = ({ title, items }: { title: string, items: string[], key?:
             <div className="py-6 px-8 space-y-4">
               <ul className="grid md:grid-cols-2 gap-4">
                 {items.map((item, i) => (
-                  <motion.li
+                  <li
                     key={i}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05 }}
                     className="flex items-start gap-3 text-zinc-400 font-light"
                   >
                     <CheckCircle2 size={18} className="text-accent shrink-0 mt-0.5" />
                     <span>{item}</span>
-                  </motion.li>
+                  </li>
                 ))}
               </ul>
             </div>
@@ -97,10 +94,7 @@ const TestimonialCard = ({ t, isWide }: { t: any, isWide: boolean, key?: any }) 
   const [isExpanded, setIsExpanded] = useState(false);
   
   return (
-    <motion.div 
-      initial={{ opacity: 0, scale: 0.95 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true }}
+    <div 
       className={`bg-zinc-900/40 backdrop-blur-md p-8 md:p-10 rounded-[8px] border border-white/5 flex flex-col ${isWide ? 'md:col-span-2 md:flex-row md:items-center gap-10' : 'justify-between'}`}
     >
       <div className={isWide ? 'flex-1' : ''}>
@@ -137,7 +131,7 @@ const TestimonialCard = ({ t, isWide }: { t: any, isWide: boolean, key?: any }) 
           <span className="text-[10px] text-accent uppercase font-bold tracking-widest">{t.role}</span>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
@@ -212,11 +206,7 @@ const Home = ({ onSelectProject, settings: initialSettings }: { onSelectProject:
         <div className="section-card flex items-center justify-center p-8 md:p-16 bg-zinc-900/40 backdrop-blur-3xl relative overflow-hidden">
           <Quote className="absolute -top-10 -left-10 text-accent/5 w-40 h-40 md:w-60 md:h-60 -z-10" />
           <div className="max-w-4xl w-full">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1 }}
-            >
+            <div>
               <div className="flex flex-col gap-6 text-zinc-300 text-sm md:text-base leading-relaxed font-light">
                 <div className="relative">
                   <p className={`whitespace-pre-line text-justify first-letter:text-5xl first-letter:font-black first-letter:text-accent first-letter:mr-4 first-letter:float-left transition-all duration-700 ${!isBioExpanded ? 'max-h-[320px] md:max-h-[220px] overflow-hidden' : 'max-h-[2000px]'}`}>
@@ -243,7 +233,7 @@ const Home = ({ onSelectProject, settings: initialSettings }: { onSelectProject:
                   {isBioExpanded ? <Minus size={14} /> : <Plus size={14} />}
                 </button>
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
