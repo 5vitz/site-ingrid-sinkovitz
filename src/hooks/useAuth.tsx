@@ -21,12 +21,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [authActionLoading, setAuthActionLoading] = useState(false);
 
   useEffect(() => {
+    // Safety timeout to prevent infinite loading if Firebase hangs
+    const safetyTimeout = setTimeout(() => {
+      setLoading(false);
+    }, 5000);
+
     if (!auth) {
       setLoading(false);
+      clearTimeout(safetyTimeout);
       return;
     }
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      clearTimeout(safetyTimeout);
       setUser(user);
       if (user?.email) {
         try {

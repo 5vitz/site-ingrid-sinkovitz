@@ -644,11 +644,31 @@ const MaintenanceGuard = ({ children, settings }: { children: React.ReactNode, s
   // Se estiver carregando, mostramos a tela de manutenção preventivamente 
   // para evitar o flash de conteúdo ou tela preta
   if (loading) {
-    return <MaintenanceMode title={settings?.maintenanceTitle || 'Sob manutenção'} />;
+    return <MaintenanceMode title={settings?.maintenanceTitle || 'Sob manutenção'} isLoading={true} />;
   }
 
-  if (isMaintenanceActive && !isAdmin) {
-    return <MaintenanceMode title={settings?.maintenanceTitle || 'Sob manutenção'} />;
+  // Se o modo manutenção estiver ativo
+  if (isMaintenanceActive) {
+    // Se NÃO for admin, bloqueia direto
+    if (!isAdmin) {
+      return <MaintenanceMode title={settings?.maintenanceTitle || 'Sob manutenção'} />;
+    }
+    
+    // Se FOR admin, permitimos escolha: ver o site ou ficar na manutenção
+    // Para simplificar, vamos usar um estado local para "aceitar entrar em modo adm"
+    // Mas para este caso específico solicitado pelo usuário (onde ele estranha entrar direto),
+    // vamos mostrar a tela de manutenção com um botão de entrar.
+    const [bypassed, setBypassed] = useState(false);
+
+    if (!bypassed) {
+      return (
+        <MaintenanceMode 
+          title={settings?.maintenanceTitle || 'Sob manutenção'} 
+          isAdmin={true} 
+          onBypass={() => setBypassed(true)}
+        />
+      );
+    }
   }
 
   return <>{children}</>;

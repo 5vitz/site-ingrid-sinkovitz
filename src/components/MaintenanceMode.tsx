@@ -1,14 +1,18 @@
 import React from 'react';
-import { LogIn } from 'lucide-react';
+import { LogIn, Eye, Loader2 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useAuth } from '../hooks/useAuth';
 
 interface MaintenanceModeProps {
   title?: string;
+  isAdmin?: boolean;
+  onBypass?: () => void;
+  isLoading?: boolean;
 }
 
-export const MaintenanceMode: React.FC<MaintenanceModeProps> = ({ title }) => {
-  const { login, loading } = useAuth();
+export const MaintenanceMode: React.FC<MaintenanceModeProps> = ({ title, isAdmin, onBypass, isLoading }) => {
+  const { login, loading: authLoading } = useAuth();
+  const loading = authLoading || isLoading;
 
   return (
     <div className="h-screen w-full relative flex items-center justify-center overflow-hidden bg-black">
@@ -36,25 +40,44 @@ export const MaintenanceMode: React.FC<MaintenanceModeProps> = ({ title }) => {
 
           <div className="space-y-4">
             <h1 className="text-xl md:text-2xl font-bold tracking-tighter text-white uppercase">
-              {title || 'Sob manutenção'}
+              {isLoading ? 'Iniciando Sistema' : (title || 'Sob manutenção')}
             </h1>
             <p className="text-zinc-400 text-xs md:text-sm font-light tracking-[0.2em] uppercase max-w-md mx-auto">
-              Voltaremos em breve
+              {isLoading ? 'Carregando recursos de segurança...' : 'Voltaremos em breve'}
             </p>
           </div>
 
           <div className="flex flex-col items-center gap-4">
-            <button 
-              onClick={login}
-              disabled={loading}
-              className="px-6 py-3 bg-accent text-black font-black uppercase tracking-[0.2em] text-[10px] rounded-[8px] flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-[0_0_30px_rgba(242,187,50,0.3)] disabled:opacity-50"
-            >
-              {loading ? (
-                <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <><LogIn size={14} /> Acesso Administrativo</>
-              )}
-            </button>
+            {isLoading ? (
+               <div className="flex flex-col items-center gap-4">
+                 <Loader2 className="w-8 h-8 text-accent animate-spin opacity-50" />
+               </div>
+            ) : isAdmin ? (
+              <button 
+                onClick={onBypass}
+                className="px-6 py-3 bg-white text-black font-black uppercase tracking-[0.2em] text-[10px] rounded-[8px] flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-[0_0_30px_rgba(255,255,255,0.1)]"
+              >
+                <Eye size={14} /> Visualizar Site (ADM)
+              </button>
+            ) : (
+              <button 
+                onClick={login}
+                disabled={loading}
+                className="px-6 py-3 bg-accent text-black font-black uppercase tracking-[0.2em] text-[10px] rounded-[8px] flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-[0_0_30px_rgba(242,187,50,0.3)] disabled:opacity-50"
+              >
+                {loading ? (
+                  <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <><LogIn size={14} /> Acesso Administrativo</>
+                )}
+              </button>
+            )}
+            
+            {isAdmin && !isLoading && (
+              <p className="text-[9px] text-zinc-500 uppercase tracking-widest font-bold">
+                Você está logada como administradora
+              </p>
+            )}
           </div>
         </motion.div>
       </div>
