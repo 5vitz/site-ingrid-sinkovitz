@@ -10,6 +10,11 @@ export const METAVIX_PROJECT: Project = {
   audioUrl: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Trilha%2FMetavix.mp3?alt=media&token=866a461d-6169-450f-90e9-74cb96e95b00',
   order: 1,
   mediaItems: [], 
+  theme: {
+    accentColor: '#00D154',
+    playerBorder: 'border-white/10',
+    navButtonBg: 'bg-[#00D154]/35'
+  },
   feed: [
     { id: 'f01', aspectRatio: 0.56, media: { type: 'video', order: 1, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto1%2FVideos%2F01.mp4?alt=media&token=19f0b135-718b-4e94-82a1-c5d1e080005c' } },
     { id: 'f02', aspectRatio: 0.56, media: { type: 'video', order: 2, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto1%2FVideos%2F03.mp4?alt=media&token=f9d51d7a-966c-4cc6-872a-8ce22d492b54' } },
@@ -77,6 +82,11 @@ export const GOOD_STORAGE_PROJECT: Project = {
   audioUrl: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Trilha%2FMetavix.mp3?alt=media&token=866a461d-6169-450f-90e9-74cb96e95b00',
   order: 2,
   mediaItems: [],
+  theme: {
+    accentColor: '#00D154',
+    playerBorder: 'border-white/10',
+    navButtonBg: 'bg-[#00D154]/35'
+  },
   feed: [
     { id: 'gs-01', aspectRatio: 0.56, media: { type: 'video', order: 1, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2FVideos%2FEloBike_01.mp4?alt=media&token=8eb6b3d4-8d4e-4f3b-8b9a-7c9d6e5f4a3b' } },
     { id: 'gs-02', aspectRatio: 0.56, media: { type: 'video', order: 2, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2FVideos%2FEloBike_02.mp4?alt=media&token=7d5c4b3a-9e8d-4f2c-1a0b-9c8d7e6f5a4b' } },
@@ -94,6 +104,11 @@ export const ELOBIKE_PROJECT: Project = {
   audioUrl: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Trilha%2FMetavix.mp3?alt=media&token=866a461d-6169-450f-90e9-74cb96e95b00',
   order: 3,
   mediaItems: [],
+  theme: {
+    accentColor: '#00D154',
+    playerBorder: 'border-white/10',
+    navButtonBg: 'bg-[#00D154]/35'
+  },
   feed: [
     {
       id: 'eb-marau',
@@ -169,6 +184,13 @@ export const LION_JUMP_PROJECT: Project = {
   audioUrl: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Trilha%2FMetavix.mp3?alt=media&token=866a461d-6169-450f-90e9-74cb96e95b00',
   order: 4,
   mediaItems: [],
+  theme: {
+    accentColor: '#FEF200',
+    playerShadow: 'shadow-[0_0_8px_rgba(254,242,0,0.3),0_0_15px_rgba(254,242,0,0.1),0_0_2px_rgba(254,242,0,0.4)_inset]',
+    playerBorder: 'border-[#FEF200]/40 border',
+    navButtonBg: 'bg-[#FEF200]/40',
+    navButtonColor: 'text-black'
+  },
   feed: [
     {
       id: 'lj-feed-01',

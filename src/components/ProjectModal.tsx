@@ -83,6 +83,13 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, [onClose]);
 
+  const theme = project?.theme || {
+    accentColor: '#00D154',
+    playerBorder: 'border-white/10',
+    navButtonBg: 'bg-[#00D154]/35',
+    navButtonColor: 'text-black'
+  };
+
   const currentFeed = project?.feed?.[feedIndex];
   const totalFeed = project?.feed?.length || 0;
   const currentStories = currentFeed?.stories || [];
@@ -323,6 +330,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                   {/* Player Principal Container - Agora sem animação para corte seco */}
                   <div 
                     className="relative z-10"
+                    key={`${feedIndex}-${storyIndex}`} // Força a recriação de todo o container nas transições
                     style={{ 
                       maxWidth: '98vw', 
                       maxHeight: 'calc(100svh - 60px)', 
@@ -332,7 +340,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                   >
                     {/* O Player propriamente dito */}
                     <div 
-                      className={`w-full h-full bg-black rounded-[8px] overflow-hidden relative shadow-2xl ${project.id === 'projeto-lion-jump' ? 'border-[#FEF200]/40 border shadow-[0_0_8px_rgba(254,242,0,0.3),0_0_15px_rgba(254,242,0,0.1),0_0_2px_rgba(254,242,0,0.4)_inset]' : 'border border-white/10'}`}
+                      className={`w-full h-full bg-black rounded-[8px] overflow-hidden relative shadow-2xl ${theme.playerBorder || 'border border-white/10'} ${theme.playerShadow || ''}`}
                     >
                       {/* Conteúdo interno com corte seco */}
                       <div className="w-full h-full overflow-hidden">
@@ -347,13 +355,15 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                         <>
                           <button 
                             onClick={(e) => { e.stopPropagation(); navigateStory(-1); }}
-                            className={`absolute -left-10 top-1/2 -translate-y-1/2 w-[30px] h-[30px] flex items-center justify-center rounded-full bg-[#00D154]/35 text-black z-[10020] transition-all ${storyIndex === 0 ? 'opacity-0 pointer-events-none scale-50' : 'opacity-100 hover:bg-accent hover:scale-110 active:scale-95 pointer-events-auto'}`}
+                            className={`absolute -left-10 top-1/2 -translate-y-1/2 w-[30px] h-[30px] flex items-center justify-center rounded-full ${theme.navButtonBg || 'bg-[#00D154]/35'} ${theme.navButtonColor || 'text-black'} z-[10020] transition-all ${storyIndex === 0 ? 'opacity-0 pointer-events-none scale-50' : 'opacity-100 hover:scale-110 active:scale-95 pointer-events-auto'}`}
+                            style={{ backgroundColor: theme.accentColor ? `${theme.accentColor}55` : undefined }}
                           >
                             <ChevronLeft size={16} />
                           </button>
                           <button 
                             onClick={(e) => { e.stopPropagation(); navigateStory(1); }}
-                            className={`absolute -right-10 top-1/2 -translate-y-1/2 w-[30px] h-[30px] flex items-center justify-center rounded-full bg-[#00D154]/35 text-black z-[10020] transition-all ${storyIndex === totalStories - 1 ? 'opacity-0 pointer-events-none scale-50' : 'opacity-100 hover:bg-accent hover:scale-110 active:scale-95 pointer-events-auto'}`}
+                            className={`absolute -right-10 top-1/2 -translate-y-1/2 w-[30px] h-[30px] flex items-center justify-center rounded-full ${theme.navButtonBg || 'bg-[#00D154]/35'} ${theme.navButtonColor || 'text-black'} z-[10020] transition-all ${storyIndex === totalStories - 1 ? 'opacity-0 pointer-events-none scale-50' : 'opacity-100 hover:scale-110 active:scale-95 pointer-events-auto'}`}
+                            style={{ backgroundColor: theme.accentColor ? `${theme.accentColor}55` : undefined }}
                           >
                             <ChevronRight size={16} />
                           </button>
@@ -374,7 +384,8 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                       <button 
                         disabled={feedIndex === 0}
                         onClick={(e) => { e.stopPropagation(); navigateFeed(-1); }}
-                        className={`w-[30px] h-[30px] rounded-full flex items-center justify-center bg-[#00D154]/35 text-black pointer-events-auto transition-all ${feedIndex === 0 ? 'opacity-0 pointer-events-none scale-50' : 'opacity-100 hover:bg-accent hover:scale-110 active:scale-95'}`}
+                        className={`w-[30px] h-[30px] rounded-full flex items-center justify-center ${theme.navButtonBg || 'bg-[#00D154]/35'} ${theme.navButtonColor || 'text-black'} pointer-events-auto transition-all ${feedIndex === 0 ? 'opacity-0 pointer-events-none scale-50' : 'opacity-100 hover:scale-110 active:scale-95'}`}
+                        style={{ backgroundColor: theme.accentColor ? `${theme.accentColor}55` : undefined }}
                       >
                         <ChevronUp size={16} />
                       </button>
@@ -382,7 +393,8 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                       <button 
                         disabled={feedIndex === totalFeed - 1}
                         onClick={(e) => { e.stopPropagation(); navigateFeed(1); }}
-                        className={`w-[30px] h-[30px] rounded-full flex items-center justify-center bg-[#00D154]/35 text-black pointer-events-auto transition-all ${feedIndex === totalFeed - 1 ? 'opacity-0 pointer-events-none scale-50' : 'opacity-100 hover:bg-accent hover:scale-110 active:scale-95'}`}
+                        className={`w-[30px] h-[30px] rounded-full flex items-center justify-center ${theme.navButtonBg || 'bg-[#00D154]/35'} ${theme.navButtonColor || 'text-black'} pointer-events-auto transition-all ${feedIndex === totalFeed - 1 ? 'opacity-0 pointer-events-none scale-50' : 'opacity-100 hover:scale-110 active:scale-95'}`}
+                        style={{ backgroundColor: theme.accentColor ? `${theme.accentColor}55` : undefined }}
                       >
                         <ChevronDown size={16} />
                       </button>
@@ -500,7 +512,10 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
       );
     }
     return (
-      <div className={`w-full h-full bg-black flex items-center justify-center ${media.allowScroll ? 'overflow-y-auto custom-scrollbar items-start' : 'overflow-hidden'}`}>
+      <div 
+        key={media.url}
+        className={`w-full h-full bg-black flex items-center justify-center ${media.allowScroll ? 'overflow-y-auto custom-scrollbar items-start' : 'overflow-hidden'}`}
+      >
         <img 
           src={media.url} 
           className={`w-full ${media.allowScroll ? 'h-auto block min-h-full' : 'h-full object-cover'}`}

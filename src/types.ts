@@ -51,6 +51,17 @@ export interface FeedItem {
   aspectRatio: number; // 0.56 ou 0.80
 }
 
+export interface ProjectTheme {
+  playerBorder?: string;
+  playerShadow?: string;
+  modalOverlayBg?: string;
+  accentColor?: string;
+  navButtonBg?: string;
+  navButtonColor?: string;
+  closeButtonBg?: string;
+  closeButtonColor?: string;
+}
+
 export interface Project {
   id: string;
   title: string;
@@ -64,6 +75,7 @@ export interface Project {
   mediaItems: MediaItem[]; // Para compatibilidade com projetos antigos
   feed?: FeedItem[]; // Nova estrutura 2D
   order: number;
+  theme?: ProjectTheme;
 }
 
 export interface Service {
