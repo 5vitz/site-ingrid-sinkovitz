@@ -84,6 +84,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   }, [onClose]);
 
   const theme = project?.theme || {
+    playerBg: 'bg-black',
     accentColor: '#00D154',
     playerBorder: 'border-white/10',
     navButtonBg: 'bg-[#00D154]/35',
@@ -95,8 +96,12 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const currentStories = currentFeed?.stories || [];
   const totalStories = currentStories.length + 1;
 
-  // Dimensões do Player dinâmicas - Movido para depois da definição da mídia
-  const playerHeight = 540;
+  // Dimensões do Player dinâmicas
+  const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
+  const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 1200;
+  
+  // Altura máxima para o player (descontando margens)
+  const maxPlayerHeight = Math.min(viewportHeight - 120, 850);
 
   const navigateFeed = useCallback((direction: 1 | -1) => {
     if (isScrollingRef.current) return;
@@ -104,7 +109,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     if (next >= 0 && next < totalFeed) {
       isScrollingRef.current = true;
       setFeedIndex(next);
-      setStoryIndex(0); // Sempre volta para o primeiro card ao trocar de capítulo
+      setStoryIndex(0);
       setTimeout(() => { isScrollingRef.current = false; }, 500);
     }
   }, [feedIndex, totalFeed]);
@@ -145,14 +150,24 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [project, showPlayer, navigateFeed, navigateStory, onClose]);
-
+  
   const currentMedia = storyIndex === 0 
     ? currentFeed?.media 
     : currentStories[storyIndex - 1];
 
   // Cálculo síncrono da largura baseado no aspecto da mídia atual
-  const currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || (1080/1920);
-  const playerWidth = Math.round(playerHeight * currentAspectRatio);
+  const currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || (9/16);
+  
+  // Calculamos a largura ideal baseada na altura máxima padrão
+  let playerWidth = maxPlayerHeight * currentAspectRatio;
+  let playerHeight = maxPlayerHeight;
+
+  // Se a largura ultrapassar o limite da tela (95% da largura), reduzimos proporcionalmente
+  const maxAllowedWidth = viewportWidth * 0.95;
+  if (playerWidth > maxAllowedWidth) {
+    playerWidth = maxAllowedWidth;
+    playerHeight = playerWidth / currentAspectRatio;
+  }
 
   // Controla o "ducking" do áudio se a mídia atual for vídeo
   useEffect(() => {
@@ -334,7 +349,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                   {/* Player Principal Container - Agora sem animação para corte seco */}
                   <div 
                     className="relative z-10 !transition-none"
-                    key={`${feedIndex}-${storyIndex}`} // Força a recriação de todo o container nas transições
                     style={{ 
                       maxWidth: '98vw', 
                       maxHeight: 'calc(100svh - 60px)', 
@@ -351,7 +365,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                       {/* Conteúdo interno com corte seco */}
                       <div className="w-full h-full overflow-hidden !transition-none" style={{ transition: 'none !important' }}>
                         {/* Media Renderer */}
-                        <MediaRenderer media={currentMedia} isActive={showPlayer} isMuted={isMuted} />
+                        <MediaRenderer media={currentMedia} isActive={showPlayer} isMuted={isMuted} theme={theme} />
                       </div>
                     </div>
 
@@ -440,9 +454,10 @@ interface MediaRendererProps {
   media?: MediaItem;
   isActive: boolean;
   isMuted?: boolean;
+  theme: any;
 }
 
-const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted = true }) => {
+const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted = true, theme }) => {
   if (!media) return null;
 
   if (media.type === 'video') {
@@ -525,7 +540,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
       >
         <img 
           src={media.url} 
-          className={`w-full !transition-none ${media.allowScroll ? 'h-auto block min-h-full' : 'h-full object-cover'}`}
+          className={`w-full !transition-none ${media.allowScroll ? 'h-auto block min-h-full' : `h-full ${media.objectFit === 'contain' ? 'object-contain' : 'object-cover'}`}`}
           style={{ 
             transform: `scale(${media.zoom || 1}) translateX(${media.xOffset || 0}px) translateY(${media.yOffset || 0}px)`,
             transformOrigin: 'center center',

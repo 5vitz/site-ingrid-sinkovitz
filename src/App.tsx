@@ -640,10 +640,10 @@ const MaintenanceGuard = ({ children, settings }: { children: React.ReactNode, s
 
   if (loading) return null;
 
-  // Forçamos o modo manutenção via código conforme solicitado, ignorando o DB por enquanto
+  // Forçamos o modo manutenção via código para TODOS na Home conforme solicitado
   const isMaintenanceActive = true;
 
-  if (isMaintenanceActive && !isAdmin) {
+  if (isMaintenanceActive) {
     return <MaintenanceMode title={settings?.maintenanceTitle || 'Sob manutenção'} />;
   }
 

@@ -187,8 +187,7 @@ export const LION_JUMP_PROJECT: Project = {
   theme: {
     accentColor: '#FEF200',
     playerBg: 'bg-black',
-    playerShadow: 'shadow-[0_0_8px_rgba(254,242,0,0.3),0_0_15px_rgba(254,242,0,0.1),0_0_2px_rgba(254,242,0,0.4)_inset]',
-    playerBorder: 'border-[#FEF200]/40 border',
+    playerBorder: 'border-none',
     navButtonBg: 'bg-[#FEF200]/40',
     navButtonColor: 'text-black'
   },
@@ -300,9 +299,11 @@ export const LION_JUMP_PROJECT: Project = {
         },
         {
           id: 'card-12',
-          type: 'iframe',
+          type: 'image',
           order: 12,
-          url: `https://docs.google.com/viewer?url=${encodeURIComponent('https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F04-Africa%2FEmMovimentoAfrica.pdf?alt=media&token=d63690d8-651a-4ebe-90bf-6ba337fbb5d2')}&embedded=true`
+          url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F04-Africa%2FEmMovimentoAfrica.png?alt=media&token=d63690d8-651a-4ebe-90bf-6ba337fbb5d2',
+          allowScroll: true,
+          aspectRatio: 1.77777777778
         }
       ]
     },
