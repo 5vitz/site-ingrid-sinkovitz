@@ -88,9 +88,8 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const currentStories = currentFeed?.stories || [];
   const totalStories = currentStories.length + 1;
 
-  // Dimensões do Player dinâmicas - Ajustadas para maior flexibilidade
+  // Dimensões do Player dinâmicas - Movido para depois da definição da mídia
   const playerHeight = 540;
-  const playerWidth = currentFeed ? Math.round(playerHeight * currentFeed.aspectRatio) : 960;
 
   const navigateFeed = useCallback((direction: 1 | -1) => {
     if (isScrollingRef.current) return;
@@ -139,6 +138,10 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const currentMedia = storyIndex === 0 
     ? currentFeed?.media 
     : currentStories[storyIndex - 1];
+
+  // Cálculo síncrono da largura baseado no aspecto da mídia atual
+  const currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || (1080/1920);
+  const playerWidth = Math.round(playerHeight * currentAspectRatio);
 
   // Controla o "ducking" do áudio se a mídia atual for vídeo
   useEffect(() => {
@@ -500,12 +503,14 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
       <div className={`w-full h-full bg-black flex items-center justify-center ${media.allowScroll ? 'overflow-y-auto custom-scrollbar items-start' : 'overflow-hidden'}`}>
         <img 
           src={media.url} 
-          className={`w-full ${media.allowScroll ? 'h-auto block min-h-full' : 'h-full object-contain'}`}
+          className={`w-full ${media.allowScroll ? 'h-auto block min-h-full' : 'h-full object-cover'}`}
           style={{ 
             transform: `scale(${media.zoom || 1}) translateX(${media.xOffset || 0}px) translateY(${media.yOffset || 0}px)`,
-            transformOrigin: 'center center'
+            transformOrigin: 'center center',
+            display: 'block'
           }}
           alt={media.title || ''}
+          referrerPolicy="no-referrer"
         />
       </div>
     );
