@@ -12,6 +12,22 @@ export const MaintenanceMode: React.FC<MaintenanceModeProps> = ({ title }) => {
 
   return (
     <div className="h-screen w-full relative flex items-center justify-center overflow-hidden bg-black">
+      {/* Cabeçalho de Marca Superior */}
+      <div className="absolute top-12 left-0 w-full text-center z-20">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <h2 className="text-xl md:text-2xl font-bold tracking-tighter uppercase text-white">
+            Ingrid <span className="text-accent">Sinkovitz</span>
+          </h2>
+          <p className="text-[9px] md:text-[11px] uppercase tracking-[0.4em] opacity-30 font-bold text-white mt-1">
+            Estratégia | Planejamento | Gestão
+          </p>
+        </motion.div>
+      </div>
+
       {/* Imagem de Fundo com Overlay */}
       <div className="absolute inset-0 z-0">
         <img 
@@ -26,7 +42,7 @@ export const MaintenanceMode: React.FC<MaintenanceModeProps> = ({ title }) => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
           className="space-y-8"
         >
           <div className="w-20 h-20 bg-accent/20 text-accent mx-auto rounded-full flex items-center justify-center animate-pulse">
@@ -34,11 +50,11 @@ export const MaintenanceMode: React.FC<MaintenanceModeProps> = ({ title }) => {
           </div>
 
           <div className="space-y-4">
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tighter text-white uppercase">
-              {title || 'Sob manutenção, até breve!'}
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tighter text-white uppercase">
+              {title || 'Sob manutenção'}
             </h1>
-            <p className="text-zinc-400 text-lg font-light tracking-wide max-w-md mx-auto">
-              Estamos preparando novidades incríveis para você. Voltaremos em breve com o conteúdo atualizado.
+            <p className="text-zinc-400 text-lg md:text-xl font-light tracking-[0.2em] uppercase max-w-md mx-auto">
+              Voltaremos em breve
             </p>
           </div>
 
@@ -61,10 +77,10 @@ export const MaintenanceMode: React.FC<MaintenanceModeProps> = ({ title }) => {
         </motion.div>
       </div>
 
-      {/* Marca Ingrid Sinkovitz */}
+      {/* Marca Ingrid Sinkovitz sutil no rodapé */}
       <div className="absolute bottom-10 left-0 w-full text-center z-10">
-        <p className="text-xs font-black tracking-[0.5em] text-white opacity-20 uppercase">
-          Ingrid Sinkovitz
+        <p className="text-[9px] font-black tracking-[0.5em] text-white opacity-10 uppercase">
+          © 2026 INGRID SINKOVITZ
         </p>
       </div>
     </div>
