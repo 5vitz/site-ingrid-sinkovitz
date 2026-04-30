@@ -158,15 +158,28 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   // Cálculo síncrono da largura baseado no aspecto da mídia atual
   const currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || (9/16);
   
+  const isAuddar = project.id === 'projeto-auddar';
+
   // Calculamos a largura ideal baseada na altura máxima padrão
-  let playerWidth = maxPlayerHeight * currentAspectRatio;
-  let playerHeight = maxPlayerHeight;
+  let playerWidth = isAuddar ? 540 : (maxPlayerHeight * currentAspectRatio);
+  let playerHeight = isAuddar ? (currentMedia?.type === 'text' ? (maxPlayerHeight * 0.9) : 540) : maxPlayerHeight;
+
+  // No caso da Auddar, se for texto, permitimos que a altura seja dinâmica ou maior que 540, 
+  // mas o player principal (imagens) será 540x540
+  if (isAuddar && currentMedia?.type !== 'text') {
+    playerHeight = 540;
+  } else if (isAuddar && currentMedia?.type === 'text') {
+    // Para o card de texto da Auddar, queremos largura fixa de 540 e altura que caiba o texto (scroll vertical)
+    // Mas o player em si pode ter uma altura máxima.
+    playerHeight = Math.min(viewportHeight - 120, 700); 
+  }
 
   // Se a largura ultrapassar o limite da tela (95% da largura), reduzimos proporcionalmente
   const maxAllowedWidth = viewportWidth * 0.95;
   if (playerWidth > maxAllowedWidth) {
+    const ratio = playerHeight / playerWidth;
     playerWidth = maxAllowedWidth;
-    playerHeight = playerWidth / currentAspectRatio;
+    playerHeight = playerWidth * ratio;
   }
 
   // Controla o "ducking" do áudio se a mídia atual for vídeo
@@ -365,7 +378,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                       {/* Conteúdo interno com corte seco */}
                       <div className="w-full h-full overflow-hidden !transition-none" style={{ transition: 'none !important' }}>
                         {/* Media Renderer */}
-                        <MediaRenderer media={currentMedia} isActive={showPlayer} isMuted={isMuted} theme={theme} />
+                        <MediaRenderer media={currentMedia} isActive={showPlayer} isMuted={isMuted} theme={theme} projectId={project.id} />
                       </div>
                     </div>
 
@@ -455,10 +468,13 @@ interface MediaRendererProps {
   isActive: boolean;
   isMuted?: boolean;
   theme: any;
+  projectId?: string;
 }
 
-const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted = true, theme }) => {
+const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted = true, theme, projectId }) => {
   if (!media) return null;
+  
+  const isAuddar = projectId === 'projeto-auddar';
 
   if (media.type === 'video') {
     return (
@@ -575,6 +591,69 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
   }
 
   if (media.type === 'text') {
+    if (isAuddar) {
+      return (
+        <div className="w-full h-full relative flex flex-col bg-[#0066FF] text-white font-sans overflow-hidden">
+          {/* Fundo decorativo sutil */}
+          <div className="absolute inset-0 opacity-10 pointer-events-none">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 left-0 w-80 h-80 bg-black/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+          </div>
+
+          <div className="relative z-10 flex flex-col h-full w-full p-10 md:p-14">
+            <div className="flex-grow overflow-y-auto pr-4 custom-scrollbar text-left">
+              {media.title && (
+                <h2 className="text-3xl md:text-4xl font-black mb-2 tracking-tight uppercase italic underline decoration-white/20 underline-offset-8">
+                  {media.title}
+                </h2>
+              )}
+              
+              {media.subtitle && (
+                <p className="text-white/70 text-sm md:text-base font-bold tracking-[0.2em] uppercase mb-12">
+                  {media.subtitle}
+                </p>
+              )}
+
+              {media.content && (
+                <div className="space-y-8 text-[15px] md:text-[17px] leading-relaxed font-light">
+                  {media.content.split('\n\n').map((block, idx) => {
+                     const lines = block.split('\n');
+                     const firstLine = lines[0];
+                     
+                     // Se for um título de seção (termina com :)
+                     if (firstLine.trim().endsWith(':')) {
+                       return (
+                         <div key={idx} className="space-y-4">
+                           <h4 className="font-black uppercase tracking-widest text-xs text-white/50 mb-4 flex items-center gap-3">
+                             <span className="w-8 h-[1px] bg-white/30" />
+                             {firstLine}
+                           </h4>
+                           <div className="space-y-3 pl-0 md:pl-0">
+                             {lines.slice(1).map((line, li) => (
+                               <p key={li} className="flex gap-4">
+                                 {line.trim().startsWith('•') ? (
+                                   <span className="text-white/40 mt-1 shrink-0">•</span>
+                                 ) : null}
+                                 <span className="text-white/90">
+                                   {line.replace(/^•\s*/, '')}
+                                 </span>
+                               </p>
+                             ))}
+                           </div>
+                         </div>
+                       );
+                     }
+                     
+                     return <p key={idx} className="text-white/90 whitespace-pre-line">{block}</p>;
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     if (media.layout === 'gshow') {
       return (
         <div className="w-full h-full bg-white relative flex flex-col font-sans text-black">

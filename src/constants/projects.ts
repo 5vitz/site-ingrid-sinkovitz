@@ -337,17 +337,60 @@ export const LION_JUMP_PROJECT: Project = {
   ]
 };
 
-export const PLACEHOLDER_5: Project = {
-  id: 'projeto-05',
-  title: 'Projeto 05',
-  description: 'Em breve...',
+export const AUDDAR_PROJECT: Project = {
+  id: 'projeto-auddar',
+  title: 'Audaar - Techospitality',
+  description: 'Estruturação de Marketing e Materiais de Venda para a Audaar.',
   layoutType: '2d',
   galleryThumbnail: '',
   coverImage: '',
   audioUrl: '',
   order: 5,
   mediaItems: [],
-  feed: []
+  theme: {
+    accentColor: '#0066FF', // Azul inicial, será ajustado depois
+    playerBg: 'bg-zinc-900',
+    playerBorder: 'border-white/10',
+    navButtonBg: 'bg-[#0066FF]/35',
+    navButtonColor: 'text-white'
+  },
+  feed: [
+    {
+      id: 'auddar-f01',
+      title: 'Audaar - Techospitality',
+      aspectRatio: 1, // 540x540 (1:1)
+      media: { 
+        type: 'text', 
+        order: 1, 
+        title: 'Techospitality',
+        subtitle: 'Estruturação de Marketing e Materiais de Venda | Audaar',
+        content: `Projeto de estruturação da comunicação e dos serviços da Audaar, empresa de tecnologia para o setor de hospedagem.
+Objetivo de organizar a proposta de valor da marca, desenvolver narrativa e materiais estratégicos de venda, com foco em clareza, consistência e conversão.
+
+Meu papel:
+Gerente de Marketing, atuando de forma integrada ao time comercial para estruturar comunicação, presença digital e suporte às vendas.
+
+Escopo de atuação:
+• Desenvolvimento de narrativa, tom de voz e posicionamento
+• Criação de apresentações comerciais e materiais de venda (propostas, serviços e pitch)
+• Estruturação do Instagram (bio, destaques e identidade inicial)
+• Produção de conteúdos estratégicos (carrosséis informativos)
+• Criação de e-mail marketing (copy e layout) para relacionamento e apoio comercial
+• Planejamento de ações e conteúdos alinhados à aquisição e posicionamento
+• Apoio a demandas internas de comunicação (endomarketing)
+
+Entrega:
+• Organização e clareza na comunicação dos serviços
+• Materiais estruturados para apoio direto ao time comercial
+• Base de presença digital alinhada ao posicionamento da marca
+• Conteúdos voltados à educação do público e geração de demanda
+
+Foco estratégico:
+Tradução de soluções técnicas em comunicação acessível e orientada à conversão, conectando marketing, conteúdo e processo comercial.`,
+        allowScroll: true
+      }
+    }
+  ]
 };
 
 export const PLACEHOLDER_6: Project = {
@@ -368,6 +411,6 @@ export const PROJECTS_LIST: Project[] = [
   GOOD_STORAGE_PROJECT, 
   ELOBIKE_PROJECT, 
   LION_JUMP_PROJECT,
-  PLACEHOLDER_5,
+  AUDDAR_PROJECT,
   PLACEHOLDER_6
 ];

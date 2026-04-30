@@ -58,11 +58,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setAuthActionLoading(false);
       console.error("Login failed", error);
       if (error.code === 'auth/popup-blocked') {
-        alert('O navegador bloqueou a janela de login. Por favor, habilite popups para este site.');
+        alert('O navegador bloqueou a janela de login. Por favor, habilite popups ou clique em "Abrir em nova aba" no ícone do topo direito do preview.');
       } else if (error.code === 'auth/cancelled-popup-request') {
-        // Just user closing the popup or navigating away, ignore
+        // Ignorar
+      } else if (error.code === 'auth/internal-error' && error.message.includes('iframe')) {
+        alert('Este ambiente restringe logins dentro do frame. Por favor, abra o app em uma nova aba usando o ícone no canto superior direito do preview.');
       } else {
-        alert('Ocorreu um erro ao tentar entrar. Tente novamente.');
+        alert(`Ocorreu um erro ao entrar: ${error.message || 'Tente novamente.'}`);
       }
     }
   };

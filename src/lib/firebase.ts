@@ -2,20 +2,16 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
-const requiredVars = [
-  'VITE_FIREBASE_API_KEY',
-  'VITE_FIREBASE_AUTH_DOMAIN',
-  'VITE_FIREBASE_PROJECT_ID',
-  'VITE_FIREBASE_STORAGE_BUCKET',
-  'VITE_FIREBASE_MESSAGING_SENDER_ID',
-  'VITE_FIREBASE_APP_ID',
-  'VITE_FIREBASE_FIRESTORE_DATABASE_ID'
-];
+import firebaseConfigManual from '../../firebase-applet-config.json';
 
-const missingVars = requiredVars.filter(v => !import.meta.env[v]);
-if (missingVars.length > 0) {
-  console.error('Missing Firebase environment variables:', missingVars.join(', '));
-}
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || firebaseConfigManual.apiKey,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || firebaseConfigManual.authDomain,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || firebaseConfigManual.projectId,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || firebaseConfigManual.storageBucket,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || firebaseConfigManual.messagingSenderId,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || firebaseConfigManual.appId,
+};
 
 let app;
 let auth;
@@ -24,15 +20,6 @@ let storage;
 const googleProvider = new GoogleAuthProvider();
 
 try {
-  const firebaseConfig = {
-    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-    appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  };
-
   // Check if mandatory fields are actually present before initializing
   if (!firebaseConfig.apiKey || firebaseConfig.apiKey === 'undefined') {
     throw new Error('Firebase API Key is missing or invalid.');
@@ -41,7 +28,7 @@ try {
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
   
-  const dbId = import.meta.env.VITE_FIREBASE_FIRESTORE_DATABASE_ID;
+  const dbId = import.meta.env.VITE_FIREBASE_FIRESTORE_DATABASE_ID || firebaseConfigManual.firestoreDatabaseId;
   if (dbId && dbId !== 'undefined') {
     db = getFirestore(app, dbId);
   } else {
@@ -51,8 +38,6 @@ try {
   storage = getStorage(app);
 } catch (error) {
   console.error('CRITICAL: Firebase failed to initialize:', error);
-  // We'll export empty/mock objects to prevent other components from crashing immediately,
-  // but the console will have the real error.
 }
 
 export { auth, db, storage, googleProvider };

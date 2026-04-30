@@ -641,9 +641,10 @@ const MaintenanceGuard = ({ children, settings }: { children: React.ReactNode, s
   if (loading) return null;
 
   // Forçamos o modo manutenção via código para TODOS na Home conforme solicitado
+  // Mas permitimos que ADM ignore para poder trabalhar
   const isMaintenanceActive = true;
 
-  if (isMaintenanceActive) {
+  if (isMaintenanceActive && !isAdmin) {
     return <MaintenanceMode title={settings?.maintenanceTitle || 'Sob manutenção'} />;
   }
 
