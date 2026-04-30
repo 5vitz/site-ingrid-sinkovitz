@@ -637,6 +637,7 @@ export default function App() {
 const MaintenanceGuard = ({ children, settings }: { children: React.ReactNode, settings: SiteSettings | null }) => {
   const { role, loading } = useAuth();
   const isAdmin = ['super', 'admin'].includes(role || '');
+  const [bypassed, setBypassed] = useState(false);
 
   // Forçamos o modo manutenção via código
   const isMaintenanceActive = true;
@@ -654,12 +655,7 @@ const MaintenanceGuard = ({ children, settings }: { children: React.ReactNode, s
       return <MaintenanceMode title={settings?.maintenanceTitle || 'Sob manutenção'} />;
     }
     
-    // Se FOR admin, permitimos escolha: ver o site ou ficar na manutenção
-    // Para simplificar, vamos usar um estado local para "aceitar entrar em modo adm"
-    // Mas para este caso específico solicitado pelo usuário (onde ele estranha entrar direto),
-    // vamos mostrar a tela de manutenção com um botão de entrar.
-    const [bypassed, setBypassed] = useState(false);
-
+    // Se FOR admin, mostramos a tela de manutenção com o botão amarelado de entrar
     if (!bypassed) {
       return (
         <MaintenanceMode 

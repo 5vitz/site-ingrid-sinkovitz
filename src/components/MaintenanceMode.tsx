@@ -55,9 +55,9 @@ export const MaintenanceMode: React.FC<MaintenanceModeProps> = ({ title, isAdmin
             ) : isAdmin ? (
               <button 
                 onClick={onBypass}
-                className="px-6 py-3 bg-white text-black font-black uppercase tracking-[0.2em] text-[10px] rounded-[8px] flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-[0_0_30px_rgba(255,255,255,0.1)]"
+                className="px-6 py-3 bg-accent text-black font-black uppercase tracking-[0.2em] text-[10px] rounded-[8px] flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-[0_0_30px_rgba(242,187,50,0.3)]"
               >
-                <Eye size={14} /> Visualizar Site (ADM)
+                <LogIn size={14} /> Acesso Administrativo
               </button>
             ) : (
               <button 
@@ -71,12 +71,6 @@ export const MaintenanceMode: React.FC<MaintenanceModeProps> = ({ title, isAdmin
                   <><LogIn size={14} /> Acesso Administrativo</>
                 )}
               </button>
-            )}
-            
-            {isAdmin && !isLoading && (
-              <p className="text-[9px] text-zinc-500 uppercase tracking-widest font-bold">
-                Você está logada como administradora
-              </p>
             )}
           </div>
         </motion.div>

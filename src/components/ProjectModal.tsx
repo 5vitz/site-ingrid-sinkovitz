@@ -159,23 +159,16 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     : currentStories[storyIndex - 1];
 
   // Cálculo síncrono da largura baseado no aspecto da mídia atual
-  const currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || (9/16);
+  let currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || (9/16);
+  if (isNaN(currentAspectRatio) || currentAspectRatio <= 0) currentAspectRatio = 9/16;
   
   const isAuddar = project?.id === 'projeto-auddar';
 
   // Calculamos a largura ideal baseada na altura máxima padrão
   let playerWidth = isAuddar ? 540 : (maxPlayerHeight * currentAspectRatio);
-  let playerHeight = isAuddar ? (currentMedia?.type === 'text' ? (maxPlayerHeight * 0.9) : 540) : maxPlayerHeight;
-
-  // No caso da Auddar, se for texto, permitimos que a altura seja dinâmica ou maior que 540, 
-  // mas o player principal (imagens) será 540x540
-  if (isAuddar && currentMedia?.type !== 'text') {
-    playerHeight = 540;
-  } else if (isAuddar && currentMedia?.type === 'text') {
-    // Para o card de texto da Auddar, queremos largura fixa de 540 e altura que caiba o texto (scroll vertical)
-    // Mas o player em si pode ter uma altura máxima.
-    playerHeight = Math.min(viewportHeight - 120, 700); 
-  }
+  let playerHeight = isAuddar 
+    ? (currentMedia?.type === 'text' ? Math.min(viewportHeight - 120, 700) : 540) 
+    : maxPlayerHeight;
 
   // Se a largura ultrapassar o limite da tela (95% da largura), reduzimos proporcionalmente
   const maxAllowedWidth = viewportWidth * 0.95;
@@ -617,9 +610,9 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
 
               {media.content && (
                 <div className="space-y-8 text-[15px] md:text-[17px] leading-relaxed font-light">
-                  {media.content.split('\n\n').map((block, idx) => {
+                  {(media.content || '').split('\n\n').map((block, idx) => {
                      const lines = block.split('\n');
-                     const firstLine = lines[0];
+                     const firstLine = lines[0] || '';
                      
                      // Se for um título de seção (termina com :)
                      if (firstLine.trim().endsWith(':')) {
