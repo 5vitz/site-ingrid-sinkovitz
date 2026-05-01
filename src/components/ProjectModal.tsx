@@ -113,11 +113,11 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const currentStories = currentFeed?.stories || [];
   const totalStories = currentStories.length + 1;
 
-  const viewportHeight = windowSize.height;
-  const viewportWidth = windowSize.width;
+  const viewportHeight = windowSize.height || (typeof window !== 'undefined' ? window.innerHeight : 800);
+  const viewportWidth = windowSize.width || (typeof window !== 'undefined' ? window.innerWidth : 1200);
   
   // Altura máxima para o player (descontando margens)
-  const maxPlayerHeight = Math.min(viewportHeight - 120, 850);
+  const maxPlayerHeight = Math.max(300, Math.min(viewportHeight - 120, 850));
 
   const navigateFeed = useCallback((direction: 1 | -1) => {
     if (isScrollingRef.current) return;
@@ -185,9 +185,9 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     ? (currentMedia?.type === 'text' ? Math.min(viewportHeight - 120, 700) : 540) 
     : maxPlayerHeight;
 
-  // Garantir que não temos valores negativos ou absurdos
-  playerWidth = Math.max(300, playerWidth);
-  playerHeight = Math.max(400, playerHeight);
+  // Garantir que não temos valores negativos ou absurdos (mínimos de segurança)
+  playerWidth = Math.max(280, playerWidth);
+  playerHeight = Math.max(280, playerHeight);
 
   // Se a largura ultrapassar o limite da tela (95% da largura), reduzimos proporcionalmente
   const maxAllowedWidth = viewportWidth * 0.95;
@@ -326,12 +326,13 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
 
   const handleToggleMute = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (audioRef.current) {
+    const audio = audioRef.current;
+    if (audio) {
       if (isMuted) {
-        audioRef.current.muted = false;
-        audioRef.current.play().catch(() => {});
+        audio.muted = false;
+        audio.play().catch(() => {});
       } else {
-        audioRef.current.pause();
+        audio.pause();
       }
     }
     setIsMuted(!isMuted);
@@ -567,17 +568,15 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
     return (
       <div 
         key={media.url}
-        className={`w-full h-full ${theme.playerBg || 'bg-black'} flex items-center justify-center !transition-none ${media.allowScroll ? 'overflow-y-auto custom-scrollbar items-start' : 'overflow-hidden'}`}
-        style={{ transition: 'none' }}
+        className={`w-full h-full ${theme.playerBg || 'bg-black'} flex items-center justify-center ${media.allowScroll ? 'overflow-y-auto custom-scrollbar items-start' : 'overflow-hidden'}`}
       >
         <img 
           src={media.url} 
-          className={`w-full !transition-none ${media.allowScroll ? 'h-auto block min-h-full' : `h-full ${media.objectFit === 'contain' ? 'object-contain' : 'object-cover'}`}`}
+          className={`w-full ${media.allowScroll ? 'h-auto block min-h-full' : `h-full ${media.objectFit === 'contain' ? 'object-contain' : 'object-cover'}`}`}
           style={{ 
             transform: `scale(${media.zoom || 1}) translateX(${media.xOffset || 0}px) translateY(${media.yOffset || 0}px)`,
             transformOrigin: 'center center',
-            display: 'block',
-            transition: 'none'
+            display: 'block'
           }}
           alt={media.title || ''}
           referrerPolicy="no-referrer"
