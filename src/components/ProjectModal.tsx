@@ -30,6 +30,34 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const isScrollingRef = useRef(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  // 2. Callbacks e Efeitos (Todos antes de qualquer return condicional)
+  
+  const navigateFeed = useCallback((direction: 1 | -1) => {
+    if (isScrollingRef.current) return;
+    const next = feedIndex + direction;
+    if (project?.feed && Array.isArray(project.feed) && next >= 0 && next < project.feed.length) {
+      isScrollingRef.current = true;
+      setFeedIndex(next);
+      setStoryIndex(0);
+      setTimeout(() => { isScrollingRef.current = false; }, 500);
+    }
+  }, [feedIndex, project?.feed]);
+
+  // Calculamos o totalStories dentro do storyIndex para manter o hook estável
+  const currentFeedForNav = Array.isArray(project?.feed) ? project?.feed[feedIndex] : null;
+  const currentStoriesForNav = Array.isArray(currentFeedForNav?.stories) ? currentFeedForNav?.stories : [];
+  const totalStoriesForNav = currentStoriesForNav.length + (currentFeedForNav ? 1 : 0);
+
+  const navigateStory = useCallback((direction: 1 | -1) => {
+    if (isScrollingRef.current) return;
+    const next = storyIndex + direction;
+    if (next >= 0 && next < totalStoriesForNav) {
+      isScrollingRef.current = true;
+      setStoryIndex(next);
+      setTimeout(() => { isScrollingRef.current = false; }, 400);
+    }
+  }, [storyIndex, totalStoriesForNav]);
+
   // Zera o estado ao trocar de projeto
   useEffect(() => {
     if (project) {
@@ -91,112 +119,36 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const totalFeed = Array.isArray(project?.feed) ? project.feed.length : 0;
-  const currentFeed = Array.isArray(project?.feed) ? project.feed[feedIndex] : null;
+  // 3. Verificações de Dados e Renderização
+  if (!project) return null;
+
+  const theme = project.theme || {
+    playerBg: 'bg-black',
+    accentColor: '#00D154',
+    playerBorder: 'border-white/10',
+    navButtonBg: 'bg-[#00D154]/35',
+    navButtonColor: 'text-black'
+  };
+
+  const totalFeed = Array.isArray(project.feed) ? project.feed.length : 0;
+  const currentFeed = totalFeed > 0 ? project.feed[feedIndex] : null;
   const currentStories = Array.isArray(currentFeed?.stories) ? currentFeed.stories : [];
   const totalStories = currentStories.length + (currentFeed ? 1 : 0);
   const currentMedia = storyIndex === 0 ? currentFeed?.media : currentStories[storyIndex - 1];
 
-  const navigateFeed = useCallback((direction: 1 | -1) => {
-    if (isScrollingRef.current) return;
-    const next = feedIndex + direction;
-    if (project?.feed && Array.isArray(project.feed) && next >= 0 && next < project.feed.length) {
-      isScrollingRef.current = true;
-      setFeedIndex(next);
-      setStoryIndex(0);
-      setTimeout(() => { isScrollingRef.current = false; }, 500);
-    }
-  }, [feedIndex, project?.feed]);
-
-  const navigateStory = useCallback((direction: 1 | -1) => {
-    if (isScrollingRef.current) return;
-    const next = storyIndex + direction;
-    if (next >= 0 && next < totalStories) {
-      isScrollingRef.current = true;
-      setStoryIndex(next);
-      setTimeout(() => { isScrollingRef.current = false; }, 400);
-    }
-  }, [storyIndex, totalStories]);
-
-  // Teclado
-  useEffect(() => {
-    if (!showPlayer || !project) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      const isVertical = project.layoutType === 'vertical';
-      if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
-        e.preventDefault();
-      }
-      if (isVertical) {
-        if (e.key === 'ArrowDown') navigateFeed(1);
-        if (e.key === 'ArrowUp') navigateFeed(-1);
-        if (e.key === 'ArrowRight') navigateStory(1);
-        if (e.key === 'ArrowLeft') navigateStory(-1);
-      } else {
-        if (e.key === 'ArrowRight') navigateFeed(1);
-        if (e.key === 'ArrowLeft') navigateFeed(-1);
-        if (e.key === 'ArrowDown') navigateStory(1);
-        if (e.key === 'ArrowUp') navigateStory(-1);
-      }
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [project, showPlayer, navigateFeed, navigateStory, onClose]);
-
-  // Wheel
-  useEffect(() => {
-    if (!project || !showPlayer) return;
-    let scrollCooldown = false;
-    const handleWheel = (e: WheelEvent) => {
-      if (currentMedia?.allowScroll || (currentMedia?.images && currentMedia.images.length > 0)) return;
-      if (scrollCooldown) return;
-      const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
-      if (Math.abs(delta) > 40) { 
-        scrollCooldown = true;
-        const isVertical = project.layoutType === 'vertical';
-        if (delta > 0) isVertical ? navigateFeed(1) : navigateStory(1);
-        else isVertical ? navigateFeed(-1) : navigateStory(-1);
-        setTimeout(() => { scrollCooldown = false; }, 600);
-      }
-    };
-    window.addEventListener('wheel', handleWheel, { passive: true });
-    return () => window.removeEventListener('wheel', handleWheel);
-  }, [project, showPlayer, navigateFeed, navigateStory, currentMedia]);
-
-  // Swipe
-  useEffect(() => {
-    if (!project || !showPlayer) return;
-    const handleTouchStart = (e: TouchEvent) => {
-      touchStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-    };
-    const handleTouchEnd = (e: TouchEvent) => {
-      if (!touchStartRef.current || !project) return;
-      const touchEnd = { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
-      const dx = touchEnd.x - touchStartRef.current.x;
-      const dy = touchEnd.y - touchStartRef.current.y;
-      const absDx = Math.abs(dx);
-      const absDy = Math.abs(dy);
-      const target = e.target as HTMLElement;
-      const isInsideScrollable = target.closest('.overflow-y-auto');
-      if (absDx > 40 || absDy > 40) {
-        const isV = project.layoutType === 'vertical';
-        if (absDx > absDy) {
-          if (dx > 0) isV ? navigateStory(-1) : navigateFeed(-1);
-          else isV ? navigateStory(1) : navigateFeed(1);
-        } else if (!isInsideScrollable) {
-          if (dy > 0) isV ? navigateFeed(-1) : navigateStory(-1);
-          else isV ? navigateFeed(1) : navigateStory(1);
-        }
-      }
-      touchStartRef.current = null;
-    };
-    window.addEventListener('touchstart', handleTouchStart, { passive: true });
-    window.addEventListener('touchend', handleTouchEnd, { passive: true });
-    return () => {
-      window.removeEventListener('touchstart', handleTouchStart);
-      window.removeEventListener('touchend', handleTouchEnd);
-    };
-  }, [project, showPlayer, navigateFeed, navigateStory, currentMedia]);
+  const viewportHeight = windowSize.height;
+  const viewportWidth = windowSize.width;
+  const maxPlayerHeight = Math.max(300, Math.min(viewportHeight - 120, 850));
+  
+  let currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || (9/16);
+  let playerWidth = (maxPlayerHeight * currentAspectRatio);
+  let playerHeight = maxPlayerHeight;
+  const maxAllowedWidth = viewportWidth * 0.95;
+  if (playerWidth > maxAllowedWidth) {
+    const scaleFactor = maxAllowedWidth / playerWidth;
+    playerWidth = maxAllowedWidth;
+    playerHeight = playerHeight * scaleFactor;
+  }
 
   const handleStartTour = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -217,31 +169,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     }
     setIsMuted(!isMuted);
   };
-
-  // Verificação final antes de renderizar
-  if (!project) return null;
-
-  const theme = project.theme || {
-    playerBg: 'bg-black',
-    accentColor: '#00D154',
-    playerBorder: 'border-white/10',
-    navButtonBg: 'bg-[#00D154]/35',
-    navButtonColor: 'text-black'
-  };
-
-  const viewportHeight = windowSize.height;
-  const viewportWidth = windowSize.width;
-  const maxPlayerHeight = Math.max(300, Math.min(viewportHeight - 120, 850));
-  
-  let currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || (9/16);
-  let playerWidth = (maxPlayerHeight * currentAspectRatio);
-  let playerHeight = maxPlayerHeight;
-  const maxAllowedWidth = viewportWidth * 0.95;
-  if (playerWidth > maxAllowedWidth) {
-    const scaleFactor = maxAllowedWidth / playerWidth;
-    playerWidth = maxAllowedWidth;
-    playerHeight = playerHeight * scaleFactor;
-  }
 
   return (
     <motion.div 
