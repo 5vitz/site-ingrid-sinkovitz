@@ -114,6 +114,8 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     navButtonColor: 'text-black'
   };
 
+  if (!project) return null;
+
   const currentFeed = project.feed?.[feedIndex];
   const totalFeed = project.feed?.length || 0;
   const currentStories = currentFeed?.stories || [];
@@ -145,8 +147,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       setTimeout(() => { isScrollingRef.current = false; }, 400);
     }
   }, [storyIndex, totalStories]);
-
-  if (!project) return null;
 
   useEffect(() => {
     if (!showPlayer) return;
@@ -358,6 +358,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       } else {
         audio.pause();
       }
+    }
     setIsMuted(!isMuted);
   };
 
@@ -824,4 +825,3 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
     />
   );
 };
-}
