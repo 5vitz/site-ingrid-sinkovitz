@@ -185,19 +185,9 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     currentAspectRatio = 9/16;
   }
   
-  const isAuddar = project?.id === 'projeto-auddar';
-
-  useEffect(() => {
-    if (project) {
-      console.log(`[ProjectModal] Projeto selecionado: ${project?.id}. Feed size: ${project?.feed?.length || 0}`);
-    }
-  }, [project?.id]);
-
   // Calculamos a largura ideal baseada na altura máxima padrão
-  let playerWidth = isAuddar ? 540 : (maxPlayerHeight * currentAspectRatio);
-  let playerHeight = isAuddar 
-    ? (currentMedia?.type === 'text' ? Math.min(viewportHeight - 120, 700) : 540) 
-    : maxPlayerHeight;
+  let playerWidth = (maxPlayerHeight * currentAspectRatio);
+  let playerHeight = maxPlayerHeight;
 
   // Garantir que não temos valores negativos ou absurdos (mínimos de segurança)
   playerWidth = Math.max(280, playerWidth);
@@ -505,8 +495,6 @@ interface MediaRendererProps {
 const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted = true, theme, projectId }) => {
   if (!media) return null;
   
-  const isAuddar = projectId === 'projeto-auddar';
-
   if (media.type === 'video') {
     if (!media.url) return <div className="w-full h-full bg-zinc-900 animate-pulse" />;
     return (
@@ -625,74 +613,6 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
   }
 
   if (media.type === 'text') {
-    if (isAuddar) {
-      return (
-        <div className="w-full h-full relative flex flex-col bg-[#0066FF] text-white font-sans overflow-hidden">
-          {/* Fundo decorativo sutil */}
-          <div className="absolute inset-0 opacity-10 pointer-events-none">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-            <div className="absolute bottom-0 left-0 w-80 h-80 bg-black/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
-          </div>
-
-          <div className="relative z-10 flex flex-col h-full w-full p-10 md:p-14">
-            <div className="flex-grow overflow-y-auto pr-4 custom-scrollbar text-left">
-              {media.title && (
-                <h2 className="text-3xl md:text-4xl font-black mb-2 tracking-tight uppercase italic underline decoration-white/20 underline-offset-8">
-                  {media.title}
-                </h2>
-              )}
-              
-              {media.subtitle && (
-                <p className="text-white/70 text-sm md:text-base font-bold tracking-[0.2em] uppercase mb-12">
-                  {media.subtitle}
-                </p>
-              )}
-
-              {media.content && (
-                <div className="space-y-8 text-[15px] md:text-[17px] leading-relaxed font-light">
-                  {(media?.content || '').split('\n\n').map((block, idx) => {
-                     if (!block) return null;
-                     const lines = block.split('\n');
-                     const firstLine = (lines[0] || '').trim();
-                     
-                     // Se for um título de seção (termina com :)
-                     if (firstLine.endsWith(':')) {
-                       return (
-                         <div key={idx} className="space-y-4">
-                           <h4 className="font-black uppercase tracking-widest text-xs text-white/50 mb-4 flex items-center gap-3">
-                             <span className="w-8 h-[1px] bg-white/30" />
-                             {firstLine}
-                           </h4>
-                           <div className="space-y-3 pl-0 md:pl-0">
-                             {lines.slice(1).map((line, li) => {
-                               if (!line) return null;
-                               const trimmedLine = line.trim();
-                               return (
-                                 <p key={li} className="flex gap-4">
-                                   {trimmedLine.startsWith('•') ? (
-                                     <span className="text-white/40 mt-1 shrink-0">•</span>
-                                   ) : null}
-                                   <span className="text-white/90">
-                                     {trimmedLine.replace(/^•\s*/, '')}
-                                   </span>
-                                 </p>
-                               );
-                             })}
-                           </div>
-                         </div>
-                       );
-                     }
-                     
-                     return <p key={idx} className="text-white/90 whitespace-pre-line">{block}</p>;
-                  })}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      );
-    }
-
     if (media.layout === 'gshow') {
       return (
         <div className="w-full h-full bg-white relative flex flex-col font-sans text-black">

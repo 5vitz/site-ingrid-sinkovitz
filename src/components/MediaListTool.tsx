@@ -18,7 +18,7 @@ export const MediaListTool = () => {
       if (p.coverImage) urls.push({ label: `Capa: ${p.title}`, url: p.coverImage });
       if (p.audioUrl) urls.push({ label: `Áudio: ${p.title}`, url: p.audioUrl });
       
-      p.feed.forEach(f => {
+      p.feed?.forEach(f => {
         if (f.media?.url) urls.push({ label: `Media: ${f.title || p.title}`, url: f.media.url });
         if (f.media?.images) {
           f.media.images.forEach((img, i) => {
