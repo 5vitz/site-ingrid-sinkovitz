@@ -40,6 +40,10 @@ export const updateSettings = (key: 'global' | 'sobre', data: any) => {
 };
 
 // Projects CRUD
+export const subscribeToProjects = (callback: (data: Project[]) => void) => {
+  return subscribeToCollection<Project>('projects', callback);
+};
+
 export const addProject = (data: Omit<Project, 'id'>) => {
   return addDoc(collection(db, 'projects'), data);
 };

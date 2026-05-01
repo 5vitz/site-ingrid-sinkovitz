@@ -3,7 +3,36 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Google AI Studio App</title>
+    <title>Ingrid Sinkovitz | Portfólio</title>
+    <script>
+      window.onerror = function(msg, url, lineNo, columnNo, error) {
+        var debugDiv = document.getElementById('debug-error-overlay');
+        if (!debugDiv) {
+          debugDiv = document.createElement('div');
+          debugDiv.id = 'debug-error-overlay';
+          debugDiv.style.position = 'fixed';
+          debugDiv.style.top = '0';
+          debugDiv.style.left = '0';
+          debugDiv.style.width = '100%';
+          debugDiv.style.zIndex = '999999';
+          debugDiv.style.background = 'red';
+          debugDiv.style.color = 'white';
+          debugDiv.style.padding = '20px';
+          debugDiv.style.fontSize = '14px';
+          debugDiv.style.fontFamily = 'monospace';
+          debugDiv.style.maxHeight = '50vh';
+          debugDiv.style.overflow = 'auto';
+          debugDiv.style.boxShadow = '0 10px 30px rgba(0,0,0,0.5)';
+          document.body.appendChild(debugDiv);
+        }
+        debugDiv.innerHTML += '<div style="margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 5px;">' +
+          '<b>Erro:</b> ' + msg + '<br/>' +
+          '<b>Local:</b> ' + url + ':' + lineNo + ':' + columnNo + '<br/>' +
+          (error && error.stack ? '<details><summary>Stack Trace</summary><pre style="font-size: 10px; opacity: 0.8;">' + error.stack + '</pre></details>' : '') +
+          '</div>';
+        return false;
+      };
+    </script>
   </head>
   <body>
     <div id="root"></div>

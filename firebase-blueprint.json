@@ -8,27 +8,60 @@
         "id": { "type": "string" },
         "title": { "type": "string" },
         "description": { "type": "string" },
-        "layoutType": { "type": "string", "enum": ["vertical", "horizontal"] },
+        "layoutType": { "type": "string" },
         "audioUrl": { "type": "string" },
         "galleryThumbnail": { "type": "string" },
         "coverImage": { "type": "string" },
         "thumbnailFit": { "type": "string", "enum": ["cover", "contain"] },
         "cardBg": { "type": "string" },
         "order": { "type": "number" },
-        "mediaItems": {
+        "theme": {
+          "type": "object",
+          "properties": {
+            "playerBg": { "type": "string" },
+            "playerBorder": { "type": "string" },
+            "playerShadow": { "type": "string" },
+            "modalOverlayBg": { "type": "string" },
+            "accentColor": { "type": "string" },
+            "navButtonBg": { "type": "string" },
+            "navButtonColor": { "type": "string" },
+            "closeButtonBg": { "type": "string" },
+            "closeButtonColor": { "type": "string" }
+          }
+        },
+        "feed": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "type": { "type": "string", "enum": ["image", "video", "text", "link"] },
-              "url": { "type": "string" },
-              "thumbnail": { "type": "string" },
-              "order": { "type": "number" }
+              "id": { "type": "string" },
+              "title": { "type": "string" },
+              "aspectRatio": { "type": "number" },
+              "media": { "$ref": "#/definitions/MediaItem" },
+              "stories": {
+                "type": "array",
+                "items": { "$ref": "#/definitions/MediaItem" }
+              }
             }
           }
         }
       },
-      "required": ["id", "title", "description", "layoutType", "galleryThumbnail", "coverImage", "mediaItems", "order"]
+      "required": ["id", "title", "description", "order"]
+    },
+    "MediaItem": {
+      "title": "Media Item",
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "enum": ["image", "video", "text", "link", "iframe"] },
+        "url": { "type": "string" },
+        "title": { "type": "string" },
+        "subtitle": { "type": "string" },
+        "content": { "type": "string" },
+        "order": { "type": "number" },
+        "aspectRatio": { "type": "number" },
+        "objectFit": { "type": "string" },
+        "allowScroll": { "type": "boolean" }
+      }
     },
     "UserRole": {
       "title": "User Role",

@@ -1,21 +1,33 @@
-import React, { useState } from 'react';
-import { motion } from 'motion/react';
-import { Play } from 'lucide-react';
-import { ProjectModal } from './ProjectModal';
-import { PROJECTS_LIST } from '../constants/projects';
+import React from 'react';
 import { Project } from '../types';
+import { useCollection } from '../hooks/useCollection';
+import { PROJECTS_LIST as STATIC_PROJECTS } from '../constants/projects';
 
 export const ProjectSection: React.FC<{ onSelectProject: (p: Project) => void }> = ({ onSelectProject }) => {
-  const handleVideoStateChange = React.useCallback((isPlaying: boolean) => {
-    // Implementação futura
-  }, []);
+  const { data: dbProjects, loading } = useCollection<Project>('projects');
 
-  // Usar a lista real de projetos e completar com placeholders apenas se necessário para o grid
+  // Mesclar projetos estáticos com os do banco
+  // Se o ID existir no banco, ele sobrescreve o estático. Se não, mantém o estático.
+  const projects = React.useMemo(() => {
+    const combined = [...STATIC_PROJECTS];
+    
+    dbProjects.forEach(dbProj => {
+      const index = combined.findIndex(p => p.id === dbProj.id);
+      if (index !== -1) {
+        combined[index] = dbProj;
+      } else {
+        combined.push(dbProj);
+      }
+    });
+
+    return combined.sort((a, b) => (a.order || 0) - (b.order || 0));
+  }, [dbProjects]);
+
   const displayProjects = [
-    ...PROJECTS_LIST,
-    ...Array.from({ length: Math.max(0, 6 - PROJECTS_LIST.length) }).map((_, i) => ({
+    ...projects,
+    ...Array.from({ length: Math.max(0, 6 - projects.length) }).map((_, i) => ({
       id: `placeholder-${i}`,
-      title: `Projeto ${PROJECTS_LIST.length + i + 1}`,
+      title: `Projeto ${projects.length + i + 1}`,
       galleryThumbnail: '',
       isPlaceholder: true
     }))
@@ -28,10 +40,13 @@ export const ProjectSection: React.FC<{ onSelectProject: (p: Project) => void }>
             <h3 className="text-xl md:text-2xl font-bold tracking-[0.3em] uppercase opacity-40">
               Galeria de Projetos
             </h3>
+            {loading && dbProjects.length === 0 && (
+              <p className="text-[10px] uppercase tracking-widest text-accent/50 mt-4 animate-pulse">Sincronizando com nuvem...</p>
+            )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-[1008px] mb-12">
-          {displayProjects.map((project: any, idx) => (
+          {displayProjects.map((project: any) => (
             <div
               key={project.id}
               className={`relative group ${project.isPlaceholder ? 'cursor-default' : 'cursor-pointer'}`}
