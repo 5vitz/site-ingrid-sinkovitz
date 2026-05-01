@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import { 
@@ -435,16 +435,23 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
-  const handleVideoStateChange = (isVideo: boolean) => {
+  const handleVideoStateChange = useCallback((isVideo: boolean) => {
     // Ducking logic removed from here as it will be local to modal
-  };
+  }, []);
 
-  const closeModalsDirectly = (e: React.MouseEvent) => {
+  const closeProject = useCallback(() => {
+    setSelectedProject(null);
+    document.body.style.overflow = '';
+    document.documentElement.style.overflow = '';
+  }, []);
+
+  const closeModalsDirectly = useCallback((e?: React.MouseEvent) => {
+    if (e && e.preventDefault) e.preventDefault();
     setIsMenuOpen(false);
     setSelectedProject(null);
     document.body.style.overflow = '';
     document.documentElement.style.overflow = '';
-  };
+  }, []);
 
   return (
     <div className="min-h-screen">
@@ -454,11 +461,11 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
           
           {/* Desktop Menu */}
           <div className="hidden md:flex gap-12 font-medium text-sm tracking-widest uppercase">
-            <a href="#sobre" onClick={closeModalsDirectly} className="hover:text-accent transition">Sobre</a>
-            <a href="#servicos" onClick={closeModalsDirectly} className="hover:text-accent transition">Serviços</a>
-            <a href="#projetos" onClick={closeModalsDirectly} className="hover:text-accent transition">Projetos</a>
-            <a href="#depoimentos" onClick={closeModalsDirectly} className="hover:text-accent transition">Depoimentos</a>
-            <a href="#contato" onClick={closeModalsDirectly} className="hover:text-accent transition">Contato</a>
+            <a href="#sobre" onClick={() => closeModalsDirectly()} className="hover:text-accent transition">Sobre</a>
+            <a href="#servicos" onClick={() => closeModalsDirectly()} className="hover:text-accent transition">Serviços</a>
+            <a href="#projetos" onClick={() => closeModalsDirectly()} className="hover:text-accent transition">Projetos</a>
+            <a href="#depoimentos" onClick={() => closeModalsDirectly()} className="hover:text-accent transition">Depoimentos</a>
+            <a href="#contato" onClick={() => closeModalsDirectly()} className="hover:text-accent transition">Contato</a>
           </div>
 
           <div className="flex items-center gap-2">
@@ -502,11 +509,11 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
                 </button>
 
                 <div className="flex flex-col gap-0 text-base font-medium text-white w-full">
-                  <a href="#sobre" onClick={closeModalsDirectly} className="w-full py-4 border-b border-white/5 hover:text-accent transition text-left">Sobre</a>
-                  <a href="#servicos" onClick={closeModalsDirectly} className="w-full py-4 border-b border-white/5 hover:text-accent transition text-left">Serviços</a>
-                  <a href="#projetos" onClick={closeModalsDirectly} className="w-full py-4 border-b border-white/5 hover:text-accent transition text-left">Projetos</a>
-                  <a href="#depoimentos" onClick={closeModalsDirectly} className="w-full py-4 border-b border-white/5 hover:text-accent transition text-left">Depoimentos</a>
-                  <a href="#contato" onClick={closeModalsDirectly} className="w-full py-4 border-b border-white/5 hover:text-accent transition text-left">Contato</a>
+                  <a href="#sobre" onClick={() => closeModalsDirectly()} className="w-full py-4 border-b border-white/5 hover:text-accent transition text-left">Sobre</a>
+                  <a href="#servicos" onClick={() => closeModalsDirectly()} className="w-full py-4 border-b border-white/5 hover:text-accent transition text-left">Serviços</a>
+                  <a href="#projetos" onClick={() => closeModalsDirectly()} className="w-full py-4 border-b border-white/5 hover:text-accent transition text-left">Projetos</a>
+                  <a href="#depoimentos" onClick={() => closeModalsDirectly()} className="w-full py-4 border-b border-white/5 hover:text-accent transition text-left">Depoimentos</a>
+                  <a href="#contato" onClick={() => closeModalsDirectly()} className="w-full py-4 border-b border-white/5 hover:text-accent transition text-left">Contato</a>
                   
                   <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-2 text-zinc-500 mt-6 hover:text-white transition-colors text-[10px] uppercase font-bold tracking-widest">
                     <ShieldCheck size={14} /> Admin
@@ -540,11 +547,11 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
             <div className="bg-white/[0.03] backdrop-blur-sm p-10 rounded-[8px] border border-white/5 flex flex-col items-center md:items-start justify-start space-y-8 text-sm font-medium text-zinc-500">
               <span className="text-white/20 font-sans uppercase tracking-widest text-xs font-bold">Navegação</span>
               <div className="flex flex-col gap-4 items-center md:items-start">
-                <a href="#sobre" onClick={closeModalsDirectly} className="hover:text-accent transition capitalize">Sobre</a>
-                <a href="#servicos" onClick={closeModalsDirectly} className="hover:text-accent transition capitalize">Serviços</a>
-                <a href="#projetos" onClick={closeModalsDirectly} className="hover:text-accent transition capitalize">Projetos</a>
-                <a href="#depoimentos" onClick={closeModalsDirectly} className="hover:text-accent transition capitalize">Depoimentos</a>
-                <a href="#contato" onClick={closeModalsDirectly} className="hover:text-accent transition capitalize">Contato</a>
+                <a href="#sobre" onClick={() => closeModalsDirectly()} className="hover:text-accent transition capitalize">Sobre</a>
+                <a href="#servicos" onClick={() => closeModalsDirectly()} className="hover:text-accent transition capitalize">Serviços</a>
+                <a href="#projetos" onClick={() => closeModalsDirectly()} className="hover:text-accent transition capitalize">Projetos</a>
+                <a href="#depoimentos" onClick={() => closeModalsDirectly()} className="hover:text-accent transition capitalize">Depoimentos</a>
+                <a href="#contato" onClick={() => closeModalsDirectly()} className="hover:text-accent transition capitalize">Contato</a>
               </div>
             </div>
 
@@ -585,7 +592,7 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
 
       <ProjectModal 
         project={selectedProject} 
-        onClose={() => setSelectedProject(null)}
+        onClose={closeProject}
         onVideoStateChange={handleVideoStateChange}
       />
     </div>
@@ -637,34 +644,41 @@ export default function App() {
 const MaintenanceGuard = ({ children, settings }: { children: React.ReactNode, settings: SiteSettings | null }) => {
   const { role, loading } = useAuth();
   const isAdmin = ['super', 'admin'].includes(role || '');
-  const [bypassed, setBypassed] = useState(false);
 
-  // Forçamos o modo manutenção via código
-  const isMaintenanceActive = true;
+  // Mantemos o bypassed no localStorage para persistir entre refreshes de projetos
+  const [bypassed, setBypassed] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem('maintenance_bypassed') === 'true';
+  });
 
-  // Se estiver carregando, mostramos a tela de manutenção preventivamente 
-  // para evitar o flash de conteúdo ou tela preta
+  const handleBypass = () => {
+    setBypassed(true);
+    localStorage.setItem('maintenance_bypassed', 'true');
+  };
+
+  // Só ativa se o modo estiver explicitamente como true
+  const isMaintenanceActive = settings?.maintenanceMode === true;
+
+  // Se estiver carregando auth
   if (loading) {
-    return <MaintenanceMode title={settings?.maintenanceTitle || 'Sob manutenção'} isLoading={true} />;
+    return <MaintenanceMode title={settings?.maintenanceTitle} isLoading={true} />;
   }
 
-  // Se o modo manutenção estiver ativo
-  if (isMaintenanceActive) {
-    // Se NÃO for admin, bloqueia direto
+  // Se o modo manutenção estiver ativo e NÃO estiver em bypass
+  if (isMaintenanceActive && !bypassed) {
+    // Se NÃO for admin, bloqueia direto com a mensagem
     if (!isAdmin) {
-      return <MaintenanceMode title={settings?.maintenanceTitle || 'Sob manutenção'} />;
+      return <MaintenanceMode title={settings?.maintenanceTitle} />;
     }
     
-    // Se FOR admin, mostramos a tela de manutenção com o botão amarelado de entrar
-    if (!bypassed) {
-      return (
-        <MaintenanceMode 
-          title={settings?.maintenanceTitle || 'Sob manutenção'} 
-          isAdmin={true} 
-          onBypass={() => setBypassed(true)}
-        />
-      );
-    }
+    // Se FOR admin, mostramos a tela com o botão de entrar
+    return (
+      <MaintenanceMode 
+        title={settings?.maintenanceTitle} 
+        isAdmin={true} 
+        onBypass={handleBypass}
+      />
+    );
   }
 
   return <>{children}</>;

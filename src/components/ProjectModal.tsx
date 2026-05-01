@@ -29,20 +29,19 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const isScrollingRef = useRef(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Early return if no project is selected
-  if (!project) return null;
-
   // Zera o estado ao trocar de projeto
   useEffect(() => {
-    setFeedIndex(0);
-    setStoryIndex(0);
-    setShowPlayer(false);
-    setIsMuted(true);
-    setShouldDuck(false);
+    if (project) {
+      setFeedIndex(0);
+      setStoryIndex(0);
+      setShowPlayer(false);
+      setIsMuted(true);
+      setShouldDuck(false);
 
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.src = "";
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
     }
   }, [project?.id]);
 
@@ -90,14 +89,21 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, [onClose]);
 
-  // Monitorar redimensionamento da janela
+  // Monitorar redimensionamento da janela de forma otimizada
   useEffect(() => {
     if (typeof window === 'undefined') return;
+    let timeoutId: number;
     const handleResize = () => {
-      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+      clearTimeout(timeoutId);
+      timeoutId = window.setTimeout(() => {
+        setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+      }, 150);
     };
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(timeoutId);
+    };
   }, []);
 
   const theme = project?.theme || {
@@ -108,10 +114,10 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     navButtonColor: 'text-black'
   };
 
-  const currentFeed = project?.feed?.[feedIndex];
-  const totalFeed = project?.feed?.length || 0;
+  const currentFeed = project.feed?.[feedIndex];
+  const totalFeed = project.feed?.length || 0;
   const currentStories = currentFeed?.stories || [];
-  const totalStories = currentStories.length + 1;
+  const totalStories = currentStories.length + (currentFeed ? 1 : 0);
 
   const viewportHeight = windowSize.height || (typeof window !== 'undefined' ? window.innerHeight : 800);
   const viewportWidth = windowSize.width || (typeof window !== 'undefined' ? window.innerWidth : 1200);
@@ -140,8 +146,10 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     }
   }, [storyIndex, totalStories]);
 
+  if (!project) return null;
+
   useEffect(() => {
-    if (!project || !showPlayer) return;
+    if (!showPlayer) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       const isVertical = project.layoutType === 'vertical';
 
@@ -179,6 +187,12 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   
   const isAuddar = project?.id === 'projeto-auddar';
 
+  useEffect(() => {
+    if (project) {
+      console.log(`[ProjectModal] Projeto selecionado: ${project.id}. Feed size: ${project.feed?.length || 0}`);
+    }
+  }, [project?.id]);
+
   // Calculamos a largura ideal baseada na altura máxima padrão
   let playerWidth = isAuddar ? 540 : (maxPlayerHeight * currentAspectRatio);
   let playerHeight = isAuddar 
@@ -198,12 +212,20 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   }
 
   // Controla o "ducking" do áudio se a mídia atual for vídeo
+  const lastUpdateRef = useRef<{ mediaUrl?: string, isVideo: boolean }>({ isVideo: false });
   useEffect(() => {
     const isVideo = currentMedia?.type === 'video';
+    const mediaUrl = currentMedia?.url;
+    
     setShouldDuck(isVideo);
-    onVideoStateChange(isVideo);
-  }, [currentMedia, onVideoStateChange]);
-
+    
+    // Só avisa o pai se o estado realmente mudou para evitar loops
+    if (lastUpdateRef.current.isVideo !== isVideo || lastUpdateRef.current.mediaUrl !== mediaUrl) {
+      onVideoStateChange(isVideo);
+      lastUpdateRef.current = { isVideo, mediaUrl };
+    }
+  }, [currentMedia?.url, currentMedia?.type, onVideoStateChange]);
+    
   // Navegação via Scroll do Mouse
   useEffect(() => {
     if (!project || !showPlayer) return;
@@ -211,17 +233,19 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     let scrollCooldown = false;
     const handleWheel = (e: WheelEvent) => {
       // Se a mídia atual permitir scroll, não interceptamos o wheel para navegação de cards
-      // Deixamos o scroll nativo do navegador agir sobre o container com overflow-y-auto
       if (currentMedia?.allowScroll || (currentMedia?.images && currentMedia.images.length > 0)) {
         return;
       }
 
       if (scrollCooldown) return;
-      const isVertical = project.layoutType === 'vertical';
       
-      if (Math.abs(e.deltaY) > 30) { 
+      const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+      
+      if (Math.abs(delta) > 40) { 
         scrollCooldown = true;
-        if (e.deltaY > 0) {
+        const isVertical = project.layoutType === 'vertical';
+        
+        if (delta > 0) {
           if (isVertical) navigateFeed(1);
           else navigateStory(1);
         } else {
@@ -237,7 +261,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
 
     window.addEventListener('wheel', handleWheel, { passive: true });
     return () => window.removeEventListener('wheel', handleWheel);
-  }, [project, showPlayer, navigateFeed, navigateStory, currentMedia]);
+  }, [project?.id, project?.layoutType, showPlayer, navigateFeed, navigateStory, currentMedia?.allowScroll, currentMedia?.images?.length]);
 
   // Navegação via Touch (Swipe)
   useEffect(() => {
@@ -334,144 +358,138 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       } else {
         audio.pause();
       }
-    }
     setIsMuted(!isMuted);
   };
 
   return (
-    <>
-      {project && (
-        <div 
-          className="fixed inset-0 z-[9999] bg-[#050510]/95 backdrop-blur-xl flex items-center justify-center p-4 md:p-10 select-none overflow-hidden"
-          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
-        >
-          {/* Fundo para fechar ao clicar fora */}
-          <div className="absolute inset-0 z-0 bg-transparent" onClick={onClose} />
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="fixed inset-0 z-[9999] bg-[#050510]/98 backdrop-blur-3xl flex items-center justify-center p-4 md:p-10 select-none overflow-hidden"
+      style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
+    >
+      {/* Fundo para fechar ao clicar fora */}
+      <div className="absolute inset-0 z-0 bg-transparent" onClick={onClose} />
 
-          <div 
-            className="relative z-[10000] w-full max-w-7xl h-full flex items-center justify-center" 
-            onClick={e => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-center w-full h-full relative">
-              {!showPlayer ? (
-                <div className="flex flex-col items-center text-center max-w-lg bg-zinc-900 p-12 rounded-[8px] border border-white/10 shadow-2xl">
-                  {project.coverImage && (
-                    <img 
-                      src={project.coverImage} 
-                      className="w-32 h-32 md:w-40 md:h-40 rounded-[8px] object-cover mb-10 shadow-2xl border border-accent/30"
-                      alt=""
-                    />
+      <div 
+        className="relative z-[10000] w-full max-w-7xl h-full flex items-center justify-center" 
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-center w-full h-full relative">
+          {!showPlayer ? (
+            <div className="flex flex-col items-center text-center max-w-lg bg-zinc-900 p-12 rounded-[8px] border border-white/10 shadow-2xl">
+              {project.coverImage && (
+                <img 
+                  src={project.coverImage} 
+                  className="w-32 h-32 md:w-40 md:h-40 rounded-[8px] object-cover mb-10 shadow-2xl border border-accent/30"
+                  alt=""
+                />
+              )}
+              <h2 className="text-3xl md:text-5xl font-black mb-6 italic uppercase tracking-tighter text-white">{project.title}</h2>
+              <p className="text-zinc-400 font-medium mb-12 text-sm leading-relaxed max-w-xs">{project.description}</p>
+              <button
+                onClick={handleStartTour}
+                className="px-14 py-5 bg-accent text-white font-black uppercase tracking-[0.2em] text-xs rounded-full hover:scale-105 transition-all shadow-2xl pointer-events-auto"
+              >
+                Iniciar Tour
+              </button>
+            </div>
+          ) : (
+            <div className="relative flex items-center justify-center" style={{ perspective: '2000px' }}>
+              {/* Player Principal Container - Agora sem animação para corte seco */}
+              <div 
+                className="relative z-10"
+                style={{ 
+                  maxWidth: '98vw', 
+                  maxHeight: 'calc(100svh - 60px)', 
+                  width: playerWidth,
+                  height: playerHeight,
+                }}
+              >
+                {/* O Player propriamente dito */}
+                <div 
+                  className={`w-full h-full ${theme.playerBg || 'bg-black'} rounded-[8px] overflow-hidden relative shadow-2xl ${theme.playerBorder || 'border border-white/10'} ${theme.playerShadow || ''}`}
+                >
+                  {/* Conteúdo interno com corte seco */}
+                  <div className="w-full h-full overflow-hidden">
+                    {/* Media Renderer */}
+                    <MediaRenderer media={currentMedia} isActive={showPlayer} isMuted={isMuted} theme={theme} projectId={project.id} />
+                  </div>
+                </div>
+
+                {/* Setas de Navegação interna (Stories) - FORA do overflow-hidden */}
+                <div className="hidden md:block">
+                  {totalStories > 1 && (
+                    <>
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); navigateStory(-1); }}
+                        className={`absolute -left-10 top-1/2 -translate-y-1/2 w-[30px] h-[30px] flex items-center justify-center rounded-full ${theme.navButtonBg || 'bg-[#00D154]/35'} ${theme.navButtonColor || 'text-black'} z-[10020] transition-all ${storyIndex === 0 ? 'opacity-0 pointer-events-none scale-50' : 'opacity-100 hover:scale-110 active:scale-95 pointer-events-auto'}`}
+                        style={{ backgroundColor: theme.accentColor ? `${theme.accentColor}55` : undefined }}
+                      >
+                        <ChevronLeft size={16} />
+                      </button>
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); navigateStory(1); }}
+                        className={`absolute -right-10 top-1/2 -translate-y-1/2 w-[30px] h-[30px] flex items-center justify-center rounded-full ${theme.navButtonBg || 'bg-[#00D154]/35'} ${theme.navButtonColor || 'text-black'} z-[10020] transition-all ${storyIndex === totalStories - 1 ? 'opacity-0 pointer-events-none scale-50' : 'opacity-100 hover:scale-110 active:scale-95 pointer-events-auto'}`}
+                        style={{ backgroundColor: theme.accentColor ? `${theme.accentColor}55` : undefined }}
+                      >
+                        <ChevronRight size={16} />
+                      </button>
+                    </>
                   )}
-                  <h2 className="text-3xl md:text-5xl font-black mb-6 italic uppercase tracking-tighter text-white">{project.title}</h2>
-                  <p className="text-zinc-400 font-medium mb-12 text-sm leading-relaxed max-w-xs">{project.description}</p>
-                  <button
-                    onClick={handleStartTour}
-                    className="px-14 py-5 bg-accent text-white font-black uppercase tracking-[0.2em] text-xs rounded-full hover:scale-105 transition-all shadow-2xl pointer-events-auto"
+                </div>
+
+                {/* Botão Fechar (X) */}
+                <button 
+                  onClick={(e) => { e.stopPropagation(); onClose(); }}
+                  className="absolute -top-3 -right-3 z-[10020] w-8 h-8 bg-zinc-900 border border-white/10 text-white rounded-full flex items-center justify-center hover:scale-110 transition-all shadow-xl"
+                >
+                  <X size={14} strokeWidth={3} />
+                </button>
+
+                {/* Controles do Feed (Horizontal ou Vertical) - Acoplado aos lados do player */}
+                <div className={`hidden md:flex absolute ${project.layoutType === 'vertical' ? 'inset-x-0 -top-10 -bottom-10 flex-col' : 'inset-y-0 -left-10 -right-10 flex-row'} items-center justify-between pointer-events-none z-[10010]`}>
+                  <button 
+                    disabled={feedIndex === 0}
+                    onClick={(e) => { e.stopPropagation(); navigateFeed(-1); }}
+                    className={`w-[30px] h-[30px] rounded-full flex items-center justify-center ${theme.navButtonBg || 'bg-[#00D154]/35'} ${theme.navButtonColor || 'text-black'} pointer-events-auto transition-all ${feedIndex === 0 ? 'opacity-0 pointer-events-none scale-50' : 'opacity-100 hover:scale-110 active:scale-95'}`}
+                    style={{ backgroundColor: theme.accentColor ? `${theme.accentColor}55` : undefined }}
                   >
-                    Iniciar Tour
+                    <ChevronUp size={16} />
+                  </button>
+                  
+                  <button 
+                    disabled={feedIndex === totalFeed - 1}
+                    onClick={(e) => { e.stopPropagation(); navigateFeed(1); }}
+                    className={`w-[30px] h-[30px] rounded-full flex items-center justify-center ${theme.navButtonBg || 'bg-[#00D154]/35'} ${theme.navButtonColor || 'text-black'} pointer-events-auto transition-all ${feedIndex === totalFeed - 1 ? 'opacity-0 pointer-events-none scale-50' : 'opacity-100 hover:scale-110 active:scale-95'}`}
+                    style={{ backgroundColor: theme.accentColor ? `${theme.accentColor}55` : undefined }}
+                  >
+                    <ChevronDown size={16} />
                   </button>
                 </div>
-              ) : (
-                <div className="relative flex items-center justify-center" style={{ perspective: '2000px' }}>
-                  {/* Player Principal Container - Agora sem animação para corte seco */}
-                  <div 
-                    className="relative z-10"
-                    style={{ 
-                      maxWidth: '98vw', 
-                      maxHeight: 'calc(100svh - 60px)', 
-                      width: playerWidth,
-                      height: playerHeight,
-                    }}
-                  >
-                    {/* O Player propriamente dito */}
-                    <div 
-                      className={`w-full h-full ${theme.playerBg || 'bg-black'} rounded-[8px] overflow-hidden relative shadow-2xl ${theme.playerBorder || 'border border-white/10'} ${theme.playerShadow || ''}`}
-                    >
-                      {/* Conteúdo interno com corte seco */}
-                      <div className="w-full h-full overflow-hidden">
-                        {/* Media Renderer */}
-                        <MediaRenderer media={currentMedia} isActive={showPlayer} isMuted={isMuted} theme={theme} projectId={project.id} />
-                      </div>
-                    </div>
-
-                    {/* Setas de Navegação interna (Stories) - FORA do overflow-hidden */}
-                    <div className="hidden md:block">
-                      {totalStories > 1 && (
-                        <>
-                          <button 
-                            onClick={(e) => { e.stopPropagation(); navigateStory(-1); }}
-                            className={`absolute -left-10 top-1/2 -translate-y-1/2 w-[30px] h-[30px] flex items-center justify-center rounded-full ${theme.navButtonBg || 'bg-[#00D154]/35'} ${theme.navButtonColor || 'text-black'} z-[10020] transition-all ${storyIndex === 0 ? 'opacity-0 pointer-events-none scale-50' : 'opacity-100 hover:scale-110 active:scale-95 pointer-events-auto'}`}
-                            style={{ backgroundColor: theme.accentColor ? `${theme.accentColor}55` : undefined }}
-                          >
-                            <ChevronLeft size={16} />
-                          </button>
-                          <button 
-                            onClick={(e) => { e.stopPropagation(); navigateStory(1); }}
-                            className={`absolute -right-10 top-1/2 -translate-y-1/2 w-[30px] h-[30px] flex items-center justify-center rounded-full ${theme.navButtonBg || 'bg-[#00D154]/35'} ${theme.navButtonColor || 'text-black'} z-[10020] transition-all ${storyIndex === totalStories - 1 ? 'opacity-0 pointer-events-none scale-50' : 'opacity-100 hover:scale-110 active:scale-95 pointer-events-auto'}`}
-                            style={{ backgroundColor: theme.accentColor ? `${theme.accentColor}55` : undefined }}
-                          >
-                            <ChevronRight size={16} />
-                          </button>
-                        </>
-                      )}
-                    </div>
-
-                    {/* Botão Fechar (X) */}
-                    <button 
-                      onClick={(e) => { e.stopPropagation(); onClose(); }}
-                      className="absolute -top-3 -right-3 z-[10020] w-8 h-8 bg-zinc-900 border border-white/10 text-white rounded-full flex items-center justify-center hover:scale-110 transition-all shadow-xl"
-                    >
-                      <X size={14} strokeWidth={3} />
-                    </button>
-
-                    {/* Controles do Feed (Horizontal ou Vertical) - Acoplado aos lados do player */}
-                    <div className={`hidden md:flex absolute ${project.layoutType === 'vertical' ? 'inset-x-0 -top-10 -bottom-10 flex-col' : 'inset-y-0 -left-10 -right-10 flex-row'} items-center justify-between pointer-events-none z-[10010]`}>
-                      <button 
-                        disabled={feedIndex === 0}
-                        onClick={(e) => { e.stopPropagation(); navigateFeed(-1); }}
-                        className={`w-[30px] h-[30px] rounded-full flex items-center justify-center ${theme.navButtonBg || 'bg-[#00D154]/35'} ${theme.navButtonColor || 'text-black'} pointer-events-auto transition-all ${feedIndex === 0 ? 'opacity-0 pointer-events-none scale-50' : 'opacity-100 hover:scale-110 active:scale-95'}`}
-                        style={{ backgroundColor: theme.accentColor ? `${theme.accentColor}55` : undefined }}
-                      >
-                        <ChevronUp size={16} />
-                      </button>
-                      
-                      <button 
-                        disabled={feedIndex === totalFeed - 1}
-                        onClick={(e) => { e.stopPropagation(); navigateFeed(1); }}
-                        className={`w-[30px] h-[30px] rounded-full flex items-center justify-center ${theme.navButtonBg || 'bg-[#00D154]/35'} ${theme.navButtonColor || 'text-black'} pointer-events-auto transition-all ${feedIndex === totalFeed - 1 ? 'opacity-0 pointer-events-none scale-50' : 'opacity-100 hover:scale-110 active:scale-95'}`}
-                        style={{ backgroundColor: theme.accentColor ? `${theme.accentColor}55` : undefined }}
-                      >
-                        <ChevronDown size={16} />
-                      </button>
-                    </div>
-                  </div>
-
-
-                  {/* Mobile navigation controls removed for minimalism */}
-                </div>
-              )}
+              </div>
             </div>
-          </div>
-
-          {project.audioUrl && (
-            <>
-              <audio 
-                ref={audioRef} 
-                src={project.audioUrl}
-                loop 
-                playsInline 
-                preload="auto" 
-                crossOrigin="anonymous"
-              />
-              <AudioPlayer 
-                isMuted={isMuted}
-                onToggleMute={handleToggleMute}
-              />
-            </>
           )}
         </div>
-      )}
-    </>
+      </div>
+
+        {project.audioUrl && (
+          <>
+            <audio 
+              ref={audioRef} 
+              src={project.audioUrl}
+              loop 
+              playsInline 
+              preload="auto" 
+              crossOrigin="anonymous"
+            />
+            <AudioPlayer 
+              isMuted={isMuted}
+              onToggleMute={handleToggleMute}
+            />
+          </>
+        )}
+    </motion.div>
   );
 };
 
@@ -806,3 +824,4 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
     />
   );
 };
+}
