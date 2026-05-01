@@ -15,8 +15,9 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   onClose, 
   onVideoStateChange,
 }) => {
-  const [feedIndex, setFeedIndex] = useState(0); // Horizontal (Topic)
-  const [storyIndex, setStoryIndex] = useState(0); // Vertical (Sub-item)
+  // 1. Definição de todos os Hooks (Sempre no topo, nunca pulados)
+  const [feedIndex, setFeedIndex] = useState(0);
+  const [storyIndex, setStoryIndex] = useState(0);
   const [showPlayer, setShowPlayer] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [shouldDuck, setShouldDuck] = useState(false);
@@ -45,7 +46,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     }
   }, [project?.id]);
 
-  // Carrega o áudio assim que o projeto é selecionado (mas não dá play ainda)
+  // Carrega o áudio
   useEffect(() => {
     if (project?.audioUrl && audioRef.current) {
       audioRef.current.src = project.audioUrl;
@@ -53,26 +54,21 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     }
   }, [project?.audioUrl]);
 
-  // Controla o volume (ducking) e o estado de mute
+  // Audio mute/volume
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-
     audio.muted = isMuted;
-    audio.volume = shouldDuck ? 0.15 : 0.8; // Reduzi um pouco o volume base e o ducking
+    audio.volume = shouldDuck ? 0.15 : 0.8;
 
     if (!isMuted && showPlayer) {
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(error => {
-          console.warn("Audio: Auto-play was prevented by the browser. Waiting for interaction.", error);
-        });
-      }
+      audio.play().catch(() => {});
     } else {
       audio.pause();
     }
   }, [isMuted, shouldDuck, showPlayer]);
 
+  // Bloqueio de scroll do body
   useEffect(() => {
     if (project) {
       document.body.style.overflow = 'hidden';
@@ -81,62 +77,36 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       document.body.style.overflow = '';
       document.documentElement.style.overflow = '';
     }
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    };
   }, [project]);
 
-  useEffect(() => {
-    const handleHashChange = () => onClose();
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
-  }, [onClose]);
-
-  // Monitorar redimensionamento da janela de forma otimizada
+  // Resize listener
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    let timeoutId: number;
-    const handleResize = () => {
-      clearTimeout(timeoutId);
-      timeoutId = window.setTimeout(() => {
-        setWindowSize({ width: window.innerWidth, height: window.innerHeight });
-      }, 150);
-    };
+    const handleResize = () => setWindowSize({ width: window.innerWidth, height: window.innerHeight });
     window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      clearTimeout(timeoutId);
-    };
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const theme = project?.theme || {
-    playerBg: 'bg-black',
-    accentColor: '#00D154',
-    playerBorder: 'border-white/10',
-    navButtonBg: 'bg-[#00D154]/35',
-    navButtonColor: 'text-black'
-  };
-
-  if (!project) return null;
-
-  const currentFeed = Array.isArray(project?.feed) ? project.feed[feedIndex] : undefined;
   const totalFeed = Array.isArray(project?.feed) ? project.feed.length : 0;
+  const currentFeed = Array.isArray(project?.feed) ? project.feed[feedIndex] : null;
   const currentStories = Array.isArray(currentFeed?.stories) ? currentFeed.stories : [];
   const totalStories = currentStories.length + (currentFeed ? 1 : 0);
-
-  const viewportHeight = windowSize.height || (typeof window !== 'undefined' ? window.innerHeight : 800);
-  const viewportWidth = windowSize.width || (typeof window !== 'undefined' ? window.innerWidth : 1200);
-  
-  // Altura máxima para o player (descontando margens)
-  const maxPlayerHeight = Math.max(300, Math.min(viewportHeight - 120, 850));
+  const currentMedia = storyIndex === 0 ? currentFeed?.media : currentStories[storyIndex - 1];
 
   const navigateFeed = useCallback((direction: 1 | -1) => {
     if (isScrollingRef.current) return;
     const next = feedIndex + direction;
-    if (next >= 0 && next < totalFeed) {
+    if (project?.feed && Array.isArray(project.feed) && next >= 0 && next < project.feed.length) {
       isScrollingRef.current = true;
       setFeedIndex(next);
       setStoryIndex(0);
       setTimeout(() => { isScrollingRef.current = false; }, 500);
     }
-  }, [feedIndex, totalFeed]);
+  }, [feedIndex, project?.feed]);
 
   const navigateStory = useCallback((direction: 1 | -1) => {
     if (isScrollingRef.current) return;
@@ -148,15 +118,14 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     }
   }, [storyIndex, totalStories]);
 
+  // Teclado
   useEffect(() => {
-    if (!showPlayer) return;
+    if (!showPlayer || !project) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       const isVertical = project.layoutType === 'vertical';
-
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
         e.preventDefault();
       }
-
       if (isVertical) {
         if (e.key === 'ArrowDown') navigateFeed(1);
         if (e.key === 'ArrowUp') navigateFeed(-1);
@@ -168,148 +137,59 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
         if (e.key === 'ArrowDown') navigateStory(1);
         if (e.key === 'ArrowUp') navigateStory(-1);
       }
-      
       if (e.key === 'Escape') onClose();
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [project, showPlayer, navigateFeed, navigateStory, onClose]);
-  
-  const currentMedia = storyIndex === 0 
-    ? currentFeed?.media 
-    : currentStories[storyIndex - 1];
 
-  // Cálculo síncrono da largura baseado no aspecto da mídia atual
-  let currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || (9/16);
-  if (typeof currentAspectRatio !== 'number' || isNaN(currentAspectRatio) || currentAspectRatio <= 0) {
-    currentAspectRatio = 9/16;
-  }
-  
-  // Calculamos a largura ideal baseada na altura máxima padrão
-  let playerWidth = (maxPlayerHeight * currentAspectRatio);
-  let playerHeight = maxPlayerHeight;
-
-  // Garantir que não temos valores negativos ou absurdos (mínimos de segurança)
-  playerWidth = Math.max(280, playerWidth);
-  playerHeight = Math.max(280, playerHeight);
-
-  // Se a largura ultrapassar o limite da tela (95% da largura), reduzimos proporcionalmente
-  const maxAllowedWidth = viewportWidth * 0.95;
-  if (playerWidth > maxAllowedWidth) {
-    const scaleFactor = maxAllowedWidth / playerWidth;
-    playerWidth = maxAllowedWidth;
-    playerHeight = playerHeight * scaleFactor;
-  }
-
-  // Controla o "ducking" do áudio se a mídia atual for vídeo
-  const lastUpdateRef = useRef<{ mediaUrl?: string, isVideo: boolean }>({ isVideo: false });
-  useEffect(() => {
-    const isVideo = currentMedia?.type === 'video';
-    const mediaUrl = currentMedia?.url;
-    
-    setShouldDuck(isVideo);
-    
-    // Só avisa o pai se o estado realmente mudou para evitar loops
-    if (lastUpdateRef.current.isVideo !== isVideo || lastUpdateRef.current.mediaUrl !== mediaUrl) {
-      onVideoStateChange(isVideo);
-      lastUpdateRef.current = { isVideo, mediaUrl };
-    }
-  }, [currentMedia?.url, currentMedia?.type, onVideoStateChange]);
-    
-  // Navegação via Scroll do Mouse
+  // Wheel
   useEffect(() => {
     if (!project || !showPlayer) return;
-
     let scrollCooldown = false;
     const handleWheel = (e: WheelEvent) => {
-      // Se a mídia atual permitir scroll, não interceptamos o wheel para navegação de cards
-      if (currentMedia?.allowScroll || (currentMedia?.images && currentMedia.images.length > 0)) {
-        return;
-      }
-
+      if (currentMedia?.allowScroll || (currentMedia?.images && currentMedia.images.length > 0)) return;
       if (scrollCooldown) return;
-      
       const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
-      
       if (Math.abs(delta) > 40) { 
         scrollCooldown = true;
         const isVertical = project.layoutType === 'vertical';
-        
-        if (delta > 0) {
-          if (isVertical) navigateFeed(1);
-          else navigateStory(1);
-        } else {
-          if (isVertical) navigateFeed(-1);
-          else navigateStory(-1);
-        }
-        
-        setTimeout(() => {
-          scrollCooldown = false;
-        }, 600);
+        if (delta > 0) isVertical ? navigateFeed(1) : navigateStory(1);
+        else isVertical ? navigateFeed(-1) : navigateStory(-1);
+        setTimeout(() => { scrollCooldown = false; }, 600);
       }
     };
-
     window.addEventListener('wheel', handleWheel, { passive: true });
     return () => window.removeEventListener('wheel', handleWheel);
-  }, [project?.id, project?.layoutType, showPlayer, navigateFeed, navigateStory, currentMedia?.allowScroll, currentMedia?.images?.length]);
+  }, [project, showPlayer, navigateFeed, navigateStory, currentMedia]);
 
-  // Navegação via Touch (Swipe)
+  // Swipe
   useEffect(() => {
     if (!project || !showPlayer) return;
-
     const handleTouchStart = (e: TouchEvent) => {
-      touchStartRef.current = {
-        x: e.touches[0].clientX,
-        y: e.touches[0].clientY
-      };
+      touchStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
     };
-
     const handleTouchEnd = (e: TouchEvent) => {
       if (!touchStartRef.current || !project) return;
-      
-      const touchEnd = {
-        x: e.changedTouches[0].clientX,
-        y: e.changedTouches[0].clientY
-      };
-
+      const touchEnd = { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
       const dx = touchEnd.x - touchStartRef.current.x;
       const dy = touchEnd.y - touchStartRef.current.y;
       const absDx = Math.abs(dx);
       const absDy = Math.abs(dy);
-
-      // Se a mídia atual permitir scroll vertical interno, ignoramos o swipe vertical se o usuário estiver scrollando o texto
       const target = e.target as HTMLElement;
       const isInsideScrollable = target.closest('.overflow-y-auto');
-      
       if (absDx > 40 || absDy > 40) {
-        const isVerticalLayout = project.layoutType === 'vertical';
-
+        const isV = project.layoutType === 'vertical';
         if (absDx > absDy) {
-          // Horizontal Swipe
-          if (dx > 0) {
-            if (isVerticalLayout) navigateStory(-1);
-            else navigateFeed(-1);
-          } else {
-            if (isVerticalLayout) navigateStory(1);
-            else navigateFeed(1);
-          }
-        } else {
-          // Vertical Swipe
-          // Só interceptamos o swipe vertical se não estivermos dentro de um elemento de scroll ou se o scroll estiver nos limites
-          if (!isInsideScrollable) {
-            if (dy > 0) {
-              if (isVerticalLayout) navigateFeed(-1);
-              else navigateStory(-1);
-            } else {
-              if (isVerticalLayout) navigateFeed(1);
-              else navigateStory(1);
-            }
-          }
+          if (dx > 0) isV ? navigateStory(-1) : navigateFeed(-1);
+          else isV ? navigateStory(1) : navigateFeed(1);
+        } else if (!isInsideScrollable) {
+          if (dy > 0) isV ? navigateFeed(-1) : navigateStory(-1);
+          else isV ? navigateFeed(1) : navigateStory(1);
         }
       }
       touchStartRef.current = null;
     };
-
     window.addEventListener('touchstart', handleTouchStart, { passive: true });
     window.addEventListener('touchend', handleTouchEnd, { passive: true });
     return () => {
@@ -320,37 +200,48 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
 
   const handleStartTour = (e: React.MouseEvent) => {
     e.stopPropagation();
-    console.log("Iniciando tour e áudio para:", project.title);
     setShowPlayer(true);
     setIsMuted(false); 
-    
     if (audioRef.current) {
       audioRef.current.muted = false;
       audioRef.current.volume = 0.8;
-      audioRef.current.load();
-      const playPromise = audioRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(err => {
-          console.error("Erro ao tocar áudio no clique:", err);
-          setTimeout(() => audioRef.current?.play(), 100);
-        });
-      }
+      audioRef.current.play().catch(() => {});
     }
   };
 
   const handleToggleMute = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const audio = audioRef.current;
-    if (audio) {
-      if (isMuted) {
-        audio.muted = false;
-        audio.play().catch(() => {});
-      } else {
-        audio.pause();
-      }
+    if (audioRef.current) {
+      if (isMuted) audioRef.current.play().catch(() => {});
+      else audioRef.current.pause();
     }
     setIsMuted(!isMuted);
   };
+
+  // Verificação final antes de renderizar
+  if (!project) return null;
+
+  const theme = project.theme || {
+    playerBg: 'bg-black',
+    accentColor: '#00D154',
+    playerBorder: 'border-white/10',
+    navButtonBg: 'bg-[#00D154]/35',
+    navButtonColor: 'text-black'
+  };
+
+  const viewportHeight = windowSize.height;
+  const viewportWidth = windowSize.width;
+  const maxPlayerHeight = Math.max(300, Math.min(viewportHeight - 120, 850));
+  
+  let currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || (9/16);
+  let playerWidth = (maxPlayerHeight * currentAspectRatio);
+  let playerHeight = maxPlayerHeight;
+  const maxAllowedWidth = viewportWidth * 0.95;
+  if (playerWidth > maxAllowedWidth) {
+    const scaleFactor = maxAllowedWidth / playerWidth;
+    playerWidth = maxAllowedWidth;
+    playerHeight = playerHeight * scaleFactor;
+  }
 
   return (
     <motion.div 

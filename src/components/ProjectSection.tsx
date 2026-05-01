@@ -9,21 +9,21 @@ export const ProjectSection: React.FC<{ onSelectProject: (p: Project) => void }>
   // Mesclar projetos estáticos com os do banco
   // O Banco de Dados SEMPRE tem prioridade absoluta pelo ID
   const projects = React.useMemo(() => {
+    // Usamos um Map para garantir que cada ID seja único.
+    // Se o Firebase trouxer um ID que já existe na lista estática, o do Firebase sobrescreve.
     const combinedMap = new Map<string, Project>();
     
-    // 1. Começamos com os projetos que já estão no código (estáticos)
+    // 1. Adicionamos os estáticos primeiro
     STATIC_PROJECTS.forEach(p => combinedMap.set(p.id, p));
     
-    // 2. Sobrescrevemos com o que está no Banco de Dados (Firebase)
-    // Se o ID for igual (ex: projeto-metavix), a versão do banco ganha.
-    // Se for novo (ex: projeto-auddar), ele é adicionado.
+    // 2. Adicionamos os do banco (sobrescrevendo se o ID bater)
     dbProjects.forEach(dbProj => {
       if (dbProj.id) {
         combinedMap.set(dbProj.id, dbProj);
       }
     });
 
-    // 3. Transformamos o mapa de volta em uma lista ordenada
+    // 3. Retornamos a lista final ordenada pelo campo 'order'
     return Array.from(combinedMap.values())
       .sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
   }, [dbProjects]);
