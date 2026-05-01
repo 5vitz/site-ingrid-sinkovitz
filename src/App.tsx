@@ -657,7 +657,8 @@ const MaintenanceGuard = ({ children, settings }: { children: React.ReactNode, s
   };
 
   // Só ativa se o modo estiver explicitamente como true
-  const isMaintenanceActive = settings?.maintenanceMode === true;
+  // DESCONECTADO TEMPORARIAMENTE PARA TESTES DA SEÇÃO DE PROJETOS
+  const isMaintenanceActive = false;
 
   // Se estiver carregando auth
   if (loading) {
