@@ -7,20 +7,34 @@ export const ProjectSection: React.FC<{ onSelectProject: (p: Project) => void }>
   const { data: dbProjects, loading } = useCollection<Project>('projects');
 
   // Mesclar projetos estáticos com os do banco
-  // Se o ID existir no banco, ele sobrescreve o estático. Se não, mantém o estático.
+  // Garantir que não haja duplicatas por ID OU por Título
   const projects = React.useMemo(() => {
-    const combined = [...STATIC_PROJECTS];
+    const combinedMap = new Map<string, Project>();
     
+    // Primeiro, adicionamos os estáticos ao mapa (chave é o ID)
+    STATIC_PROJECTS.forEach(p => combinedMap.set(p.id, p));
+    
+    // Depois, sobrescrevemos ou adicionamos os do banco
     dbProjects.forEach(dbProj => {
-      const index = combined.findIndex(p => p.id === dbProj.id);
-      if (index !== -1) {
-        combined[index] = dbProj;
-      } else {
-        combined.push(dbProj);
-      }
+      // Tentamos encontrar pelo ID
+      combinedMap.set(dbProj.id, dbProj);
     });
 
-    return combined.sort((a, b) => (a.order || 0) - (b.order || 0));
+    // Converter de volta para array e garantir títulos únicos (opcional, para evitar confusão visual)
+    const finalProjects: Project[] = [];
+    const titlesSet = new Set<string>();
+
+    Array.from(combinedMap.values())
+      .sort((a, b) => (a.order ?? 99) - (b.order ?? 99))
+      .forEach(p => {
+        // Se o título já existe e é de um projeto estático, e o novo projeto é do banco, priorizamos o do banco
+        if (!titlesSet.has(p.title)) {
+          finalProjects.push(p);
+          titlesSet.add(p.title);
+        }
+      });
+
+    return finalProjects;
   }, [dbProjects]);
 
   const displayProjects = [

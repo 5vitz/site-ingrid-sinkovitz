@@ -116,9 +116,9 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
 
   if (!project) return null;
 
-  const currentFeed = project?.feed?.[feedIndex];
-  const totalFeed = project?.feed?.length || 0;
-  const currentStories = currentFeed?.stories || [];
+  const currentFeed = Array.isArray(project?.feed) ? project.feed[feedIndex] : undefined;
+  const totalFeed = Array.isArray(project?.feed) ? project.feed.length : 0;
+  const currentStories = Array.isArray(currentFeed?.stories) ? currentFeed.stories : [];
   const totalStories = currentStories.length + (currentFeed ? 1 : 0);
 
   const viewportHeight = windowSize.height || (typeof window !== 'undefined' ? window.innerHeight : 800);
@@ -613,6 +613,10 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
   }
 
   if (media.type === 'text') {
+    const content = typeof media.content === 'string' ? media.content : '';
+    const title = typeof media.title === 'string' ? media.title : '';
+    const subtitle = typeof media.subtitle === 'string' ? media.subtitle : '';
+
     if (media.layout === 'gshow') {
       return (
         <div className="w-full h-full bg-white relative flex flex-col font-sans text-black">
@@ -628,12 +632,12 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
           <div className="flex-grow overflow-y-auto px-6 py-8 custom-scrollbar">
             <div className="max-w-2xl mx-auto">
               <h1 className="text-3xl md:text-4xl font-bold leading-tight mb-4 text-zinc-900 font-sans tracking-tight">
-                {media.title}
+                {title}
               </h1>
               
-              {media.subtitle && (
+              {subtitle && (
                 <p className="text-zinc-500 text-lg md:text-xl leading-snug mb-6 font-medium">
-                  {media.subtitle}
+                  {subtitle}
                 </p>
               )}
 
@@ -646,7 +650,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
               )}
 
               <div className="space-y-6 text-zinc-800 text-[16px] leading-[1.6]">
-                {media.content?.split('\n\n').map((paragraph, idx) => {
+                {content?.split('\n\n').map((paragraph, idx) => {
                   // Se houver placeholders de imagem [IMAGE:0], [IMAGE:1], etc.
                   const imageRegex = /\[IMAGE:(\d+)\]/g;
                   if (imageRegex.test(paragraph)) {
