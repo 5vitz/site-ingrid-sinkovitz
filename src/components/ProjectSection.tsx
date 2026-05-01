@@ -7,34 +7,25 @@ export const ProjectSection: React.FC<{ onSelectProject: (p: Project) => void }>
   const { data: dbProjects, loading } = useCollection<Project>('projects');
 
   // Mesclar projetos estáticos com os do banco
-  // Garantir que não haja duplicatas por ID OU por Título
+  // O Banco de Dados SEMPRE tem prioridade absoluta pelo ID
   const projects = React.useMemo(() => {
     const combinedMap = new Map<string, Project>();
     
-    // Primeiro, adicionamos os estáticos ao mapa (chave é o ID)
+    // 1. Começamos com os projetos que já estão no código (estáticos)
     STATIC_PROJECTS.forEach(p => combinedMap.set(p.id, p));
     
-    // Depois, sobrescrevemos ou adicionamos os do banco
+    // 2. Sobrescrevemos com o que está no Banco de Dados (Firebase)
+    // Se o ID for igual (ex: projeto-metavix), a versão do banco ganha.
+    // Se for novo (ex: projeto-auddar), ele é adicionado.
     dbProjects.forEach(dbProj => {
-      // Tentamos encontrar pelo ID
-      combinedMap.set(dbProj.id, dbProj);
+      if (dbProj.id) {
+        combinedMap.set(dbProj.id, dbProj);
+      }
     });
 
-    // Converter de volta para array e garantir títulos únicos (opcional, para evitar confusão visual)
-    const finalProjects: Project[] = [];
-    const titlesSet = new Set<string>();
-
-    Array.from(combinedMap.values())
-      .sort((a, b) => (a.order ?? 99) - (b.order ?? 99))
-      .forEach(p => {
-        // Se o título já existe e é de um projeto estático, e o novo projeto é do banco, priorizamos o do banco
-        if (!titlesSet.has(p.title)) {
-          finalProjects.push(p);
-          titlesSet.add(p.title);
-        }
-      });
-
-    return finalProjects;
+    // 3. Transformamos o mapa de volta em uma lista ordenada
+    return Array.from(combinedMap.values())
+      .sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
   }, [dbProjects]);
 
   const displayProjects = [

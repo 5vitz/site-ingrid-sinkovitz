@@ -403,8 +403,16 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                 >
                   {/* Conteúdo interno com corte seco */}
                   <div className="w-full h-full overflow-hidden">
-                    {/* Media Renderer */}
-                    <MediaRenderer media={currentMedia} isActive={showPlayer} isMuted={isMuted} theme={theme} projectId={project.id} />
+                    {totalFeed > 0 ? (
+                      /* Media Renderer */
+                      <MediaRenderer media={currentMedia} isActive={showPlayer} isMuted={isMuted} theme={theme} projectId={project.id} />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center p-8 text-center bg-zinc-900 text-zinc-500">
+                        <div className="w-12 h-12 border-2 border-accent/20 border-t-accent rounded-full animate-spin mb-4" />
+                        <p className="text-sm font-medium uppercase tracking-[0.2em]">Configurando Conteúdo</p>
+                        <p className="text-[10px] mt-2 opacity-50">Este projeto ainda não possui itens no feed do Banco de Dados.</p>
+                      </div>
+                    )}
                   </div>
                 </div>
 
