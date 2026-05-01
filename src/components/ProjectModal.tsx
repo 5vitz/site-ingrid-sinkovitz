@@ -20,6 +20,10 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const [showPlayer, setShowPlayer] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [shouldDuck, setShouldDuck] = useState(false);
+  const [windowSize, setWindowSize] = useState({ 
+    width: typeof window !== 'undefined' ? window.innerWidth : 1200, 
+    height: typeof window !== 'undefined' ? window.innerHeight : 800 
+  });
   
   const touchStartRef = useRef<{ x: number, y: number } | null>(null);
   const isScrollingRef = useRef(false);
@@ -86,6 +90,16 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, [onClose]);
 
+  // Monitorar redimensionamento da janela
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handleResize = () => {
+      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const theme = project?.theme || {
     playerBg: 'bg-black',
     accentColor: '#00D154',
@@ -99,9 +113,8 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const currentStories = currentFeed?.stories || [];
   const totalStories = currentStories.length + 1;
 
-  // Dimensões do Player dinâmicas
-  const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
-  const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 1200;
+  const viewportHeight = windowSize.height;
+  const viewportWidth = windowSize.width;
   
   // Altura máxima para o player (descontando margens)
   const maxPlayerHeight = Math.min(viewportHeight - 120, 850);
@@ -361,22 +374,20 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                 <div className="relative flex items-center justify-center" style={{ perspective: '2000px' }}>
                   {/* Player Principal Container - Agora sem animação para corte seco */}
                   <div 
-                    className="relative z-10 !transition-none"
+                    className="relative z-10"
                     style={{ 
                       maxWidth: '98vw', 
                       maxHeight: 'calc(100svh - 60px)', 
                       width: playerWidth,
                       height: playerHeight,
-                      transition: 'none !important'
                     }}
                   >
                     {/* O Player propriamente dito */}
                     <div 
-                      className={`w-full h-full ${theme.playerBg || 'bg-black'} rounded-[8px] overflow-hidden relative shadow-2xl ${theme.playerBorder || 'border border-white/10'} ${theme.playerShadow || ''} !transition-none`}
-                      style={{ transition: 'none !important' }}
+                      className={`w-full h-full ${theme.playerBg || 'bg-black'} rounded-[8px] overflow-hidden relative shadow-2xl ${theme.playerBorder || 'border border-white/10'} ${theme.playerShadow || ''}`}
                     >
                       {/* Conteúdo interno com corte seco */}
-                      <div className="w-full h-full overflow-hidden !transition-none" style={{ transition: 'none !important' }}>
+                      <div className="w-full h-full overflow-hidden">
                         {/* Media Renderer */}
                         <MediaRenderer media={currentMedia} isActive={showPlayer} isMuted={isMuted} theme={theme} projectId={project.id} />
                       </div>
@@ -477,6 +488,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
   const isAuddar = projectId === 'projeto-auddar';
 
   if (media.type === 'video') {
+    if (!media.url) return <div className="w-full h-full bg-zinc-900 animate-pulse" />;
     return (
       <video
         key={media.url}
@@ -500,18 +512,21 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
       return (
         <div className="w-full h-full bg-black overflow-y-auto custom-scrollbar flex flex-col">
           <div className="relative w-full">
-            {media.images.map((url, i) => (
-              <img 
-                key={i}
-                src={url} 
-                className="w-full h-auto block"
-                style={{ 
-                  transform: media.zoom ? `scale(${media.zoom})` : 'scale(1)',
-                  transformOrigin: 'top center'
-                }}
-                alt=""
-              />
-            ))}
+            {media.images.map((url, i) => {
+              if (!url) return null;
+              return (
+                <img 
+                  key={i}
+                  src={url} 
+                  className="w-full h-auto block"
+                  style={{ 
+                    transform: media.zoom ? `scale(${media.zoom})` : 'scale(1)',
+                    transformOrigin: 'top center'
+                  }}
+                  alt=""
+                />
+              );
+            })}
             
             {/* Camadas (Overlays) para imagens empilhadas */}
             {media.overlays?.map((overlay) => (
@@ -548,6 +563,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
         </div>
       );
     }
+    if (!media.url) return <div className="w-full h-full bg-zinc-900 animate-pulse" />;
     return (
       <div 
         key={media.url}
