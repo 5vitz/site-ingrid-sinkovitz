@@ -50,6 +50,12 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // Media Library
+    match /media_library/{mediaId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // Users Roles
     match /users_roles/{email} {
       allow read: if isSignedIn() && (request.auth.token.email == email || isAdmin());

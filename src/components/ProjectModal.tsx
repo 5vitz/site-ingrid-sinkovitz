@@ -140,14 +140,25 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const viewportWidth = windowSize.width;
   const maxPlayerHeight = Math.max(300, Math.min(viewportHeight - 120, 850));
   
-  let currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || (9/16);
-  let playerWidth = (maxPlayerHeight * currentAspectRatio);
-  let playerHeight = maxPlayerHeight;
-  const maxAllowedWidth = viewportWidth * 0.95;
+  // Configuração solicitada: 540px de largura fixa (no desktop) com altura baseada na proporção
+  const targetWidth = 540;
+  const currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || (9/16);
+  
+  let playerWidth = targetWidth;
+  let playerHeight = targetWidth / currentAspectRatio;
+
+  // Ajuste para não estourar telas pequenas
+  const maxAllowedWidth = viewportWidth * 0.92;
+  const maxAllowedHeight = viewportHeight * 0.85;
+
   if (playerWidth > maxAllowedWidth) {
-    const scaleFactor = maxAllowedWidth / playerWidth;
     playerWidth = maxAllowedWidth;
-    playerHeight = playerHeight * scaleFactor;
+    playerHeight = playerWidth / currentAspectRatio;
+  }
+
+  if (playerHeight > maxAllowedHeight) {
+    playerHeight = maxAllowedHeight;
+    playerWidth = playerHeight * currentAspectRatio;
   }
 
   const handleStartTour = (e: React.MouseEvent) => {
@@ -205,33 +216,63 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
             </div>
           ) : (
             <div className="relative flex items-center justify-center" style={{ perspective: '2000px' }}>
-              {/* Player Principal Container - Agora sem animação para corte seco */}
-              <div 
+              {/* Player Principal Container */}
+              <motion.div 
+                key={`${feedIndex}-${storyIndex}`}
+                initial={{ opacity: 0, scale: 0.98, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
                 className="relative z-10"
                 style={{ 
                   maxWidth: '98vw', 
-                  maxHeight: 'calc(100svh - 60px)', 
+                  maxHeight: 'calc(100svh - 80px)', 
                   width: playerWidth,
                   height: playerHeight,
                 }}
               >
                 {/* O Player propriamente dito */}
                 <div 
-                  className={`w-full h-full ${theme.playerBg || 'bg-black'} rounded-[8px] overflow-hidden relative shadow-2xl ${theme.playerBorder || 'border border-white/10'} ${theme.playerShadow || ''}`}
+                  className={`w-full h-full ${theme.playerBg || 'bg-black'} rounded-[12px] overflow-hidden relative shadow-[0_0_50px_rgba(0,0,0,0.5)] border ${theme.playerBorder || 'border-white/10'} ${theme.playerShadow || ''}`}
                 >
-                  {/* Conteúdo interno com corte seco */}
+                  {/* Glass Header (Mobile/Compact) */}
+                  <div className="absolute top-0 inset-x-0 h-16 bg-gradient-to-b from-black/60 to-transparent z-[10015] pointer-events-none flex items-start justify-between px-6 pt-4">
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-black uppercase tracking-[0.3em] text-accent/80 leading-none mb-1">
+                        {currentFeed?.title || project.title}
+                      </span>
+                      <span className="text-[9px] font-bold text-white/40 uppercase tracking-widest">
+                        {storyIndex + 1} / {totalStories}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Conteúdo interno */}
                   <div className="w-full h-full overflow-hidden">
                     {totalFeed > 0 ? (
-                      /* Media Renderer */
                       <MediaRenderer media={currentMedia} isActive={showPlayer} isMuted={isMuted} theme={theme} projectId={project.id} />
                     ) : (
                       <div className="w-full h-full flex flex-col items-center justify-center p-8 text-center bg-zinc-900 text-zinc-500">
                         <div className="w-12 h-12 border-2 border-accent/20 border-t-accent rounded-full animate-spin mb-4" />
-                        <p className="text-sm font-medium uppercase tracking-[0.2em]">Configurando Conteúdo</p>
-                        <p className="text-[10px] mt-2 opacity-50">Este projeto ainda não possui itens no feed do Banco de Dados.</p>
+                        <p className="text-[10px] font-black uppercase tracking-[0.3em]">Configurando Auddar...</p>
                       </div>
                     )}
                   </div>
+
+                  {/* Progress Bars (Top) */}
+                  {totalStories > 1 && (
+                    <div className="absolute top-2 inset-x-4 flex gap-1.5 z-[10020]">
+                      {Array.from({ length: totalStories }).map((_, i) => (
+                        <div key={i} className="h-[2px] flex-1 bg-white/10 rounded-full overflow-hidden">
+                          <motion.div 
+                            className="h-full bg-accent"
+                            initial={{ width: 0 }}
+                            animate={{ width: i < storyIndex ? '100%' : i === storyIndex ? '100%' : '0%' }}
+                            transition={{ duration: 0.4 }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Setas de Navegação interna (Stories) - FORA do overflow-hidden */}
@@ -284,7 +325,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                     <ChevronDown size={16} />
                   </button>
                 </div>
-              </div>
+              </motion.div>
             </div>
           )}
         </div>

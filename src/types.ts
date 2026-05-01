@@ -121,3 +121,13 @@ export interface AboutMe {
   videoUrl: string;
   description: string;
 }
+
+export interface MediaLibraryItem {
+  id: string;
+  name: string;
+  url: string;
+  type: string;
+  size: number;
+  createdAt: number;
+  category: 'image' | 'video' | 'audio' | 'other';
+}

@@ -24,6 +24,7 @@ import { AboutManager } from './components/Admin/AboutManager';
 import { TestimonialManager } from './components/Admin/TestimonialManager';
 import { GlobalSettingsManager } from './components/Admin/GlobalSettingsManager';
 import { UserManagement } from './components/Admin/UserManagement';
+import { MediaLibrary } from './components/Admin/MediaLibrary';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from './lib/firebase';
 
@@ -352,7 +353,7 @@ const ProtectedRoute = ({ children, requiredRole }: { children: React.ReactNode,
 
 const AdminPanel = () => {
   const { logout, role } = useAuth();
-  const [activeTab, setActiveTab] = useState<'projects' | 'services' | 'testimonials' | 'about' | 'users' | 'settings'>('projects');
+  const [activeTab, setActiveTab] = useState<'projects' | 'services' | 'testimonials' | 'about' | 'users' | 'settings' | 'media'>('projects');
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white flex flex-col md:flex-row">
@@ -365,6 +366,7 @@ const AdminPanel = () => {
 
         <nav className="flex-1 space-y-2">
           <AdminNavItem active={activeTab === 'projects'} onClick={() => setActiveTab('projects')} icon={<LayoutGrid size={20}/>} label="Projetos" />
+          <AdminNavItem active={activeTab === 'media'} onClick={() => setActiveTab('media')} icon={<Plus size={20}/>} label="Mídias (Upload)" />
           <AdminNavItem active={activeTab === 'services'} onClick={() => setActiveTab('services')} icon={<MessageSquare size={20}/>} label="Serviços" />
           <AdminNavItem active={activeTab === 'testimonials'} onClick={() => setActiveTab('testimonials')} icon={<Mail size={20}/>} label="Depoimentos" />
           <AdminNavItem active={activeTab === 'about'} onClick={() => setActiveTab('about')} icon={<Play size={20}/>} label="Sobre Mim" />
@@ -381,6 +383,7 @@ const AdminPanel = () => {
       <main className="flex-1 p-8 md:p-16 overflow-y-auto max-h-screen">
         <div className="max-w-5xl mx-auto">
           {activeTab === 'projects' && <ProjectManager />}
+          {activeTab === 'media' && <MediaLibrary />}
           {activeTab === 'services' && <ServiceManager />}
           {activeTab === 'testimonials' && <TestimonialManager />}
           {activeTab === 'about' && <AboutManager />}

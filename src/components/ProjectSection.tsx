@@ -54,18 +54,35 @@ export const ProjectSection: React.FC<{ onSelectProject: (p: Project) => void }>
           {displayProjects.map((project: any) => (
             <div
               key={project.id}
-              className={`relative group ${project.isPlaceholder ? 'cursor-default' : 'cursor-pointer'}`}
+              className={`relative group h-full ${project.isPlaceholder ? 'cursor-default' : 'cursor-pointer'}`}
               onClick={() => !project.isPlaceholder ? onSelectProject(project as Project) : null}
             >
               <div 
-                className="aspect-square w-full bg-zinc-900 border border-white/10 rounded-[8px] flex items-center justify-center transition-all duration-300 group-hover:border-accent/40 group-hover:shadow-[0_0_30px_rgba(212,175,55,0.1)] overflow-hidden relative"
+                className="aspect-square w-full bg-zinc-900 border border-white/10 rounded-[8px] flex flex-col items-center justify-end transition-all duration-500 group-hover:border-accent/40 group-hover:shadow-[0_0_30px_rgba(212,175,55,0.15)] overflow-hidden relative p-8"
               >
-                <span className="relative z-10 font-poppins text-white text-sm tracking-widest uppercase group-hover:text-accent transition-colors duration-300 text-center px-4">
+                {/* Background Image */}
+                {(project.galleryThumbnail || project.coverImage) ? (
+                  <>
+                    <img 
+                      src={project.galleryThumbnail || project.coverImage} 
+                      className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 group-hover:scale-110 transition-all duration-700 pointer-events-none" 
+                      alt="" 
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-0" />
+                  </>
+                ) : (
+                  <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-950 z-0" />
+                )}
+
+                <span className="relative z-10 font-black text-white text-base md:text-lg tracking-tighter uppercase group-hover:text-accent transition-colors duration-300 text-center leading-tight">
                   {project.title}
                 </span>
                 
-                {/* Mirror effect */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                {/* Accent line on hover */}
+                <div className="w-0 h-[3px] bg-accent mt-3 relative z-10 group-hover:w-16 transition-all duration-500 rounded-full" />
+
+                {/* Mirror effect / Gloss */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20" />
               </div>
             </div>
           ))}
