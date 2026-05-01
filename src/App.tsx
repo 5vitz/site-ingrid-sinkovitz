@@ -212,8 +212,8 @@ const Home = ({ onSelectProject, settings: initialSettings }: { onSelectProject:
                   <p className={`whitespace-pre-line text-justify first-letter:text-5xl first-letter:font-black first-letter:text-accent first-letter:mr-4 first-letter:float-left transition-all duration-700 ${!isBioExpanded ? 'max-h-[320px] md:max-h-[220px] overflow-hidden' : 'max-h-[2000px]'}`}>
                     {!isBioExpanded ? (
                       <>
-                        {settings.sobre?.description.split('na operação, na estratégia.')[0]}
-                        na operação, na estratégia...
+                        {(settings.sobre?.description || '').split('na operação, na estratégia.')[0]}
+                        {settings.sobre?.description?.includes('na operação, na estratégia.') ? 'na operação, na estratégia...' : ''}
                       </>
                     ) : settings.sobre?.description}
                   </p>
@@ -608,9 +608,12 @@ export default function App() {
 
   useEffect(() => {
     getSettings().then(data => {
-      setSettings(data);
+      setSettings(data || { global: null, sobre: null });
       setLoadingSettings(false);
-    }).catch(() => setLoadingSettings(false));
+    }).catch((err) => {
+      console.error("Settings load error", err);
+      setLoadingSettings(false);
+    });
   }, []);
 
   return (
@@ -624,7 +627,7 @@ export default function App() {
         <Router>
           <Routes>
             <Route path="/" element={
-              <MaintenanceGuard settings={settings.global}>
+              <MaintenanceGuard settings={settings?.global}>
                 <Layout settings={settings} />
               </MaintenanceGuard>
             } />

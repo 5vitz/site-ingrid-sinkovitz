@@ -116,8 +116,8 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
 
   if (!project) return null;
 
-  const currentFeed = project.feed?.[feedIndex];
-  const totalFeed = project.feed?.length || 0;
+  const currentFeed = project?.feed?.[feedIndex];
+  const totalFeed = project?.feed?.length || 0;
   const currentStories = currentFeed?.stories || [];
   const totalStories = currentStories.length + (currentFeed ? 1 : 0);
 
@@ -189,7 +189,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
 
   useEffect(() => {
     if (project) {
-      console.log(`[ProjectModal] Projeto selecionado: ${project.id}. Feed size: ${project.feed?.length || 0}`);
+      console.log(`[ProjectModal] Projeto selecionado: ${project?.id}. Feed size: ${project?.feed?.length || 0}`);
     }
   }, [project?.id]);
 
