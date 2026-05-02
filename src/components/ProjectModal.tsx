@@ -368,19 +368,22 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
   if (media.type === 'image' || media.type === 'pdf') {
     const isPDF = media.type === 'pdf' || media.url?.toLowerCase().includes('.pdf');
     if (isPDF) {
-      // Usamos o visualizador do Mozilla (PDF.js) que é mais limpo e não tem o indicador "1/1" do Google
-      const viewerUrl = `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(media.url || '')}`;
+      const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(media.url || '')}&embedded=true`;
       
       return (
-        <div className="w-full h-full bg-zinc-900 overflow-hidden relative">
+        <div className="w-full h-full bg-[#0a0a0a] overflow-hidden relative">
           <iframe 
             src={viewerUrl}
-            className="w-full h-full border-none pointer-events-auto block"
-            title={media.title || 'PDF Document'}
+            className="absolute inset-0 border-none pointer-events-auto block"
             style={{ 
+              width: '100%',
+              height: '100%',
+              transform: 'scale(1.20)',     // Zoom generoso para garantir que bordas sumam
+              transformOrigin: '50% 2%',    // Origem quase no topo: preserva a testa e corta o rodapé do Google
               filter: 'contrast(1.01) brightness(1.02)',
               pointerEvents: 'auto'
             }}
+            title={media.title || 'PDF Document'}
           />
         </div>
       );
