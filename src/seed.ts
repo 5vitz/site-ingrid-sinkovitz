@@ -3,7 +3,7 @@ import { db } from './lib/firebase';
 import { doc, setDoc } from 'firebase/firestore';
 
 export const seedAuddar = async () => {
-  const projectId = 'projeto6';
+  const projectId = 'projeto-auddar';
   const auddarData = {
     id: projectId,
     title: 'Auddar',

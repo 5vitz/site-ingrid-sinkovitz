@@ -6,37 +6,27 @@ import { PROJECTS_LIST as STATIC_PROJECTS } from '../constants/projects';
 export const ProjectSection: React.FC<{ onSelectProject: (p: Project) => void }> = ({ onSelectProject }) => {
   const { data: dbProjects, loading } = useCollection<Project>('projects');
 
-  // Mesclar projetos estáticos com os do banco
-  // O Banco de Dados SEMPRE tem prioridade absoluta pelo ID
-  const projects = React.useMemo(() => {
-    // Usamos um Map para garantir que cada ID seja único.
-    // Se o Firebase trouxer um ID que já existe na lista estática, o do Firebase sobrescreve.
-    const combinedMap = new Map<string, Project>();
+  // Mesclar projetos estáticos com os do banco, RESTRITO aos IDs oficiais
+  const displayProjects = React.useMemo(() => {
+    // Usamos um Map baseado nos projetos oficiais
+    const finalMap = new Map<string, Project>();
     
-    // 1. Adicionamos os estáticos primeiro
-    STATIC_PROJECTS.forEach(p => combinedMap.set(p.id, p));
+    // 1. Inicializamos com a lista estática
+    STATIC_PROJECTS.forEach(p => finalMap.set(p.id, p));
     
-    // 2. Adicionamos os do banco (sobrescrevendo se o ID bater)
+    // 2. Mesclamos com o banco APENAS se o ID já existir no mapa oficial
     dbProjects.forEach(dbProj => {
-      if (dbProj.id) {
-        combinedMap.set(dbProj.id, dbProj);
+      if (dbProj.id && finalMap.has(dbProj.id)) {
+        const existing = finalMap.get(dbProj.id)!;
+        finalMap.set(dbProj.id, { ...existing, ...dbProj });
       }
     });
 
-    // 3. Retornamos a lista final ordenada pelo campo 'order'
-    return Array.from(combinedMap.values())
-      .sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
+    // 3. Retornamos a lista final (sempre os 6 oficiais)
+    return Array.from(finalMap.values())
+      .sort((a, b) => (a.order ?? 99) - (b.order ?? 99))
+      .slice(0, 6);
   }, [dbProjects]);
-
-  const displayProjects = [
-    ...projects,
-    ...Array.from({ length: Math.max(0, 6 - projects.length) }).map((_, i) => ({
-      id: `placeholder-${i}`,
-      title: `Projeto ${projects.length + i + 1}`,
-      galleryThumbnail: '',
-      isPlaceholder: true
-    }))
-  ];
 
   return (
     <section id="projetos" className="section-container scroll-mt-20 !pt-0">
@@ -58,21 +48,10 @@ export const ProjectSection: React.FC<{ onSelectProject: (p: Project) => void }>
               onClick={() => !project.isPlaceholder ? onSelectProject(project as Project) : null}
             >
               <div 
-                className="aspect-square w-full bg-zinc-900 border border-white/10 rounded-[8px] flex flex-col items-center justify-end transition-all duration-500 group-hover:border-accent/40 group-hover:shadow-[0_0_30px_rgba(212,175,55,0.15)] overflow-hidden relative p-8"
+                className="aspect-square w-full bg-zinc-900 border border-white/10 rounded-[8px] flex flex-col items-center justify-center transition-all duration-500 group-hover:border-accent/40 group-hover:shadow-[0_0_30px_rgba(212,175,55,0.15)] overflow-hidden relative p-8"
               >
-                {/* Background Image */}
-                {(project.galleryThumbnail || project.coverImage) ? (
-                  <>
-                    <img 
-                      src={project.galleryThumbnail || project.coverImage} 
-                      className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 group-hover:scale-110 transition-all duration-700 pointer-events-none" 
-                      alt="" 
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-0" />
-                  </>
-                ) : (
-                  <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-950 z-0" />
-                )}
+                {/* Background Image - REMOVIDO TEMPORARIAMENTE A PEDIDO DO USUÁRIO */}
+                <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-950 z-0" />
 
                 <span className="relative z-10 font-black text-white text-base md:text-lg tracking-tighter uppercase group-hover:text-accent transition-colors duration-300 text-center leading-tight">
                   {project.title}
