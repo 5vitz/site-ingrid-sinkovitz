@@ -219,10 +219,10 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                 transition={{ duration: 0.15, ease: 'linear' }}
                 className="relative z-10"
                 style={{ 
-                  width: isDesktop ? '540px' : `${playerWidth}px`,
+                  width: isDesktop ? '560px' : `${playerWidth}px`,
                   height: `${playerHeight}px`,
-                  minWidth: isDesktop ? '540px' : `${playerWidth}px`,
-                  maxWidth: isDesktop ? '540px' : `${playerWidth}px`,
+                  minWidth: isDesktop ? '560px' : `${playerWidth}px`,
+                  maxWidth: isDesktop ? '560px' : `${playerWidth}px`,
                 }}
               >
                 {/* O Player propriamente dito */}
@@ -234,7 +234,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                   } as React.CSSProperties}
                 >
                   {/* Conteúdo interno */}
-                  <div className="w-full h-full overflow-hidden">
+                  <div className="w-full h-full overflow-hidden flex items-center justify-center">
                     {totalFeed > 0 ? (
                       <MediaRenderer media={currentMedia} isActive={showPlayer} isMuted={isMuted} theme={theme} projectId={project.id} />
                     ) : (
@@ -360,7 +360,8 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
         <div className="w-full h-full bg-zinc-900 overflow-hidden relative flex flex-col group/pdf">
           <iframe 
             src={viewerUrl}
-            className="w-full h-full border-none pointer-events-auto"
+            className="w-full h-full border-none pointer-events-auto block"
+            style={{ width: '100%', height: '100%', minWidth: '100%' }}
             title={media.title || 'PDF Document'}
           />
         </div>
