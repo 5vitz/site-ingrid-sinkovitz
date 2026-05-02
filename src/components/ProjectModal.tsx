@@ -140,21 +140,19 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const viewportWidth = windowSize.width;
   const maxPlayerHeight = Math.max(300, Math.min(viewportHeight - 120, 850));
   
-  // Configuração solicitada: 540px de largura fixa (no desktop) com altura baseada na proporção
-  const targetWidth = 540;
-  const currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || (9/16);
+  // Ajuste de largura fixa solicitada de 540px (Desktop)
+  const isDesktop = viewportWidth > 1024;
+  const targetWidth = isDesktop ? 540 : Math.min(540, viewportWidth * 0.95);
+  
+  // Auddar (projeto6) e outros: Se for desktop, largura é estritamente 540px.
+  // O conteúdo deve se ajustar à largura do player.
+  const currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || (1); // Default para 1:1 se não houver
   
   let playerWidth = targetWidth;
   let playerHeight = targetWidth / currentAspectRatio;
 
-  // Ajuste para não estourar telas pequenas
-  const maxAllowedWidth = viewportWidth * 0.92;
-  const maxAllowedHeight = viewportHeight * 0.85;
-
-  if (playerWidth > maxAllowedWidth) {
-    playerWidth = maxAllowedWidth;
-    playerHeight = playerWidth / currentAspectRatio;
-  }
+  // Ajuste para não estourar a altura da tela (segurança)
+  const maxAllowedHeight = viewportHeight * 0.88;
 
   if (playerHeight > maxAllowedHeight) {
     playerHeight = maxAllowedHeight;
@@ -197,7 +195,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       >
         <div className="flex items-center justify-center w-full h-full relative">
           {!showPlayer ? (
-            <div className="flex flex-col items-center text-center max-w-lg bg-zinc-900 p-12 rounded-[8px] border border-white/10 shadow-2xl">
+            <div className="flex flex-col items-center text-center max-w-lg bg-zinc-900 p-12 rounded-[12px] border border-white/10 shadow-2xl">
               {project.coverImage && (
                 <img 
                   src={project.coverImage} 
@@ -205,11 +203,11 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                   alt=""
                 />
               )}
-              <h2 className="text-3xl md:text-5xl font-black mb-6 italic uppercase tracking-tighter text-white">{project.title}</h2>
+              <h2 className="text-3xl md:text-5xl font-black mb-6 italic uppercase tracking-tighter text-white leading-none">{project.title}</h2>
               <p className="text-zinc-400 font-medium mb-12 text-sm leading-relaxed max-w-xs">{project.description}</p>
               <button
                 onClick={handleStartTour}
-                className="px-14 py-5 bg-accent text-white font-black uppercase tracking-[0.2em] text-xs rounded-full hover:scale-105 transition-all shadow-2xl pointer-events-auto"
+                className="px-14 py-5 bg-accent text-white font-black uppercase tracking-[0.2em] text-[10px] rounded-full hover:scale-105 transition-all shadow-2xl pointer-events-auto"
               >
                 Iniciar Tour
               </button>
@@ -217,32 +215,35 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
           ) : (
             <div className="relative flex items-center justify-center" style={{ perspective: '2000px' }}>
               {/* Player Principal Container */}
-              <motion.div 
-                key={`${feedIndex}-${storyIndex}`}
-                initial={{ opacity: 0, scale: 0.98, y: 10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-                className="relative z-10"
-                style={{ 
-                  maxWidth: '98vw', 
-                  maxHeight: 'calc(100svh - 80px)', 
-                  width: playerWidth,
-                  height: playerHeight,
-                }}
-              >
+                <motion.div 
+                  key={`${feedIndex}-${storyIndex}`}
+                  initial={{ opacity: 0, scale: 0.98, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+                  className="relative z-10"
+                  style={{ 
+                    width: playerWidth,
+                    height: playerHeight,
+                    maxWidth: isDesktop ? '540px' : '95vw',
+                    maxHeight: '90vh'
+                  }}
+                >
                 {/* O Player propriamente dito */}
                 <div 
-                  className={`w-full h-full ${theme.playerBg || 'bg-black'} rounded-[12px] overflow-hidden relative shadow-[0_0_50px_rgba(0,0,0,0.5)] border ${theme.playerBorder || 'border-white/10'} ${theme.playerShadow || ''}`}
+                  className={`w-full h-full ${theme.playerBg || 'bg-black'} rounded-[12px] overflow-hidden relative shadow-[0_40px_100px_rgba(0,0,0,0.8)] border ${theme.playerBorder || 'border-white/10'} ${theme.playerShadow || ''}`}
                 >
-                  {/* Glass Header (Mobile/Compact) */}
-                  <div className="absolute top-0 inset-x-0 h-16 bg-gradient-to-b from-black/60 to-transparent z-[10015] pointer-events-none flex items-start justify-between px-6 pt-4">
+                  {/* Glass Header (Auddar style) */}
+                  <div className="absolute top-0 inset-x-0 h-20 bg-gradient-to-b from-black/80 via-black/40 to-transparent z-[10015] pointer-events-none flex items-start justify-between px-8 pt-6">
                     <div className="flex flex-col">
-                      <span className="text-[10px] font-black uppercase tracking-[0.3em] text-accent/80 leading-none mb-1">
+                      <span className="text-[11px] font-black uppercase tracking-[0.4em] text-accent leading-none mb-1.5 shadow-sm">
                         {currentFeed?.title || project.title}
                       </span>
-                      <span className="text-[9px] font-bold text-white/40 uppercase tracking-widest">
-                        {storyIndex + 1} / {totalStories}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+                        <span className="text-[9px] font-black text-white/50 uppercase tracking-[0.2em]">
+                          Item {feedIndex + 1} de {totalFeed}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
@@ -251,16 +252,17 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                     {totalFeed > 0 ? (
                       <MediaRenderer media={currentMedia} isActive={showPlayer} isMuted={isMuted} theme={theme} projectId={project.id} />
                     ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center p-8 text-center bg-zinc-900 text-zinc-500">
-                        <div className="w-12 h-12 border-2 border-accent/20 border-t-accent rounded-full animate-spin mb-4" />
-                        <p className="text-[10px] font-black uppercase tracking-[0.3em]">Configurando Auddar...</p>
+                      <div className="w-full h-full flex flex-col items-center justify-center p-8 text-center bg-zinc-950 text-zinc-500">
+                        <div className="w-12 h-12 border-2 border-accent/20 border-t-accent rounded-full animate-spin mb-6" />
+                        <p className="text-[11px] font-black uppercase tracking-[0.4em] text-accent/60">Configurando Auddar...</p>
+                        <p className="text-[9px] mt-2 opacity-30 uppercase tracking-widest">Sincronizando Banco de Dados</p>
                       </div>
                     )}
                   </div>
 
                   {/* Progress Bars (Top) */}
                   {totalStories > 1 && (
-                    <div className="absolute top-2 inset-x-4 flex gap-1.5 z-[10020]">
+                    <div className="absolute top-3 inset-x-6 flex gap-2 z-[10020]">
                       {Array.from({ length: totalStories }).map((_, i) => (
                         <div key={i} className="h-[2px] flex-1 bg-white/10 rounded-full overflow-hidden">
                           <motion.div 
@@ -281,15 +283,13 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                     <>
                       <button 
                         onClick={(e) => { e.stopPropagation(); navigateStory(-1); }}
-                        className={`absolute -left-10 top-1/2 -translate-y-1/2 w-[30px] h-[30px] flex items-center justify-center rounded-full ${theme.navButtonBg || 'bg-[#00D154]/35'} ${theme.navButtonColor || 'text-black'} z-[10020] transition-all ${storyIndex === 0 ? 'opacity-0 pointer-events-none scale-50' : 'opacity-100 hover:scale-110 active:scale-95 pointer-events-auto'}`}
-                        style={{ backgroundColor: theme.accentColor ? `${theme.accentColor}55` : undefined }}
+                        className={`absolute -left-12 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-black/40 border border-white/5 text-white/40 hover:text-white hover:bg-black/60 z-[10020] transition-all ${storyIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
                       >
                         <ChevronLeft size={16} />
                       </button>
                       <button 
                         onClick={(e) => { e.stopPropagation(); navigateStory(1); }}
-                        className={`absolute -right-10 top-1/2 -translate-y-1/2 w-[30px] h-[30px] flex items-center justify-center rounded-full ${theme.navButtonBg || 'bg-[#00D154]/35'} ${theme.navButtonColor || 'text-black'} z-[10020] transition-all ${storyIndex === totalStories - 1 ? 'opacity-0 pointer-events-none scale-50' : 'opacity-100 hover:scale-110 active:scale-95 pointer-events-auto'}`}
-                        style={{ backgroundColor: theme.accentColor ? `${theme.accentColor}55` : undefined }}
+                        className={`absolute -right-12 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-black/40 border border-white/5 text-white/40 hover:text-white hover:bg-black/60 z-[10020] transition-all ${storyIndex === totalStories - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
                       >
                         <ChevronRight size={16} />
                       </button>
@@ -300,29 +300,27 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                 {/* Botão Fechar (X) */}
                 <button 
                   onClick={(e) => { e.stopPropagation(); onClose(); }}
-                  className="absolute -top-3 -right-3 z-[10020] w-8 h-8 bg-zinc-900 border border-white/10 text-white rounded-full flex items-center justify-center hover:scale-110 transition-all shadow-xl"
+                  className="absolute -top-4 -right-4 z-[10025] w-10 h-10 bg-zinc-900 border border-white/10 text-white rounded-full flex items-center justify-center hover:scale-110 hover:border-accent/40 hover:text-accent transition-all shadow-2xl"
                 >
-                  <X size={14} strokeWidth={3} />
+                  <X size={18} strokeWidth={3} />
                 </button>
 
-                {/* Controles do Feed (Horizontal ou Vertical) - Acoplado aos lados do player */}
-                <div className={`hidden md:flex absolute ${project.layoutType === 'vertical' ? 'inset-x-0 -top-10 -bottom-10 flex-col' : 'inset-y-0 -left-10 -right-10 flex-row'} items-center justify-between pointer-events-none z-[10010]`}>
+                {/* Controles do Feed (Navegação Horizontal Unificada) */}
+                <div className="hidden md:flex absolute inset-x-0 top-1/2 -translate-y-1/2 -left-24 -right-24 flex-row items-center justify-between pointer-events-none z-[10010]">
                   <button 
                     disabled={feedIndex === 0}
                     onClick={(e) => { e.stopPropagation(); navigateFeed(-1); }}
-                    className={`w-[30px] h-[30px] rounded-full flex items-center justify-center ${theme.navButtonBg || 'bg-[#00D154]/35'} ${theme.navButtonColor || 'text-black'} pointer-events-auto transition-all ${feedIndex === 0 ? 'opacity-0 pointer-events-none scale-50' : 'opacity-100 hover:scale-110 active:scale-95'}`}
-                    style={{ backgroundColor: theme.accentColor ? `${theme.accentColor}55` : undefined }}
+                    className={`w-[50px] h-[50px] rounded-full flex items-center justify-center bg-black/40 backdrop-blur-xl border border-white/10 text-white/50 hover:text-accent hover:border-accent/40 pointer-events-auto transition-all shadow-2xl ${feedIndex === 0 ? 'opacity-0 pointer-events-none scale-50' : 'opacity-100 hover:scale-110 active:scale-95'}`}
                   >
-                    <ChevronUp size={16} />
+                    <ChevronLeft size={28} strokeWidth={2.5} />
                   </button>
                   
                   <button 
                     disabled={feedIndex === totalFeed - 1}
                     onClick={(e) => { e.stopPropagation(); navigateFeed(1); }}
-                    className={`w-[30px] h-[30px] rounded-full flex items-center justify-center ${theme.navButtonBg || 'bg-[#00D154]/35'} ${theme.navButtonColor || 'text-black'} pointer-events-auto transition-all ${feedIndex === totalFeed - 1 ? 'opacity-0 pointer-events-none scale-50' : 'opacity-100 hover:scale-110 active:scale-95'}`}
-                    style={{ backgroundColor: theme.accentColor ? `${theme.accentColor}55` : undefined }}
+                    className={`w-[50px] h-[50px] rounded-full flex items-center justify-center bg-black/40 backdrop-blur-xl border border-white/10 text-white/50 hover:text-accent hover:border-accent/40 pointer-events-auto transition-all shadow-2xl ${feedIndex === totalFeed - 1 ? 'opacity-0 pointer-events-none scale-50' : 'opacity-100 hover:scale-110 active:scale-95'}`}
                   >
-                    <ChevronDown size={16} />
+                    <ChevronRight size={28} strokeWidth={2.5} />
                   </button>
                 </div>
               </motion.div>
@@ -562,32 +560,31 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
         <div className="absolute inset-0 bg-gradient-to-br from-zinc-50/50 via-white to-zinc-100/30" />
 
         <div className="relative z-10 flex flex-col h-full w-full">
-           <div className="flex-grow overflow-y-auto pr-2 custom-scrollbar flex flex-col items-center justify-center text-center">
-             {media.title && (
-               <>
-                 <h3 className="text-xl md:text-2xl font-black text-zinc-900 mb-4 leading-tight uppercase tracking-tighter italic">
-                   {media.title}
-                 </h3>
-                 <div className="w-12 h-1 bg-accent mb-6" />
-               </>
-             )}
-             
-             {media.subtitle && (
-               <p className="text-zinc-700 text-xs md:text-sm font-bold tracking-wider uppercase leading-relaxed max-w-[90%] mb-6">
-                 {media.subtitle}
-               </p>
-             )}
-
-             {media.content && (
-               <div className="text-zinc-600 text-[13px] md:text-[15px] leading-relaxed text-justify space-y-4 font-normal font-sans tracking-tight">
-                 {media.content.split('\n\n').map((paragraph, idx) => (
-                   <p key={idx}>{paragraph}</p>
-                 ))}
-               </div>
-             )}
-           </div>
-
-           {(media.credits || media.label) && (
+            <div className={`flex-grow overflow-y-auto pr-2 custom-scrollbar flex flex-col ${media.content && media.content.length > 300 ? 'justify-start pt-4' : 'justify-center'} items-center text-center`}>
+              {media.title && (
+                <>
+                  <h3 className="text-xl md:text-2xl font-black text-zinc-900 mb-4 leading-tight uppercase tracking-tighter italic shrink-0">
+                    {media.title}
+                  </h3>
+                  <div className="w-12 h-1 bg-accent mb-6 shrink-0" />
+                </>
+              )}
+              
+              {media.subtitle && (
+                <p className="text-zinc-700 text-xs md:text-sm font-bold tracking-wider uppercase leading-relaxed max-w-[90%] mb-6 shrink-0">
+                  {media.subtitle}
+                </p>
+              )}
+              
+              {media.content && (
+                <div className="text-zinc-600 text-[13px] md:text-[15px] leading-relaxed text-center space-y-4 font-normal font-sans tracking-tight pb-8">
+                  {media.content.split('\n\n').map((paragraph, idx) => (
+                    <p key={idx}>{paragraph}</p>
+                  ))}
+                </div>
+              )}
+            </div>
+            {(media.credits || media.label) && (
              <div className="w-full pt-6 mt-4 border-t border-zinc-200/60 shrink-0">
                {media.credits && (
                  <pre className="text-zinc-400 text-[9px] uppercase tracking-[0.15em] font-sans whitespace-pre-wrap leading-relaxed mb-2">
