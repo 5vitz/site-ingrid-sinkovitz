@@ -374,12 +374,12 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
         <div className="w-full h-full bg-[#0a0a0a] overflow-hidden relative">
           <iframe 
             src={viewerUrl}
-            className="absolute inset-0 border-none pointer-events-auto block"
+            className="absolute border-none pointer-events-auto block"
             style={{ 
-              width: '100%',
-              height: '100%',
-              transform: 'scale(1.20)',     // Zoom generoso para garantir que bordas sumam
-              transformOrigin: '50% 2%',    // Origem quase no topo: preserva a testa e corta o rodapé do Google
+              width: '102%',                // Quase sem zoom lateral para não cortar texto
+              height: '115%',               // Mantém altura para esconder "1/1"
+              top: '0px', 
+              left: '-1%',                  // Centralização precisa
               filter: 'contrast(1.01) brightness(1.02)',
               pointerEvents: 'auto'
             }}
@@ -446,7 +446,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
     }
     if (!media.url) return <div className="w-full h-full bg-zinc-900 animate-pulse" />;
     return (
-      <div className={`w-full h-full relative ${media.allowScroll ? 'overflow-y-auto custom-scrollbar' : 'overflow-hidden'}`}>
+      <div className={`w-full h-full relative ${media.allowScroll ? 'overflow-y-scroll overflow-x-hidden custom-scrollbar pr-1' : 'overflow-hidden'}`}>
         <img 
           src={media.url} 
           className={`w-full ${media.allowScroll ? 'h-auto block min-h-0' : 'h-full object-cover'}`}
@@ -566,7 +566,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
         <div className="absolute inset-0 bg-gradient-to-br from-zinc-50/50 via-white to-zinc-100/30" />
 
         <div className="relative z-10 flex flex-col h-full w-full">
-            <div className={`flex-grow overflow-y-auto custom-scrollbar flex flex-col ${media.content && media.content.length > 300 ? 'justify-start' : 'justify-center'} items-center`}>
+            <div className={`flex-grow overflow-y-scroll overflow-x-hidden custom-scrollbar flex flex-col ${media.content && media.content.length > 300 ? 'justify-start' : 'justify-center'} items-center`}>
               <div className="w-full px-8 md:px-12 py-12 flex flex-col items-center text-center">
                 {media.title && (
                   <>
