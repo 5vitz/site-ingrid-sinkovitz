@@ -380,39 +380,16 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
   if (media.type === 'image') {
     const isPDF = media.url?.toLowerCase().includes('.pdf');
     if (isPDF) {
-      // Usamos a tag <object> como primeira opção, com <embed> como fallback.
-      // Isso é mais resiliente a bloqueios de segurança do Chrome em iframes simples.
+      // Usamos o Google Docs Viewer para evitar bloqueios de segurança do Chrome/CORS
+      const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(media.url || '')}&embedded=true`;
+      
       return (
         <div className="w-full h-full bg-zinc-900 overflow-hidden relative flex flex-col group/pdf">
-          <object
-            data={media.url}
-            type="application/pdf"
+          <iframe 
+            src={viewerUrl}
             className="w-full h-full border-none pointer-events-auto"
-            style={{ width: '100%', height: '100%' }}
-          >
-            <embed 
-              src={media.url} 
-              type="application/pdf"
-              className="w-full h-full border-none"
-            />
-            {/* Fallback visual interno se o plugin de PDF falhar totalmente */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center p-8 bg-zinc-950 text-center">
-              <div className="w-16 h-16 bg-accent/20 rounded-2xl flex items-center justify-center mb-6">
-                <svg className="w-8 h-8 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <p className="text-zinc-400 text-[10px] uppercase font-black tracking-widest mb-6">O navegador bloqueou a pré-visualização</p>
-              <a 
-                href={media.url} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="px-6 py-3 bg-accent text-white font-black uppercase tracking-widest text-[10px] rounded-full hover:scale-105 transition-all shadow-xl pointer-events-auto"
-              >
-                Abrir Documento
-              </a>
-            </div>
-          </object>
+            title={media.title || 'PDF Document'}
+          />
           
           {/* Overlay de título discreto */}
           <div className="absolute inset-x-0 top-0 p-4 bg-gradient-to-b from-black/60 to-transparent pointer-events-none opacity-0 group-hover/pdf:opacity-100 transition-opacity">
@@ -505,7 +482,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
           className={`w-full ${media.allowScroll ? 'h-auto block min-h-0' : `h-full ${media.objectFit === 'contain' ? 'object-contain' : 'object-cover'}`}`}
           style={{ 
             transform: `scale(${media.zoom || 1}) translateX(${media.xOffset || 0}px) translateY(${media.yOffset || 0}px)`,
-            transformOrigin: 'top center',
+            transformOrigin: media.allowScroll ? 'top center' : 'center center',
             display: 'block'
           }}
           alt={media.title || ''}
