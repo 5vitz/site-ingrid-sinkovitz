@@ -543,10 +543,28 @@ export const AUDDAR_PROJECT: Project = {
   ]
 };
 
+export const SCALLA_RECORDS_PROJECT: Project = {
+  id: 'projeto-scalla-records',
+  title: 'Scalla Records',
+  description: 'Placeholder para futura expansão da galeria.',
+  layoutType: 'vertical',
+  galleryThumbnail: '',
+  coverImage: '',
+  order: 6,
+  mediaItems: [],
+  theme: {
+    accentColor: '#444444',
+    playerBg: 'bg-zinc-900',
+    playerBorder: 'border-zinc-800'
+  },
+  feed: []
+};
+
 export const PROJECTS_LIST: Project[] = [
   METAVIX_PROJECT, 
   GOOD_STORAGE_PROJECT, 
   ELOBIKE_PROJECT, 
   LION_JUMP_PROJECT,
-  AUDDAR_PROJECT
+  AUDDAR_PROJECT,
+  SCALLA_RECORDS_PROJECT
 ];

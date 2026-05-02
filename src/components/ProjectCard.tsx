@@ -19,34 +19,45 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, hasR
     <motion.div 
       whileHover={{ y: -10 }}
       onClick={onClick}
-      className={`${cardClass} cursor-pointer group rounded-[8px] snap-center ${project.cardBg || 'bg-zinc-900'} shadow-2xl overflow-hidden relative`}
+      className={`${cardClass} cursor-pointer group rounded-[8px] snap-center ${project.cardBg || 'bg-zinc-900'} shadow-2xl overflow-hidden relative flex items-center justify-center`}
     >
-      <img 
-        src={project.galleryThumbnail} 
-        alt={project.title}
-        className={`absolute inset-0 w-full h-full transition-all duration-700 ${
-          project.title.includes('Metavix') 
-            ? 'p-10 object-contain scale-[0.5] group-hover:scale-[0.55]' 
-            : 'group-hover:scale-105 ' + (project.thumbnailFit === 'contain' ? 'object-contain' : 'object-cover')
-        }`}
-        referrerPolicy="no-referrer"
-      />
-      
-      {/* Overlay */}
-      <div className={`absolute inset-0 bg-gradient-to-t ${project.cardBg === 'bg-white' ? 'from-white/40 via-transparent' : 'from-black/80 via-transparent/20'} to-transparent flex flex-col justify-end p-8`}>
-        <div className="space-y-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-           <h3 className="text-lg md:text-xl font-bold text-white tracking-tight leading-tight">
-             {project.title}
-           </h3>
-           
-           <div className="flex items-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
-             <span className={`px-3 py-1 ${project.cardBg === 'bg-white' ? 'bg-black text-white' : 'bg-accent text-black'} text-[10px] font-bold uppercase rounded-full tracking-widest`}>
-                Explorar
-             </span>
-             <ArrowUpRight size={20} className="text-accent" />
-           </div>
+      {project.galleryThumbnail ? (
+        <img 
+          src={project.galleryThumbnail} 
+          alt={project.title}
+          className={`absolute inset-0 w-full h-full transition-all duration-700 ${
+            project.title.includes('Metavix') 
+              ? 'p-10 object-contain scale-[0.5] group-hover:scale-[0.55]' 
+              : 'group-hover:scale-105 ' + (project.thumbnailFit === 'contain' ? 'object-contain' : 'object-cover')
+          }`}
+          referrerPolicy="no-referrer"
+        />
+      ) : (
+        <div className="absolute inset-0 bg-zinc-800 flex items-center justify-center p-6 border border-white/5">
+          <div className="text-center opacity-40 group-hover:opacity-100 transition-opacity duration-500">
+            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/50 block mb-2 text-center w-full">Projeto</span>
+            <h3 className="text-xl font-black text-white uppercase tracking-tight text-center">{project.title}</h3>
+          </div>
         </div>
-      </div>
+      )}
+      
+      {/* Overlay status (only shown if there is an image, otherwise it's redundant) */}
+      {project.galleryThumbnail && (
+        <div className={`absolute inset-0 bg-gradient-to-t ${project.cardBg === 'bg-white' ? 'from-white/40 via-transparent' : 'from-black/80 via-transparent/20'} to-transparent flex flex-col justify-end p-8`}>
+          <div className="space-y-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+             <h3 className="text-lg md:text-xl font-bold text-white tracking-tight leading-tight">
+               {project.title}
+             </h3>
+             
+             <div className="flex items-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+               <span className={`px-3 py-1 ${project.cardBg === 'bg-white' ? 'bg-black text-white' : 'bg-accent text-black'} text-[10px] font-bold uppercase rounded-full tracking-widest`}>
+                  Explorar
+               </span>
+               <ArrowUpRight size={20} className="text-accent" />
+             </div>
+          </div>
+        </div>
+      )}
       
       {/* Navigation Arrows (Instagram Style) */}
       {hasRight && (
