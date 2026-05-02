@@ -381,22 +381,32 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
     const isPDF = media.url?.toLowerCase().includes('.pdf');
     if (isPDF) {
       return (
-        <div className="w-full h-full bg-zinc-900 overflow-hidden flex flex-col">
-          <embed 
-            src={`${media.url}#toolbar=0&navpanes=0&scrollbar=1`}
-            type="application/pdf"
+        <div className="w-full h-full bg-zinc-900 overflow-hidden relative flex flex-col group/pdf">
+          <iframe 
+            src={`${media.url}#toolbar=0&navpanes=0&view=FitH`}
             className="w-full h-full border-none pointer-events-auto"
-            style={{ width: '100%', height: '100%' }}
+            title={media.title || 'PDF Document'}
           />
-          {/* Fallback link if embed fails or is blocked */}
-          <div className="absolute bottom-4 right-4 z-[1000]">
+          
+          {/* Overlay de carregamento/instrução que some ao interagir ou após delay */}
+          <div className="absolute inset-x-0 top-0 p-4 bg-gradient-to-b from-black/60 to-transparent pointer-events-none opacity-0 group-hover/pdf:opacity-100 transition-opacity">
+            <span className="text-[9px] text-white/70 uppercase tracking-widest font-black">
+              {media.title || 'Visualização de Documento'}
+            </span>
+          </div>
+
+          {/* Botão de fallback sempre disponível se o iframe for bloqueado ou para melhor visualização */}
+          <div className="absolute bottom-6 right-6 z-50">
             <a 
               href={media.url} 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="bg-accent/10 hover:bg-accent/20 text-accent text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full border border-accent/20 backdrop-blur-sm transition-all"
+              className="flex items-center gap-2 bg-accent text-white text-[10px] font-black uppercase tracking-widest px-5 py-2.5 rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all pointer-events-auto"
             >
-              Abrir Externo
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+              Ver em Tela Cheia
             </a>
           </div>
         </div>
