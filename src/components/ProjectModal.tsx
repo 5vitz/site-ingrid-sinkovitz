@@ -154,7 +154,10 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   // Ajuste para não estourar a altura da tela (segurança)
   const maxAllowedHeight = viewportHeight * 0.88;
 
-  if (playerHeight > maxAllowedHeight) {
+  if (currentMedia?.allowScroll) {
+    // Se permitir scroll, a altura pode ser o máximo permitido mantendo a largura fixa de 540px
+    playerHeight = maxAllowedHeight;
+  } else if (playerHeight > maxAllowedHeight) {
     playerHeight = maxAllowedHeight;
     playerWidth = playerHeight * currentAspectRatio;
   }
@@ -381,6 +384,28 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
   }
 
   if (media.type === 'image') {
+    const isPDF = media.url?.toLowerCase().includes('.pdf');
+    if (isPDF) {
+      return (
+        <div className="w-full h-full relative flex flex-col items-center justify-center bg-zinc-900 p-8 text-center">
+          <div className="w-16 h-16 bg-accent/20 rounded-2xl flex items-center justify-center mb-6">
+            <svg className="w-8 h-8 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <h3 className="text-white font-bold uppercase tracking-widest text-sm mb-4">{media.title || 'Documento PDF'}</h3>
+          <a 
+            href={media.url} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="px-6 py-3 bg-accent text-white font-black uppercase tracking-widest text-[10px] rounded-full hover:scale-105 transition-all shadow-xl pointer-events-auto"
+          >
+            Visualizar PDF
+          </a>
+        </div>
+      );
+    }
+
     if (media.images && media.images.length > 0) {
       return (
         <div className="w-full h-full bg-black overflow-y-auto custom-scrollbar flex flex-col">
@@ -444,10 +469,10 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
       >
         <img 
           src={media.url} 
-          className={`w-full ${media.allowScroll ? 'h-auto block min-h-full' : `h-full ${media.objectFit === 'contain' ? 'object-contain' : 'object-cover'}`}`}
+          className={`w-full ${media.allowScroll ? 'h-auto block min-h-0' : `h-full ${media.objectFit === 'contain' ? 'object-contain' : 'object-cover'}`}`}
           style={{ 
             transform: `scale(${media.zoom || 1}) translateX(${media.xOffset || 0}px) translateY(${media.yOffset || 0}px)`,
-            transformOrigin: 'center center',
+            transformOrigin: 'top center',
             display: 'block'
           }}
           alt={media.title || ''}
@@ -599,38 +624,6 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
              </div>
            )}
         </div>
-      </div>
-    );
-  }
-
-  if (media.type === 'image') {
-    const isPDF = media.url?.toLowerCase().endsWith('.pdf');
-    if (isPDF) {
-      return (
-        <div className="w-full h-full relative flex flex-col items-center justify-center bg-zinc-900 p-8 text-center">
-          <div className="w-16 h-16 bg-accent/20 rounded-2xl flex items-center justify-center mb-6">
-            <svg className="w-8 h-8 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-            </svg>
-          </div>
-          <h3 className="text-white font-bold uppercase tracking-widest text-sm mb-4">{media.title || 'Documento PDF'}</h3>
-          <a href={media.url} target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-accent text-white font-black uppercase tracking-widest text-[10px] rounded-full hover:scale-105 transition-all shadow-xl">
-            Visualizar PDF
-          </a>
-        </div>
-      );
-    }
-
-    if (!media.url) return <div className="w-full h-full bg-zinc-900 animate-pulse" />;
-    return (
-      <div key={media.url} className={`w-full h-full ${theme.playerBg || 'bg-black'} flex items-center justify-center ${media.allowScroll ? 'overflow-y-auto custom-scrollbar items-start' : 'overflow-hidden'}`}>
-        <img 
-          src={media.url} 
-          className={`w-full ${media.allowScroll ? 'h-auto block min-h-full' : `h-full ${media.objectFit === 'contain' ? 'object-contain' : 'object-cover'}`}`}
-          style={{ transform: `scale(${media.zoom || 1}) translateX(${media.xOffset || 0}px) translateY(${media.yOffset || 0}px)`, transformOrigin: 'center center', display: 'block' }}
-          alt={media.title || ''}
-          referrerPolicy="no-referrer"
-        />
       </div>
     );
   }
