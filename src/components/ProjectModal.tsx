@@ -214,9 +214,9 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
             {/* Player Principal Container */}
               <motion.div 
                 key={`${feedIndex}-${storyIndex}`}
-                initial={{ opacity: 0, scale: 0.98, y: 10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.15, ease: 'linear' }}
                 className="relative z-10"
                 style={{ 
                   width: playerWidth,
