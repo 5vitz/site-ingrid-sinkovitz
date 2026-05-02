@@ -380,22 +380,48 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
   if (media.type === 'image') {
     const isPDF = media.url?.toLowerCase().includes('.pdf');
     if (isPDF) {
+      // Usamos a tag <object> como primeira opção, com <embed> como fallback.
+      // Isso é mais resiliente a bloqueios de segurança do Chrome em iframes simples.
       return (
         <div className="w-full h-full bg-zinc-900 overflow-hidden relative flex flex-col group/pdf">
-          <iframe 
-            src={`${media.url}#toolbar=0&navpanes=0&view=FitH`}
+          <object
+            data={media.url}
+            type="application/pdf"
             className="w-full h-full border-none pointer-events-auto"
-            title={media.title || 'PDF Document'}
-          />
+            style={{ width: '100%', height: '100%' }}
+          >
+            <embed 
+              src={media.url} 
+              type="application/pdf"
+              className="w-full h-full border-none"
+            />
+            {/* Fallback visual interno se o plugin de PDF falhar totalmente */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center p-8 bg-zinc-950 text-center">
+              <div className="w-16 h-16 bg-accent/20 rounded-2xl flex items-center justify-center mb-6">
+                <svg className="w-8 h-8 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <p className="text-zinc-400 text-[10px] uppercase font-black tracking-widest mb-6">O navegador bloqueou a pré-visualização</p>
+              <a 
+                href={media.url} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="px-6 py-3 bg-accent text-white font-black uppercase tracking-widest text-[10px] rounded-full hover:scale-105 transition-all shadow-xl pointer-events-auto"
+              >
+                Abrir Documento
+              </a>
+            </div>
+          </object>
           
-          {/* Overlay de carregamento/instrução que some ao interagir ou após delay */}
+          {/* Overlay de título discreto */}
           <div className="absolute inset-x-0 top-0 p-4 bg-gradient-to-b from-black/60 to-transparent pointer-events-none opacity-0 group-hover/pdf:opacity-100 transition-opacity">
             <span className="text-[9px] text-white/70 uppercase tracking-widest font-black">
               {media.title || 'Visualização de Documento'}
             </span>
           </div>
 
-          {/* Botão de fallback sempre disponível se o iframe for bloqueado ou para melhor visualização */}
+          {/* Botão de segurança/tela cheia */}
           <div className="absolute bottom-6 right-6 z-50">
             <a 
               href={media.url} 
@@ -406,7 +432,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
               <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
               </svg>
-              Ver em Tela Cheia
+              Tela Cheia
             </a>
           </div>
         </div>
