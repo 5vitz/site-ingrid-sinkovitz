@@ -150,9 +150,9 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   let playerHeight = playerWidth / currentAspectRatio;
   const maxAllowedHeight = viewportHeight * 0.88;
 
-  // Se o conteúdo permitir scroll OU ultrapassar a altura da tela, 
-  // travamos a altura no limite e MANTEMOS a largura em 540px.
-  if (currentMedia?.allowScroll || playerHeight > maxAllowedHeight) {
+  // Se o conteúdo ultrapassar a altura da tela, 
+  // travamos a altura no limite e MANTEMOS a largura em 580px.
+  if (playerHeight > maxAllowedHeight) {
     playerHeight = maxAllowedHeight;
   }
 
@@ -229,14 +229,14 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                 <div 
                   className={`w-full h-full ${theme.playerBg || 'bg-black'} rounded-[12px] overflow-hidden relative border ${theme.playerBorder || 'border-white/10'} ${theme.playerShadow || ''}`}
                   style={{
-                    width: isDesktop ? '580px' : '100%',
+                    width: '100%',
                     height: '100%',
                     '--glow-color': theme.accentColor ? `${theme.accentColor}dd` : undefined,
                     '--border-color': theme.accentColor ? `${theme.accentColor}88` : undefined,
                   } as React.CSSProperties}
                 >
                   {/* Conteúdo interno */}
-                  <div className="w-full h-full overflow-hidden flex items-center justify-center">
+                  <div className="w-full h-full">
                     {totalFeed > 0 ? (
                       <MediaRenderer media={currentMedia} isActive={showPlayer} isMuted={isMuted} theme={theme} projectId={project.id} />
                     ) : (
@@ -361,10 +361,10 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
       const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(media.url || '')}&embedded=true`;
       
       return (
-        <div className="w-full h-full bg-zinc-900 overflow-hidden relative flex flex-col group/pdf">
+        <div className="w-full h-full bg-zinc-900 overflow-hidden relative flex flex-col">
           <iframe 
             src={viewerUrl}
-            className="w-full h-full border-none pointer-events-auto block"
+            className="w-full h-full border-none pointer-events-auto block scale-[1.02]"
             style={{ width: '100%', height: '100%', minWidth: '100%' }}
             title={media.title || 'PDF Document'}
           />
@@ -429,14 +429,15 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
     }
     if (!media.url) return <div className="w-full h-full bg-zinc-900 animate-pulse" />;
     return (
-      <div className="w-full h-full relative group/media overflow-hidden">
+      <div className="w-full h-full relative overflow-hidden">
         <img 
           src={media.url} 
           className={`w-full ${media.allowScroll ? 'h-auto block min-h-0' : `h-full ${media.objectFit === 'contain' ? 'object-contain' : 'object-cover'}`}`}
           style={{ 
-            transform: `scale(${media.zoom || 1}) translateX(${media.xOffset || 0}px) translateY(${media.yOffset || 0}px)`,
+            transform: `scale(${media.zoom || 1.05}) translateX(${media.xOffset || 0}px) translateY(${media.yOffset || 0}px)`,
             transformOrigin: media.allowScroll ? 'top center' : 'center center',
-            display: 'block'
+            display: 'block',
+            width: '100%'
           }}
           alt={media.title || ''}
           referrerPolicy="no-referrer"
