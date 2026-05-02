@@ -179,7 +179,7 @@ export const LION_JUMP_PROJECT: Project = {
   title: 'Projeto Lion Jump',
   description: 'Lion Jump: Campanha de Lançamento e Divulgação Artística.',
   layoutType: 'vertical',
-  galleryThumbnail: '',
+  galleryThumbnail: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F01-SobreProjeto%2FCapaLionJump.png?alt=media&token=ef2677d3-ab36-4eb2-a2e9-7991754fb7f4',
   coverImage: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F01-SobreProjeto%2FCapaLionJump.png?alt=media&token=ef2677d3-ab36-4eb2-a2e9-7991754fb7f4',
   audioUrl: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Trilha%2FMetavix.mp3?alt=media&token=866a461d-6169-450f-90e9-74cb96e95b00',
   order: 4,
@@ -196,17 +196,15 @@ export const LION_JUMP_PROJECT: Project = {
     {
       id: 'lj-feed-01',
       title: 'Sobre o Projeto',
-      aspectRatio: 1.77777777778,
+      aspectRatio: 1.77777777778, // 16:9
       media: { 
         type: 'image', 
         order: 1, 
         url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F01-SobreProjeto%2FCapaLionJump.png?alt=media&token=ef2677d3-ab36-4eb2-a2e9-7991754fb7f4',
-        zoom: 1.1,
-        yOffset: -12
       },
       stories: [
         {
-          id: 'card-02',
+          id: 'lj-s01-02',
           type: 'image',
           order: 2,
           url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F01-SobreProjeto%2FTextoProjeto.png?alt=media&token=c064b8fb-c83f-48fb-bb27-939475c9b3a6',
@@ -221,20 +219,18 @@ export const LION_JUMP_PROJECT: Project = {
       media: { 
         type: 'image', 
         order: 3, 
-        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F02-SobreBanda%2FCapaBanda.png?alt=media&token=e1bddd4b-093a-46fd-a1a4-4fb82633288c',
-        zoom: 1.1,
-        yOffset: -12
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F02-SobreBanda%2FCapaBanda.png?alt=media&token=77de858c-f5e1-4b8d-bb32-2eeb48cdc889',
       },
       stories: [
         {
-          id: 'card-04',
+          id: 'lj-s02-04',
           type: 'image',
           order: 4,
           url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F02-SobreBanda%2FGShow2%2FGShow2.png?alt=media&token=01436ae3-a62b-4c08-b16d-ec93cae2f3a8',
           allowScroll: true
         },
         {
-          id: 'card-05',
+          id: 'lj-s02-05',
           type: 'video',
           order: 5,
           url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F02-SobreBanda%2FNaGaragem.mp4?alt=media&token=46be8878-67a9-4304-b33a-4b56d11a973a',
@@ -250,20 +246,17 @@ export const LION_JUMP_PROJECT: Project = {
         type: 'image', 
         order: 6, 
         url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F03-SuperStar%2FCapaSuperStar.png?alt=media&token=4eb58609-525a-4e49-aaa6-ad046da90beb',
-        zoom: 1.05,
-        yOffset: 0,
-        xOffset: -5
       },
       stories: [
         {
-          id: 'card-07',
+          id: 'lj-s03-07',
           type: 'image',
           order: 7,
           url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F03-SuperStar%2FGShow1%2FGShow1.png?alt=media&token=39148d2c-02c9-4156-beeb-5ef15cfc1841',
           allowScroll: true
         },
         {
-          id: 'card-08',
+          id: 'lj-s03-08',
           type: 'video',
           order: 8,
           url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F03-SuperStar%2FLionJump_superstarApresenta%C3%A7%C3%A3o.mp4?alt=media&token=c49c92a3-58b4-4c81-a083-344ce4bb1e25',
@@ -279,32 +272,27 @@ export const LION_JUMP_PROJECT: Project = {
         type: 'image',
         order: 9,
         url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F04-Africa%2FBanner_Lan%C3%A7amento_AFRICA_04.png?alt=media&token=0da585e6-641b-493e-ac1d-0a3d4d3ac928',
-        zoom: 1.12,
-        xOffset: -40,
-        objectFit: 'contain'
       },
       stories: [
         {
-          id: 'card-10',
+          id: 'lj-s04-10',
           type: 'video',
           order: 10,
           url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F04-Africa%2FClip_%C3%81frica.mp4?alt=media&token=47f294c8-6420-4b82-9ad9-9a6efd332cd1',
           objectFit: 'contain'
         },
         {
-          id: 'card-11',
+          id: 'lj-s04-11',
           type: 'video',
           order: 11,
           url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F04-Africa%2FEmMovimentoAfrica.mp4?alt=media&token=75dcf0b9-53aa-4601-9267-e87c8c74e747',
           objectFit: 'contain'
         },
         {
-          id: 'card-12',
-          type: 'image',
+          id: 'lj-s04-12',
+          type: 'pdf',
           order: 12,
-          url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F04-Africa%2FEmMovimentoAfrica.png?alt=media&token=d63690d8-651a-4ebe-90bf-6ba337fbb5d2',
-          allowScroll: true,
-          aspectRatio: 1.77777777778
+          url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F04-Africa%2FEmMovimentoAfrica.pdf?alt=media&token=d63690d8-651a-4ebe-90bf-6ba337fbb5d2',
         }
       ]
     },
@@ -316,18 +304,17 @@ export const LION_JUMP_PROJECT: Project = {
         type: 'image', 
         order: 13, 
         url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F05-Italia%2FCapaItalia.png?alt=media&token=21f53070-5798-4113-b692-1fa42cdb7abd',
-        objectFit: 'contain'
       },
       stories: [
         {
-          id: 'card-14',
+          id: 'lj-s05-14',
           type: 'image',
           order: 14,
           url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F05-Italia%2FGShow%2FGShow.png?alt=media&token=35baa827-2dde-4813-8d33-bd1e415e6d2e',
           allowScroll: true
         },
         {
-          id: 'card-15',
+          id: 'lj-s05-15',
           type: 'video',
           order: 15,
           url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F05-Italia%2FOlhosDeTodasAsCores.mp4?alt=media&token=c7f637dc-85e1-434c-968a-e9dfcf12ac0a',

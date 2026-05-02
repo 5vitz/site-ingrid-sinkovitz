@@ -288,22 +288,24 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                   <X size={18} strokeWidth={3} />
                 </button>
 
-                {/* Controles do Feed (Navegação Horizontal Unificada) */}
-                <div className="hidden md:flex absolute inset-x-0 top-1/2 -translate-y-1/2 -left-24 -right-24 flex-row items-center justify-between pointer-events-none z-[10010]">
+                {/* Controles do Feed (Navegação Vertical) */}
+                <div className="hidden md:flex absolute inset-y-0 left-1/2 -translate-x-1/2 -top-20 -bottom-20 flex-col items-center justify-between pointer-events-none z-[10010]">
                   <button 
                     disabled={feedIndex === 0}
                     onClick={(e) => { e.stopPropagation(); navigateFeed(-1); }}
-                    className={`w-[50px] h-[50px] rounded-full flex items-center justify-center bg-black/40 backdrop-blur-xl border border-white/10 text-white/50 hover:text-accent hover:border-accent/40 pointer-events-auto transition-all shadow-2xl ${feedIndex === 0 ? 'opacity-0 pointer-events-none scale-50' : 'opacity-100 hover:scale-110 active:scale-95'}`}
+                    className={`w-[44px] h-[44px] rounded-full flex items-center justify-center bg-black/40 backdrop-blur-xl border border-white/10 text-white/50 hover:text-accent hover:border-accent/40 pointer-events-auto transition-all shadow-2xl ${feedIndex === 0 ? 'opacity-0 pointer-events-none scale-50' : 'opacity-100 hover:scale-110 active:scale-95'}`}
+                    title="Capítulo Anterior"
                   >
-                    <ChevronLeft size={28} strokeWidth={2.5} />
+                    <ChevronUp size={24} strokeWidth={2.5} />
                   </button>
                   
                   <button 
                     disabled={feedIndex === totalFeed - 1}
                     onClick={(e) => { e.stopPropagation(); navigateFeed(1); }}
-                    className={`w-[50px] h-[50px] rounded-full flex items-center justify-center bg-black/40 backdrop-blur-xl border border-white/10 text-white/50 hover:text-accent hover:border-accent/40 pointer-events-auto transition-all shadow-2xl ${feedIndex === totalFeed - 1 ? 'opacity-0 pointer-events-none scale-50' : 'opacity-100 hover:scale-110 active:scale-95'}`}
+                    className={`w-[44px] h-[44px] rounded-full flex items-center justify-center bg-black/40 backdrop-blur-xl border border-white/10 text-white/50 hover:text-accent hover:border-accent/40 pointer-events-auto transition-all shadow-2xl ${feedIndex === totalFeed - 1 ? 'opacity-0 pointer-events-none scale-50' : 'opacity-100 hover:scale-110 active:scale-95'}`}
+                    title="Próximo Capítulo"
                   >
-                    <ChevronRight size={28} strokeWidth={2.5} />
+                    <ChevronDown size={24} strokeWidth={2.5} />
                   </button>
                 </div>
               </motion.div>
