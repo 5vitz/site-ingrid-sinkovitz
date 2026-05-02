@@ -43,7 +43,7 @@ export const ProjectSection: React.FC<{ onSelectProject: (p: Project) => void }>
         <div className="flex flex-col gap-10 w-full max-w-[960px] mb-12">
           {/* Linha 1: Projetos 1 a 3 */}
           <div className="bg-black border border-white/10 rounded-2xl p-5 md:p-8">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-12">
               {displayProjects.slice(0, 3).map((project: any) => (
                 <div
                   key={project.id}
@@ -55,7 +55,7 @@ export const ProjectSection: React.FC<{ onSelectProject: (p: Project) => void }>
                   >
                     <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-950 z-0" />
 
-                    <span className="relative z-10 font-black text-white text-sm md:text-base tracking-tighter uppercase group-hover:text-accent transition-colors duration-300 text-center leading-tight">
+                    <span className="relative z-10 text-accent text-sm md:text-base tracking-tighter transition-colors duration-300 text-center leading-tight">
                       {project.title}
                     </span>
                     
@@ -69,7 +69,7 @@ export const ProjectSection: React.FC<{ onSelectProject: (p: Project) => void }>
 
           {/* Linha 2: Projetos 4 a 6 */}
           <div className="bg-black border border-white/10 rounded-2xl p-5 md:p-8">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-12">
               {displayProjects.slice(3, 6).map((project: any) => (
                 <div
                   key={project.id}
@@ -81,7 +81,7 @@ export const ProjectSection: React.FC<{ onSelectProject: (p: Project) => void }>
                   >
                     <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-950 z-0" />
 
-                    <span className="relative z-10 font-black text-white text-sm md:text-base tracking-tighter uppercase group-hover:text-accent transition-colors duration-300 text-center leading-tight">
+                    <span className="relative z-10 text-accent text-sm md:text-base tracking-tighter transition-colors duration-300 text-center leading-tight">
                       {project.title}
                     </span>
                     
