@@ -140,26 +140,20 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const viewportWidth = windowSize.width;
   const maxPlayerHeight = Math.max(300, Math.min(viewportHeight - 120, 850));
   
-  // Ajuste de largura fixa solicitada de 540px (Desktop)
+  // AJUSTE CRUCIAL: Largura FIXA de 540px para Desktop
   const isDesktop = viewportWidth > 1024;
-  const targetWidth = isDesktop ? 540 : Math.min(540, viewportWidth * 0.95);
+  const playerWidth = isDesktop ? 540 : Math.min(540, viewportWidth * 0.95);
   
-  // Auddar (projeto6) e outros: Se for desktop, largura é estritamente 540px.
-  // O conteúdo deve se ajustar à largura do player.
-  const currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || (1); // Default para 1:1 se não houver
+  const currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || (1);
   
-  let playerWidth = targetWidth;
-  let playerHeight = targetWidth / currentAspectRatio;
-
-  // Ajuste para não estourar a altura da tela (segurança)
+  // Altura baseada na proporção inicial
+  let playerHeight = playerWidth / currentAspectRatio;
   const maxAllowedHeight = viewportHeight * 0.88;
 
-  if (currentMedia?.allowScroll) {
-    // Se permitir scroll, a altura pode ser o máximo permitido mantendo a largura fixa de 540px
+  // Se o conteúdo permitir scroll OU ultrapassar a altura da tela, 
+  // travamos a altura no limite e MANTEMOS a largura em 540px.
+  if (currentMedia?.allowScroll || playerHeight > maxAllowedHeight) {
     playerHeight = maxAllowedHeight;
-  } else if (playerHeight > maxAllowedHeight) {
-    playerHeight = maxAllowedHeight;
-    playerWidth = playerHeight * currentAspectRatio;
   }
 
   const handleStartTour = (e: React.MouseEvent) => {
@@ -216,21 +210,21 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
               </button>
             </div>
           ) : (
-            <div className="relative flex items-center justify-center" style={{ perspective: '2000px' }}>
-              {/* Player Principal Container */}
-                <motion.div 
-                  key={`${feedIndex}-${storyIndex}`}
-                  initial={{ opacity: 0, scale: 0.98, y: 10 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-                  className="relative z-10"
-                  style={{ 
-                    width: playerWidth,
-                    height: playerHeight,
-                    maxWidth: isDesktop ? '540px' : '95vw',
-                    maxHeight: '90vh'
-                  }}
-                >
+            <div className="relative flex items-center justify-center">
+            {/* Player Principal Container */}
+              <motion.div 
+                key={`${feedIndex}-${storyIndex}`}
+                initial={{ opacity: 0, scale: 0.98, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+                className="relative z-10"
+                style={{ 
+                  width: playerWidth,
+                  height: playerHeight,
+                  minWidth: playerWidth,
+                  maxWidth: playerWidth,
+                }}
+              >
                 {/* O Player propriamente dito */}
                 <div 
                   className={`w-full h-full ${theme.playerBg || 'bg-black'} rounded-[12px] overflow-hidden relative shadow-[0_40px_100px_rgba(0,0,0,0.8)] border ${theme.playerBorder || 'border-white/10'} ${theme.playerShadow || ''}`}
@@ -387,13 +381,24 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
     const isPDF = media.url?.toLowerCase().includes('.pdf');
     if (isPDF) {
       return (
-        <div className="w-full h-full bg-zinc-950 overflow-hidden">
-          <iframe 
+        <div className="w-full h-full bg-zinc-900 overflow-hidden flex flex-col">
+          <embed 
             src={`${media.url}#toolbar=0&navpanes=0&scrollbar=1`}
+            type="application/pdf"
             className="w-full h-full border-none pointer-events-auto"
-            title={media.title || 'PDF Document'}
             style={{ width: '100%', height: '100%' }}
           />
+          {/* Fallback link if embed fails or is blocked */}
+          <div className="absolute bottom-4 right-4 z-[1000]">
+            <a 
+              href={media.url} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="bg-accent/10 hover:bg-accent/20 text-accent text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full border border-accent/20 backdrop-blur-sm transition-all"
+            >
+              Abrir Externo
+            </a>
+          </div>
         </div>
       );
     }
@@ -564,7 +569,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
     }
 
     return (
-      <div className="w-full h-full relative flex flex-col p-8 md:p-12 overflow-hidden bg-white group">
+      <div className="w-full h-full relative flex flex-col overflow-hidden bg-white group">
         {media.url && (
           <img 
             src={media.url} 
@@ -577,32 +582,34 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
         <div className="absolute inset-0 bg-gradient-to-br from-zinc-50/50 via-white to-zinc-100/30" />
 
         <div className="relative z-10 flex flex-col h-full w-full">
-            <div className={`flex-grow overflow-y-auto pr-2 custom-scrollbar flex flex-col ${media.content && media.content.length > 300 ? 'justify-start pt-4' : 'justify-center'} items-center text-center`}>
-              {media.title && (
-                <>
-                  <h3 className="text-xl md:text-2xl font-black text-zinc-900 mb-4 leading-tight uppercase tracking-tighter italic shrink-0">
-                    {media.title}
-                  </h3>
-                  <div className="w-12 h-1 bg-accent mb-6 shrink-0" />
-                </>
-              )}
-              
-              {media.subtitle && (
-                <p className="text-zinc-700 text-xs md:text-sm font-bold tracking-wider uppercase leading-relaxed max-w-[90%] mb-6 shrink-0">
-                  {media.subtitle}
-                </p>
-              )}
-              
-              {media.content && (
-                <div className="text-zinc-600 text-[13px] md:text-[15px] leading-relaxed text-center space-y-4 font-normal font-sans tracking-tight pb-8">
-                  {media.content.split('\n\n').map((paragraph, idx) => (
-                    <p key={idx}>{paragraph}</p>
-                  ))}
-                </div>
-              )}
+            <div className={`flex-grow overflow-y-auto custom-scrollbar flex flex-col ${media.content && media.content.length > 300 ? 'justify-start' : 'justify-center'} items-center`}>
+              <div className="w-full px-8 md:px-12 py-12 flex flex-col items-center text-center">
+                {media.title && (
+                  <>
+                    <h3 className="text-xl md:text-2xl font-black text-zinc-900 mb-4 leading-tight uppercase tracking-tighter italic shrink-0">
+                      {media.title}
+                    </h3>
+                    <div className="w-12 h-1 bg-accent mb-6 shrink-0" />
+                  </>
+                )}
+                
+                {media.subtitle && (
+                  <p className="text-zinc-700 text-xs md:text-sm font-bold tracking-wider uppercase leading-relaxed max-w-[90%] mb-6 shrink-0">
+                    {media.subtitle}
+                  </p>
+                )}
+                
+                {media.content && (
+                  <div className="text-zinc-600 text-[13px] md:text-[15px] leading-relaxed text-center space-y-4 font-normal font-sans tracking-tight">
+                    {media.content.split('\n\n').map((paragraph, idx) => (
+                      <p key={idx}>{paragraph}</p>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
             {(media.credits || media.label) && (
-             <div className="w-full pt-6 mt-4 border-t border-zinc-200/60 shrink-0">
+             <div className="w-full px-8 md:px-12 pb-8 pt-4 mt-auto border-t border-zinc-200/60 shrink-0">
                {media.credits && (
                  <pre className="text-zinc-400 text-[9px] uppercase tracking-[0.15em] font-sans whitespace-pre-wrap leading-relaxed mb-2">
                    {media.credits}
