@@ -368,35 +368,20 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
   if (media.type === 'image' || media.type === 'pdf') {
     const isPDF = media.type === 'pdf' || media.url?.toLowerCase().includes('.pdf');
     if (isPDF) {
-      // Usamos o Google Docs Viewer para evitar bloqueios de segurança do Chrome/CORS
-      const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(media.url || '')}&embedded=true`;
+      // Usamos o visualizador do Mozilla (PDF.js) que é mais limpo e não tem o indicador "1/1" do Google
+      const viewerUrl = `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(media.url || '')}`;
       
       return (
-        <div className="w-full h-full bg-[#0a0a0a] overflow-hidden relative">
-          {/* Scrollable Container (Scroll visível e controlado por aqui) */}
-          <div 
-            className="w-full h-full overflow-y-scroll overflow-x-hidden custom-scrollbar relative outline-none" 
-            tabIndex={0}
-          >
-            {/* Altura que apenas permite um pouco de folga para esconder o rodapé do Google */}
-            <div className="relative w-full" style={{ height: '110%' }}>
-              <iframe 
-                src={viewerUrl}
-                className="absolute border-none pointer-events-auto block"
-                style={{ 
-                  width: '106%',               // Cobre as bordas laterais sem forçar scroll horizontal largo
-                  height: '110%',              // Garante que o indicador "1/1" fique abaixo da linha do container pai
-                  top: '-28px',                // Esconde a barra superior do Google sem cortar a cabeça.
-                  left: '-3%',                 // Centraliza o conteúdo cortado
-                  filter: 'contrast(1.01) brightness(1.02)',
-                  pointerEvents: 'auto'
-                }}
-                title={media.title || 'PDF Document'}
-              />
-            </div>
-          </div>
-          {/* Fina máscara preta no rodapé para garantir que o "1/1" nunca suba indesejadamente */}
-          <div className="absolute bottom-0 left-0 w-full h-[8px] bg-[#0a0a0a] z-50 pointer-events-none" />
+        <div className="w-full h-full bg-zinc-900 overflow-hidden relative">
+          <iframe 
+            src={viewerUrl}
+            className="w-full h-full border-none pointer-events-auto block"
+            title={media.title || 'PDF Document'}
+            style={{ 
+              filter: 'contrast(1.01) brightness(1.02)',
+              pointerEvents: 'auto'
+            }}
+          />
         </div>
       );
     }
