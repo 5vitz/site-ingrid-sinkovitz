@@ -42,7 +42,7 @@ export const ProjectSection: React.FC<{ onSelectProject: (p: Project) => void }>
 
         <div className="flex flex-col gap-10 w-full max-w-[960px] mb-12">
           {/* Linha 1: Projetos 1 a 3 */}
-          <div className="bg-zinc-900/30 border border-white-[0.03] rounded-2xl p-5 md:p-8 backdrop-blur-sm">
+          <div className="bg-black border border-white/10 rounded-2xl p-5 md:p-8">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
               {displayProjects.slice(0, 3).map((project: any) => (
                 <div
@@ -68,7 +68,7 @@ export const ProjectSection: React.FC<{ onSelectProject: (p: Project) => void }>
           </div>
 
           {/* Linha 2: Projetos 4 a 6 */}
-          <div className="bg-zinc-900/30 border border-white-[0.03] rounded-2xl p-5 md:p-8 backdrop-blur-sm">
+          <div className="bg-black border border-white/10 rounded-2xl p-5 md:p-8">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
               {displayProjects.slice(3, 6).map((project: any) => (
                 <div
