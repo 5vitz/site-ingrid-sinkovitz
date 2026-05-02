@@ -95,8 +95,8 @@ Esta seção serve de modelo para todas as outras áreas editáveis.
 
 ### Formatos Padronizados (Componentes Fixos):
 A formatação é rígida para garantir a estética do portfólio. O sistema prioriza a largura perfeita de leitura e exposição:
-1.  **Largura Fixa (Desktop):** Independente do formato da mídia, a largura do player é chumbada em **560px**. Isso garante consistência visual absoluta na navegação.
-2.  **Altura Dinâmica/Scroll:** Se a mídia ultrapassar a proporção ou altura útil da tela, o player trava na altura máxima permitida (88vh) e habilita o **Scroll Vertical Técnico**, mantendo os 560px de largura.
+1.  **Largura Fixa (Desktop):** Independente do formato da mídia, a largura do player é chumbada em **580px**. Isso garante consistência visual absoluta na navegação.
+2.  **Altura Dinâmica/Scroll:** Se a mídia ultrapassar a proporção ou altura útil da tela, o player trava na altura máxima permitida (88vh) e habilita o **Scroll Vertical Técnico**, mantendo os 580px de largura.
 
 ### Fluxo de Criação (PainelADM):
 1.  **Seleção de Formato:** Primeira etapa obrigatória (Vertical ou Horizontal).
@@ -123,7 +123,7 @@ A formatação é rígida para garantir a estética do portfólio. O sistema pri
 2.  **Navegação 2D (Feed/Stories):**
     *   **Vertical (Eixo Y):** Navega entre "Feeds" ou categorias principais do projeto.
     *   **Horizontal (Eixo X):** Navega entre "Stories" ou sub-mídias de um feed específico.
-3.  **Lógica de Largura Chumbada (560px):** O player não varia mais de largura baseada no aspectRatio em Desktop. Ele mantém 560px fixos, ajustando apenas a altura até o limite da viewport (88vh).
+3.  **Lógica de Largura Chumbada (580px):** O player não varia mais de largura baseada no aspectRatio em Desktop. Ele mantém 580px fixos, ajustando apenas a altura até o limite da viewport (88vh).
 4.  **Corte Seco Minimalista:** Transição reduzida a um `opacity` linear de 0.15s. Remoção total de efeitos de escala, bounce ou deslocamento (Y), focando em uma experiência "seca" e direta.
 5.  **Tratamento de Mídias Especiais:**
     *   **Imagens/Vídeos:** `object-cover` ou `object-contain` configurável.

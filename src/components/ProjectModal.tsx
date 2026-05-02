@@ -140,9 +140,9 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const viewportWidth = windowSize.width;
   const maxPlayerHeight = Math.max(300, Math.min(viewportHeight - 120, 850));
   
-  // AJUSTE CRUCIAL: Largura FIXA de 540px para Desktop
+  // AJUSTE CRUCIAL: Largura FIXA de 580px para Desktop
   const isDesktop = viewportWidth > 1024;
-  const playerWidth = isDesktop ? 540 : Math.min(540, viewportWidth * 0.95);
+  const playerWidth = isDesktop ? 580 : Math.min(580, viewportWidth * 0.95);
   
   const currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || (1);
   
@@ -219,16 +219,18 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                 transition={{ duration: 0.15, ease: 'linear' }}
                 className="relative z-10"
                 style={{ 
-                  width: isDesktop ? '560px' : `${playerWidth}px`,
+                  width: isDesktop ? '580px' : `${playerWidth}px`,
                   height: `${playerHeight}px`,
-                  minWidth: isDesktop ? '560px' : `${playerWidth}px`,
-                  maxWidth: isDesktop ? '560px' : `${playerWidth}px`,
+                  minWidth: isDesktop ? '580px' : `${playerWidth}px`,
+                  maxWidth: isDesktop ? '580px' : `${playerWidth}px`,
                 }}
               >
                 {/* O Player propriamente dito */}
                 <div 
                   className={`w-full h-full ${theme.playerBg || 'bg-black'} rounded-[12px] overflow-hidden relative border ${theme.playerBorder || 'border-white/10'} ${theme.playerShadow || ''}`}
                   style={{
+                    width: isDesktop ? '580px' : '100%',
+                    height: '100%',
                     '--glow-color': theme.accentColor ? `${theme.accentColor}dd` : undefined,
                     '--border-color': theme.accentColor ? `${theme.accentColor}88` : undefined,
                   } as React.CSSProperties}
@@ -333,20 +335,22 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
   if (media.type === 'video') {
     if (!media.url) return <div className="w-full h-full bg-zinc-900 animate-pulse" />;
     return (
-      <video
-        key={media.url}
-        src={media.url}
-        className={`w-full h-full ${media.objectFit === 'contain' ? 'object-contain' : 'object-cover'}`}
-        style={{ 
-          transform: `scale(${media.zoom || 1}) translateX(${media.xOffset || 0}px) translateY(${media.yOffset || 0}px)`,
-          transformOrigin: 'center center'
-        }}
-        autoPlay
-        loop
-        muted={isMuted}
-        playsInline
-        preload="auto"
-      />
+      <div className="w-full h-full relative bg-black">
+        <video
+          key={media.url}
+          src={media.url}
+          className={`w-full h-full ${media.objectFit === 'contain' ? 'object-contain' : 'object-cover'}`}
+          style={{ 
+            transform: `scale(${media.zoom || 1}) translateX(${media.xOffset || 0}px) translateY(${media.yOffset || 0}px)`,
+            transformOrigin: 'center center'
+          }}
+          autoPlay
+          loop
+          muted={isMuted}
+          playsInline
+          preload="auto"
+        />
+      </div>
     );
   }
 
@@ -425,10 +429,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
     }
     if (!media.url) return <div className="w-full h-full bg-zinc-900 animate-pulse" />;
     return (
-      <div 
-        key={media.url}
-        className={`w-full h-full ${theme.playerBg || 'bg-black'} flex items-center justify-center ${media.allowScroll ? 'overflow-y-auto custom-scrollbar items-start' : 'overflow-hidden'}`}
-      >
+      <div className="w-full h-full relative group/media overflow-hidden">
         <img 
           src={media.url} 
           className={`w-full ${media.allowScroll ? 'h-auto block min-h-0' : `h-full ${media.objectFit === 'contain' ? 'object-contain' : 'object-cover'}`}`}
