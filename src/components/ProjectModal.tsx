@@ -180,14 +180,14 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="fixed inset-0 z-[9999] bg-[#050510]/98 backdrop-blur-3xl flex items-center justify-center p-4 md:p-10 select-none overflow-hidden"
+      className="fixed inset-0 z-[9999] bg-[#050510]/98 backdrop-blur-3xl flex items-center justify-center select-none overflow-hidden"
       style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
     >
       {/* Fundo para fechar ao clicar fora */}
       <div className="absolute inset-0 z-0 bg-transparent" onClick={onClose} />
 
       <div 
-        className="relative z-[10000] w-full max-w-7xl h-full flex items-center justify-center" 
+        className="relative z-[10000] w-full max-w-7xl h-full flex items-center justify-center p-4 md:p-0" 
         onClick={e => e.stopPropagation()}
       >
         <div className="flex items-center justify-center w-full h-full relative">
@@ -219,10 +219,10 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                 transition={{ duration: 0.15, ease: 'linear' }}
                 className="relative z-10"
                 style={{ 
-                  width: playerWidth,
-                  height: playerHeight,
-                  minWidth: playerWidth,
-                  maxWidth: playerWidth,
+                  width: isDesktop ? '540px' : `${playerWidth}px`,
+                  height: `${playerHeight}px`,
+                  minWidth: isDesktop ? '540px' : `${playerWidth}px`,
+                  maxWidth: isDesktop ? '540px' : `${playerWidth}px`,
                 }}
               >
                 {/* O Player propriamente dito */}
@@ -240,27 +240,11 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                     ) : (
                       <div className="w-full h-full flex flex-col items-center justify-center p-8 text-center bg-zinc-950 text-zinc-500">
                         <div className="w-12 h-12 border-2 border-accent/20 border-t-accent rounded-full animate-spin mb-6" />
-                        <p className="text-[11px] font-black uppercase tracking-[0.4em] text-accent/60">Configurando Auddar...</p>
+                        <p className="text-[11px] font-black uppercase tracking-[0.4em] text-accent/60">Configurando Projeto...</p>
                         <p className="text-[9px] mt-2 opacity-30 uppercase tracking-widest">Sincronizando Banco de Dados</p>
                       </div>
                     )}
                   </div>
-
-                  {/* Progress Bars (Top) */}
-                  {totalStories > 1 && (
-                    <div className="absolute top-3 inset-x-6 flex gap-2 z-[10020]">
-                      {Array.from({ length: totalStories }).map((_, i) => (
-                        <div key={i} className="h-[2px] flex-1 bg-white/10 rounded-full overflow-hidden">
-                          <motion.div 
-                            className="h-full bg-accent"
-                            initial={{ width: 0 }}
-                            animate={{ width: i < storyIndex ? '100%' : i === storyIndex ? '100%' : '0%' }}
-                            transition={{ duration: 0.4 }}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  )}
                 </div>
 
                 {/* Setas de Navegação interna (Stories) - FORA do overflow-hidden */}
