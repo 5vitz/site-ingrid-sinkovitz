@@ -138,6 +138,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
 
   const viewportHeight = windowSize.height;
   const viewportWidth = windowSize.width;
+  const isDesktop = viewportWidth > 1024;
   
   // Ajuste de dimensões: Priorizamos o aspectRatio do projeto
   // Se o projeto for horizontal (Lion Jump), permitimos que ele seja maior
@@ -145,17 +146,19 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const isHorizontal = currentAspectRatio > 1.2;
   
   const baseWidth = isHorizontal ? 960 : 540;
-  const playerWidth = Math.min(baseWidth, viewportWidth * 0.9);
+  const playerWidth = isDesktop ? baseWidth : Math.min(baseWidth, viewportWidth * 0.95);
   
   // Altura baseada na proporção
   let playerHeight = playerWidth / currentAspectRatio;
   
-  const maxAllowedHeight = viewportHeight * 0.85;
+  const maxAllowedHeight = viewportHeight * 0.88;
 
   // Se a altura calculada for muito grande para a tela, reduzimos proporcionalmente
   if (playerHeight > maxAllowedHeight) {
+    const ratio = maxAllowedHeight / playerHeight;
     playerHeight = maxAllowedHeight;
-    // Não ajustamos a largura para não quebrar o layout, mas mantemos centralizado
+    // No mobile, se a altura for o limite, ajustamos a largura para manter o aspect ratio se necessário
+    // Mas no desktop, preferimos manter a largura e permitir o crop se for PDF/Imagem scrollable
   }
 
   const handleStartTour = (e: React.MouseEvent) => {
@@ -221,10 +224,10 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                 transition={{ duration: 0.15, ease: 'linear' }}
                 className="relative z-10"
                 style={{ 
-                  width: isDesktop ? '540px' : `${playerWidth}px`,
+                  width: `${playerWidth}px`,
                   height: `${playerHeight}px`,
-                  minWidth: isDesktop ? '540px' : `${playerWidth}px`,
-                  maxWidth: isDesktop ? '540px' : `${playerWidth}px`,
+                  minWidth: `${playerWidth}px`,
+                  maxWidth: `${playerWidth}px`,
                 }}
               >
                 {/* O Player propriamente dito */}
@@ -258,15 +261,17 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                     <>
                       <button 
                         onClick={(e) => { e.stopPropagation(); navigateStory(-1); }}
-                        className={`absolute -left-16 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-accent text-white shadow-[0_0_20px_rgba(0,0,0,0.4)] z-[10020] transition-all hover:scale-110 active:scale-95 ${storyIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                        className={`absolute -left-20 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-accent text-white shadow-[0_0_25px_rgba(0,0,0,0.5)] z-[10020] transition-all hover:scale-110 active:scale-95 ${storyIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                        title="Anterior"
                       >
-                        <ChevronLeft size={24} strokeWidth={3} />
+                        <ChevronLeft size={28} strokeWidth={3} />
                       </button>
                       <button 
                         onClick={(e) => { e.stopPropagation(); navigateStory(1); }}
-                        className={`absolute -right-16 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-accent text-white shadow-[0_0_20px_rgba(0,0,0,0.4)] z-[10020] transition-all hover:scale-110 active:scale-95 ${storyIndex === totalStories - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                        className={`absolute -right-20 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-accent text-white shadow-[0_0_25px_rgba(0,0,0,0.5)] z-[10020] transition-all hover:scale-110 active:scale-95 ${storyIndex === totalStories - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                        title="Próximo"
                       >
-                        <ChevronRight size={24} strokeWidth={3} />
+                        <ChevronRight size={28} strokeWidth={3} />
                       </button>
                     </>
                   )}
@@ -285,19 +290,19 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                   <button 
                     disabled={feedIndex === 0}
                     onClick={(e) => { e.stopPropagation(); navigateFeed(-1); }}
-                    className={`w-12 h-12 rounded-full flex items-center justify-center bg-accent text-white shadow-[0_0_20px_rgba(0,0,0,0.4)] pointer-events-auto transition-all ${feedIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 active:scale-95'}`}
+                    className={`w-12 h-12 rounded-full flex items-center justify-center bg-accent/90 text-white shadow-[0_0_25px_rgba(0,0,0,0.5)] pointer-events-auto transition-all ${feedIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 active:scale-95'}`}
                     title="Capítulo Anterior"
                   >
-                    <ChevronUp size={24} strokeWidth={3} />
+                    <ChevronUp size={28} strokeWidth={3} />
                   </button>
                   
                   <button 
                     disabled={feedIndex === totalFeed - 1}
                     onClick={(e) => { e.stopPropagation(); navigateFeed(1); }}
-                    className={`w-12 h-12 rounded-full flex items-center justify-center bg-accent text-white shadow-[0_0_20px_rgba(0,0,0,0.4)] pointer-events-auto transition-all ${feedIndex === totalFeed - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 active:scale-95'}`}
+                    className={`w-12 h-12 rounded-full flex items-center justify-center bg-accent/90 text-white shadow-[0_0_25px_rgba(0,0,0,0.5)] pointer-events-auto transition-all ${feedIndex === totalFeed - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 active:scale-95'}`}
                     title="Próximo Capítulo"
                   >
-                    <ChevronDown size={24} strokeWidth={3} />
+                    <ChevronDown size={28} strokeWidth={3} />
                   </button>
                 </div>
               </motion.div>
@@ -370,11 +375,11 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
             src={viewerUrl}
             className="absolute border-none pointer-events-auto block"
             style={{ 
-              width: '102%',                // Quase sem zoom lateral para não cortar texto
-              height: '115%',               // Mantém altura para esconder "1/1"
-              top: '0px', 
-              left: '-1%',                  // Centralização precisa
-              filter: 'contrast(1.01) brightness(1.02)',
+              width: '100%',
+              height: '100%',
+              transform: 'scale(1.08)',     // Zoom leve para tirar bordas mantendo o texto limpo
+              transformOrigin: '50% 0%',   // Origem no topo para preservar a "cabeça" do layout
+              filter: 'contrast(1.02) brightness(1.02)',
               pointerEvents: 'auto'
             }}
             title={media.title || 'PDF Document'}
