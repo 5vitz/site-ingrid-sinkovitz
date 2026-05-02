@@ -140,9 +140,9 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const viewportWidth = windowSize.width;
   const maxPlayerHeight = Math.max(300, Math.min(viewportHeight - 120, 850));
   
-  // AJUSTE CRUCIAL: Largura FIXA de 580px para Desktop
+  // AJUSTE CRUCIAL: Largura FIXA de 540px para Desktop
   const isDesktop = viewportWidth > 1024;
-  const playerWidth = isDesktop ? 580 : Math.min(580, viewportWidth * 0.95);
+  const playerWidth = isDesktop ? 540 : Math.min(540, viewportWidth * 0.95);
   
   const currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || (1);
   
@@ -150,9 +150,9 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   let playerHeight = playerWidth / currentAspectRatio;
   const maxAllowedHeight = viewportHeight * 0.88;
 
-  // Se o conteúdo ultrapassar a altura da tela, 
-  // travamos a altura no limite e MANTEMOS a largura em 580px.
-  if (playerHeight > maxAllowedHeight) {
+  // Se o conteúdo permitir scroll OU ultrapassar a altura da tela, 
+  // travamos a altura no limite e MANTEMOS a largura em 540px.
+  if (currentMedia?.allowScroll || playerHeight > maxAllowedHeight) {
     playerHeight = maxAllowedHeight;
   }
 
@@ -219,10 +219,10 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                 transition={{ duration: 0.15, ease: 'linear' }}
                 className="relative z-10"
                 style={{ 
-                  width: isDesktop ? '580px' : `${playerWidth}px`,
+                  width: isDesktop ? '540px' : `${playerWidth}px`,
                   height: `${playerHeight}px`,
-                  minWidth: isDesktop ? '580px' : `${playerWidth}px`,
-                  maxWidth: isDesktop ? '580px' : `${playerWidth}px`,
+                  minWidth: isDesktop ? '540px' : `${playerWidth}px`,
+                  maxWidth: isDesktop ? '540px' : `${playerWidth}px`,
                 }}
               >
                 {/* O Player propriamente dito */}
@@ -432,12 +432,12 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
       <div className="w-full h-full relative overflow-hidden">
         <img 
           src={media.url} 
-          className={`w-full ${media.allowScroll ? 'h-auto block min-h-0' : `h-full ${media.objectFit === 'contain' ? 'object-contain' : 'object-cover'}`}`}
+          className={`w-full ${media.allowScroll ? 'h-auto block min-h-0' : 'h-full object-cover'}`}
           style={{ 
-            transform: `scale(${media.zoom || 1.05}) translateX(${media.xOffset || 0}px) translateY(${media.yOffset || 0}px)`,
+            transform: `scale(${media.zoom || 1}) translateX(${media.xOffset || 0}px) translateY(${media.yOffset || 0}px)`,
             transformOrigin: media.allowScroll ? 'top center' : 'center center',
             display: 'block',
-            width: '100%'
+            width: '100%',
           }}
           alt={media.title || ''}
           referrerPolicy="no-referrer"
