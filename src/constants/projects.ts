@@ -13,7 +13,11 @@ export const METAVIX_PROJECT: Project = {
   theme: {
     accentColor: '#00D154',
     playerBorder: 'border-white/10',
-    navButtonBg: 'bg-[#00D154]/35'
+    navButtonBg: 'bg-[#00D154]/35',
+    playerWidth: 960,
+    playerHeight: 540,
+    borderWidth: '1px',
+    borderRadius: '8px'
   },
   feed: [
     { id: 'f01', aspectRatio: 0.56, media: { type: 'video', order: 1, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto1%2FVideos%2F01.mp4?alt=media&token=19f0b135-718b-4e94-82a1-c5d1e080005c' } },
@@ -83,12 +87,17 @@ export const GOOD_STORAGE_PROJECT: Project = {
   order: 2,
   mediaItems: [],
   theme: {
-    accentColor: '#fbbf24', // Amarelo Good Storage restaurado
+    accentColor: '#fbbf24', // Amarelo Good Storage
     playerBg: 'bg-black',
-    playerBorder: 'border-[#fbbf24]/30',
+    playerBorder: 'border-[#fbbf24]/50',
     playerShadow: 'shadow-[0_0_40px_rgba(251,191,36,0.15)]',
-    navButtonBg: 'bg-[#fbbf24]/40',
-    navButtonColor: 'text-white'
+    navButtonBg: 'bg-[#fbbf24]/60',
+    navButtonColor: 'text-white',
+    // Customização de layout
+    playerWidth: 304, // 540 * (9/16) para Reels
+    playerHeight: 540,
+    borderWidth: '2px',
+    borderRadius: '24px'
   },
   feed: [
     {
@@ -143,10 +152,14 @@ export const ELOBIKE_PROJECT: Project = {
   theme: {
     accentColor: '#22c55e', // Verde cicloturismo
     playerBg: 'bg-black',
-    playerBorder: 'border-[#22c55e]/30',
+    playerBorder: 'border-[#22c55e]/50',
     playerShadow: 'shadow-[0_0_40px_rgba(34,197,94,0.15)]',
-    navButtonBg: 'bg-[#22c55e]/40',
-    navButtonColor: 'text-white'
+    navButtonBg: 'bg-[#22c55e]/60',
+    navButtonColor: 'text-white',
+    playerWidth: 304,
+    playerHeight: 540,
+    borderWidth: '2px',
+    borderRadius: '16px'
   },
   feed: [
     {
@@ -239,7 +252,7 @@ export const LION_JUMP_PROJECT: Project = {
   id: 'projeto-lion-jump',
   title: 'Projeto Lion Jump',
   description: 'Lion Jump: Campanha de Lançamento e Divulgação Artística.',
-  layoutType: 'vertical',
+  layoutType: 'horizontal',
   galleryThumbnail: '',
   coverImage: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F01-SobreProjeto%2FCapaLionJump.png?alt=media&token=ef2677d3-ab36-4eb2-a2e9-7991754fb7f4',
   audioUrl: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Trilha%2FMetavix.mp3?alt=media&token=866a461d-6169-450f-90e9-74cb96e95b00',
@@ -251,7 +264,11 @@ export const LION_JUMP_PROJECT: Project = {
     playerBorder: 'border-[#FEF200]/40',
     playerShadow: 'shadow-[0_0_50px_rgba(254,242,0,0.25)] animate-neon-pulse',
     navButtonBg: 'bg-[#FEF200]/40',
-    navButtonColor: 'text-black'
+    navButtonColor: 'text-black',
+    playerWidth: 960, // 16:9
+    playerHeight: 540,
+    borderWidth: '1px',
+    borderRadius: '8px'
   },
   feed: [
     {
@@ -399,33 +416,40 @@ export const AUDDAR_PROJECT: Project = {
     accentColor: '#172554',
     playerBg: 'bg-zinc-950',
     playerBorder: 'border-[#172554]/60',
-    playerShadow: 'shadow-[0_0_50px_rgba(23,37,84,0.4)] animate-neon-pulse'
+    playerShadow: 'shadow-[0_0_50px_rgba(23,37,84,0.4)] animate-neon-pulse',
+    navButtonBg: 'bg-[#172554]/60',
+    navButtonColor: 'text-white',
+    playerWidth: 960,
+    playerHeight: 540,
+    borderWidth: '1px',
+    borderRadius: '8px'
   },
   feed: [
     {
       id: 'auddar-main-horizontal',
-      aspectRatio: 1.414,
+      aspectRatio: 1.777,
       media: { 
         type: 'image', 
         order: 1, 
-        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F01-Capa.jpg?alt=media&token=ce795f6e-1aea-4fa7-8f93-d6797b6a2450' 
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F01-Capa.jpg?alt=media&token=ce795f6e-1aea-4fa7-8f93-d6797b6a2450',
+        objectFit: 'contain'
       },
       stories: [
-        { type: 'image', order: 1, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F01-Capa.jpg?alt=media&token=ce795f6e-1aea-4fa7-8f93-d6797b6a2450' },
-        { type: 'pdf', order: 2, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2FAuddar-PDF.pdf?alt=media&token=98c3e8a1-8d2b-4f9e-a82c-4e3b1c8d7e6f', allowScroll: true },
-        { type: 'image', order: 3, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F03-Estrategia.jpg?alt=media&token=a1b2c3d4' },
-        { type: 'image', order: 4, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F04-GestaoConteudo.jpg?alt=media&token=b2c3d4e5', allowScroll: true },
-        { type: 'image', order: 5, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F05-SocialMedia.jpg?alt=media&token=c3d4e5f6', allowScroll: true },
-        { type: 'image', order: 6, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F06-FotoQuadrada1.jpg?alt=media&token=d4e5f6g7' },
-        { type: 'image', order: 7, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F07.png?alt=media&token=2ea91a9d-1abb-488e-9911-1c8cd0030b30' },
-        { type: 'image', order: 8, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F08.png?alt=media&token=2ac67681-97d5-460c-ba2b-3c6333e61b57' },
-        { type: 'image', order: 9, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F09.png?alt=media&token=469b3533-2836-4c5a-a9e0-ce5e2e6c3ac6' },
-        { type: 'image', order: 10, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F10.png?alt=media&token=8435034c-7286-47b1-869b-8effb8d596e8' },
-        { type: 'image', order: 11, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F11.png?alt=media&token=bbac69b3-ca53-46dd-b369-ee036a522217' },
-        { type: 'image', order: 12, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F12.png?alt=media&token=12da4f64-c577-45b5-a25e-36c7eee38a82' },
-        { type: 'image', order: 13, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F13.png?alt=media&token=e5182804-7b53-4df9-b6f2-6a3cf412c304' },
-        { type: 'image', order: 14, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F14.png?alt=media&token=34ab42ad-e3fb-4360-9b82-d74a20b79fdd' },
-        { type: 'image', order: 15, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F15.png?alt=media&token=70d1c25f-99e3-4efd-b4b7-7999bed4da5a' }
+        { type: 'image', order: 1, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F01-Capa.jpg?alt=media&token=ce795f6e-1aea-4fa7-8f93-d6797b6a2450', objectFit: 'contain' },
+        { type: 'pdf', order: 2, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2FAuddar-PDF.pdf?alt=media&token=98c3e8a1-8d2b-4f9e-a82c-4e3b1c8d7e6f' },
+        { type: 'image', order: 3, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F03-Estrategia.jpg?alt=media&token=a1b2c3d4', objectFit: 'contain' },
+        { type: 'image', order: 4, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F04-GestaoConteudo.jpg?alt=media&token=b2c3d4e5', objectFit: 'contain' },
+        { type: 'image', order: 5, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F05-SocialMedia.jpg?alt=media&token=c3d4e5f6', objectFit: 'contain' },
+        { type: 'image', order: 6, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F06-FotoQuadrada1.jpg?alt=media&token=d4e5f6g7', objectFit: 'contain' },
+        { type: 'image', order: 7, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F07.png?alt=media&token=2ea91a9d-1abb-488e-9911-1c8cd0030b30', objectFit: 'contain' },
+        { type: 'image', order: 8, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F08.png?alt=media&token=2ac67681-97d5-460c-ba2b-3c6333e61b57', objectFit: 'contain' },
+        { type: 'image', order: 9, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F09.png?alt=media&token=469b3533-2836-4c5a-a9e0-ce5e2e6c3ac6', objectFit: 'contain' },
+        { type: 'image', order: 10, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F10.png?alt=media&token=8435034c-7286-47b1-869b-8effb8d596e8', objectFit: 'contain' },
+        { type: 'image', order: 11, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F11.png?alt=media&token=bbac69b3-ca53-46dd-b369-ee036a522217', objectFit: 'contain' },
+        { type: 'image', order: 12, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F12.png?alt=media&token=12da4f64-c577-45b5-a25e-36c7eee38a82', objectFit: 'contain' },
+        { type: 'image', order: 13, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F13.png?alt=media&token=e5182804-7b53-4df9-b6f2-6a3cf412c304', objectFit: 'contain' },
+        { type: 'image', order: 14, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F14.png?alt=media&token=34ab42ad-e3fb-4360-9b82-d74a20b79fdd', objectFit: 'contain' },
+        { type: 'image', order: 15, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F15.png?alt=media&token=70d1c25f-99e3-4efd-b4b7-7999bed4da5a', objectFit: 'contain' }
       ]
     }
   ]
@@ -443,7 +467,11 @@ export const SCALLA_RECORDS_PROJECT: Project = {
   theme: {
     accentColor: '#444444',
     playerBg: 'bg-zinc-900',
-    playerBorder: 'border-zinc-800'
+    playerBorder: 'border-zinc-800',
+    playerWidth: 304,
+    playerHeight: 540,
+    borderWidth: '1px',
+    borderRadius: '12px'
   },
   feed: []
 };

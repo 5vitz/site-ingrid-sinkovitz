@@ -140,16 +140,20 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const viewportWidth = windowSize.width;
   const isDesktop = viewportWidth > 1024;
   
-  // Ajuste de dimensões: Priorizamos o aspectRatio do projeto
+  // Ajuste de dimensões: Altura fixa em 540px como base absoluta
+  const baseHeight = theme.playerHeight || 540;
+  
+  // Largura definida no tema ou calculada pela proporção (mantedo fallback seguro)
   const currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || 1;
   const isHorizontal = currentAspectRatio > 1.2;
   
-  // Lion Jump usa 960px. Projetos verticais (Good Storage, Elo) usam 540px
-  const baseWidth = isHorizontal ? 960 : 540;
+  // Se houver playerWidth no tema, usamos ele. Caso contrário, fallback baseado no tipo de layout
+  const baseWidth = theme.playerWidth || (isHorizontal ? 960 : 540);
+  
   const playerWidth = isDesktop ? baseWidth : Math.min(baseWidth, viewportWidth * 0.95);
   
-  // Altura baseada na proporção
-  let playerHeight = playerWidth / currentAspectRatio;
+  // Altura baseada na largura final para manter proporção se redimensionado no mobile
+  let playerHeight = playerWidth / (baseWidth / baseHeight);
   
   const maxAllowedHeight = viewportHeight * 0.88;
 
@@ -232,11 +236,13 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
               >
                 {/* O Player propriamente dito */}
                 <div 
-                  className={`w-full h-full ${theme.playerBg || 'bg-black'} rounded-[12px] overflow-hidden relative border ${theme.playerBorder || 'border-white/10'} ${theme.playerShadow || ''}`}
+                  className={`w-full h-full ${theme.playerBg || 'bg-black'} overflow-hidden relative border ${theme.playerBorder || 'border-white/10'} ${theme.playerShadow || ''}`}
                   style={{
                     width: '100%',
                     height: '100%',
-                    boxShadow: `0 0 15px ${theme.accentColor}03`,
+                    borderRadius: theme.borderRadius || '12px',
+                    borderWidth: theme.borderWidth || '1px',
+                    boxShadow: theme.playerShadow ? undefined : `0 0 15px ${theme.accentColor}03`,
                     '--glow-color': theme.accentColor ? `${theme.accentColor}33` : undefined,
                     '--border-color': theme.accentColor ? `${theme.accentColor}11` : undefined,
                   } as React.CSSProperties}
@@ -247,20 +253,20 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                   </div>
                 </div>
 
-                {/* Botões de Navegação Horizontais (Cards/Stories) - Estilo Verde Lion Jump */}
+                {/* Botões de Navegação Horizontais (Cards/Stories) */}
                 <div className="hidden md:block">
                   {totalStories > 1 && (
                     <>
                       <button 
                         onClick={(e) => { e.stopPropagation(); navigateStory(-1); }}
-                        className={`absolute -left-[47px] top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-[#006400] text-white shadow-[0_0_10px_rgba(0,0,0,0.5)] z-[10020] transition-all hover:scale-110 active:scale-95 ${storyIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                        className={`absolute -left-[47px] top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full ${theme.navButtonBg || 'bg-accent/40'} ${theme.navButtonColor || 'text-white'} shadow-[0_0_10px_rgba(0,0,0,0.5)] z-[10020] transition-all hover:scale-110 active:scale-95 ${storyIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
                         title="Anterior"
                       >
                         <ChevronLeft size={18} strokeWidth={3} />
                       </button>
                       <button 
                         onClick={(e) => { e.stopPropagation(); navigateStory(1); }}
-                        className={`absolute -right-[47px] top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-[#006400] text-white shadow-[0_0_10px_rgba(0,0,0,0.5)] z-[10020] transition-all hover:scale-110 active:scale-95 ${storyIndex === totalStories - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                        className={`absolute -right-[47px] top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full ${theme.navButtonBg || 'bg-accent/40'} ${theme.navButtonColor || 'text-white'} shadow-[0_0_10px_rgba(0,0,0,0.5)] z-[10020] transition-all hover:scale-110 active:scale-95 ${storyIndex === totalStories - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
                         title="Próximo"
                       >
                         <ChevronRight size={18} strokeWidth={3} />
@@ -272,17 +278,17 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                 {/* Botão Fechar (X) */}
                 <button 
                   onClick={(e) => { e.stopPropagation(); onClose(); }}
-                  className="absolute -top-4 -right-4 z-[10025] w-10 h-10 bg-zinc-900 border border-white/10 text-white rounded-full flex items-center justify-center hover:scale-110 hover:border-accent/40 hover:text-accent transition-all shadow-2xl"
+                  className={`absolute -top-4 -right-4 z-[10025] w-10 h-10 ${theme.closeButtonBg || 'bg-zinc-900'} border border-white/10 ${theme.closeButtonColor || 'text-white'} rounded-full flex items-center justify-center hover:scale-110 hover:border-accent/40 hover:text-accent transition-all shadow-2xl`}
                 >
                   <X size={18} strokeWidth={3} />
                 </button>
 
-                {/* Botões de Navegação Verticais (Capítulos/Feeds) - Estilo Verde Lion Jump */}
+                {/* Botões de Navegação Verticais (Capítulos/Feeds) */}
                 <div className="hidden md:flex absolute inset-y-0 left-1/2 -translate-x-1/2 -top-[47px] -bottom-[47px] flex-col items-center justify-between pointer-events-none z-[10010]">
                   <button 
                     disabled={feedIndex === 0}
                     onClick={(e) => { e.stopPropagation(); navigateFeed(-1); }}
-                    className={`w-8 h-8 rounded-full flex items-center justify-center bg-[#006400] text-white shadow-[0_0_10px_rgba(0,0,0,0.5)] pointer-events-auto transition-all ${feedIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 active:scale-95'}`}
+                    className={`w-8 h-8 rounded-full flex items-center justify-center ${theme.navButtonBg || 'bg-accent/40'} ${theme.navButtonColor || 'text-white'} shadow-[0_0_10px_rgba(0,0,0,0.5)] pointer-events-auto transition-all ${feedIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 active:scale-95'}`}
                     title="Capítulo Anterior"
                   >
                     <ChevronUp size={18} strokeWidth={3} />
@@ -291,7 +297,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                   <button 
                     disabled={feedIndex === totalFeed - 1}
                     onClick={(e) => { e.stopPropagation(); navigateFeed(1); }}
-                    className={`w-8 h-8 rounded-full flex items-center justify-center bg-[#006400] text-white shadow-[0_0_10px_rgba(0,0,0,0.5)] pointer-events-auto transition-all ${feedIndex === totalFeed - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 active:scale-95'}`}
+                    className={`w-8 h-8 rounded-full flex items-center justify-center ${theme.navButtonBg || 'bg-accent/40'} ${theme.navButtonColor || 'text-white'} shadow-[0_0_10px_rgba(0,0,0,0.5)] pointer-events-auto transition-all ${feedIndex === totalFeed - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 active:scale-95'}`}
                     title="Próximo Capítulo"
                   >
                     <ChevronDown size={18} strokeWidth={3} />
@@ -359,20 +365,19 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
   if (media.type === 'image' || media.type === 'pdf') {
     const isPDF = media.type === 'pdf' || media.url?.toLowerCase().includes('.pdf');
     if (isPDF) {
-      // Usando link direto para permitir renderização nativa (Mozilla style / PDF.js)
-      const viewerUrl = `${media.url}#toolbar=0&navpanes=0&scrollbar=0`;
+      // Usando o visualizador nativo, mas garantindo que o URL seja tratado corretamente
+      // Para o style Mozilla (nativo), apenas o link direto funciona melhor
+      const pdfUrl = media.url || '';
       
       return (
         <div className="w-full h-full bg-[#0a0a0a] overflow-hidden relative">
           <iframe 
-            src={viewerUrl}
+            src={pdfUrl}
             className="absolute border-none pointer-events-auto block"
             style={{ 
               width: '100%',
               height: '100%',
-              transform: 'scale(1)',
-              transformOrigin: '50% 0%',
-              pointerEvents: 'auto'
+              backgroundColor: '#333'
             }}
             title={media.title || 'PDF Document'}
           />

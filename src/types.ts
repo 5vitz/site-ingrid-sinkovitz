@@ -62,6 +62,11 @@ export interface ProjectTheme {
   navButtonColor?: string;
   closeButtonBg?: string;
   closeButtonColor?: string;
+  // Novas propriedades para customização total
+  playerWidth?: number; // Largura customizada
+  playerHeight?: number; // Altura (padrão 540)
+  borderWidth?: string; // Ex: '1px'
+  borderRadius?: string; // Ex: '8px'
 }
 
 export interface Project {
