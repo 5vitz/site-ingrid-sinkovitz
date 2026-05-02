@@ -40,31 +40,58 @@ export const ProjectSection: React.FC<{ onSelectProject: (p: Project) => void }>
             )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-[1008px] mb-12">
-          {displayProjects.map((project: any) => (
-            <div
-              key={project.id}
-              className={`relative group h-full ${project.isPlaceholder ? 'cursor-default' : 'cursor-pointer'}`}
-              onClick={() => !project.isPlaceholder ? onSelectProject(project as Project) : null}
-            >
-              <div 
-                className="aspect-square w-full bg-zinc-900 border border-white/10 rounded-[8px] flex flex-col items-center justify-center transition-all duration-500 group-hover:border-accent/40 group-hover:shadow-[0_0_30px_rgba(212,175,55,0.15)] overflow-hidden relative p-8"
-              >
-                {/* Background Image - REMOVIDO TEMPORARIAMENTE A PEDIDO DO USUÁRIO */}
-                <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-950 z-0" />
+        <div className="flex flex-col gap-10 w-full max-w-[960px] mb-12">
+          {/* Linha 1: Projetos 1 a 3 */}
+          <div className="bg-zinc-900/30 border border-white-[0.03] rounded-2xl p-5 md:p-8 backdrop-blur-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+              {displayProjects.slice(0, 3).map((project: any) => (
+                <div
+                  key={project.id}
+                  className={`relative group ${project.isPlaceholder ? 'cursor-default' : 'cursor-pointer'}`}
+                  onClick={() => !project.isPlaceholder ? onSelectProject(project as Project) : null}
+                >
+                  <div 
+                    className="aspect-square w-full bg-zinc-900/80 border border-white/10 rounded-[8px] flex flex-col items-center justify-center transition-all duration-500 group-hover:border-accent/40 group-hover:shadow-[0_0_30px_rgba(212,175,55,0.15)] overflow-hidden relative p-8"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-950 z-0" />
 
-                <span className="relative z-10 font-black text-white text-base md:text-lg tracking-tighter uppercase group-hover:text-accent transition-colors duration-300 text-center leading-tight">
-                  {project.title}
-                </span>
-                
-                {/* Accent line on hover */}
-                <div className="w-0 h-[3px] bg-accent mt-3 relative z-10 group-hover:w-16 transition-all duration-500 rounded-full" />
-
-                {/* Mirror effect / Gloss */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20" />
-              </div>
+                    <span className="relative z-10 font-black text-white text-sm md:text-base tracking-tighter uppercase group-hover:text-accent transition-colors duration-300 text-center leading-tight">
+                      {project.title}
+                    </span>
+                    
+                    <div className="w-0 h-[2px] bg-accent mt-3 relative z-10 group-hover:w-12 transition-all duration-500 rounded-full" />
+                    <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20" />
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
+
+          {/* Linha 2: Projetos 4 a 6 */}
+          <div className="bg-zinc-900/30 border border-white-[0.03] rounded-2xl p-5 md:p-8 backdrop-blur-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+              {displayProjects.slice(3, 6).map((project: any) => (
+                <div
+                  key={project.id}
+                  className={`relative group ${project.isPlaceholder ? 'cursor-default' : 'cursor-pointer'}`}
+                  onClick={() => !project.isPlaceholder ? onSelectProject(project as Project) : null}
+                >
+                  <div 
+                    className="aspect-square w-full bg-zinc-900/80 border border-white/10 rounded-[8px] flex flex-col items-center justify-center transition-all duration-500 group-hover:border-accent/40 group-hover:shadow-[0_0_30px_rgba(212,175,55,0.15)] overflow-hidden relative p-8"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-950 z-0" />
+
+                    <span className="relative z-10 font-black text-white text-sm md:text-base tracking-tighter uppercase group-hover:text-accent transition-colors duration-300 text-center leading-tight">
+                      {project.title}
+                    </span>
+                    
+                    <div className="w-0 h-[2px] bg-accent mt-3 relative z-10 group-hover:w-12 transition-all duration-500 rounded-full" />
+                    <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>
