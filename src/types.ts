@@ -9,7 +9,7 @@ export interface UserRoleDoc {
 }
 
 export type LayoutType = 'vertical' | 'horizontal';
-export type MediaType = 'image' | 'video' | 'text' | 'link' | 'iframe';
+export type MediaType = 'image' | 'video' | 'text' | 'link' | 'iframe' | 'pdf';
 
 export interface Overlay {
   id: string;

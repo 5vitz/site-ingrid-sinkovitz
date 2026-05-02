@@ -409,6 +409,24 @@ export const AUDDAR_PROJECT: Project = {
         order: 6, 
         url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F06-FotoQuadrada1.jpg?alt=media&token=d4e5f6g7' 
       }
+    },
+    {
+      id: 'auddar-feed-14',
+      aspectRatio: 1,
+      media: { 
+        type: 'image', 
+        order: 14, 
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F14.png?alt=media&token=34ab42ad-e3fb-4360-9b82-d74a20b79fdd' 
+      }
+    },
+    {
+      id: 'auddar-feed-15',
+      aspectRatio: 1,
+      media: { 
+        type: 'image', 
+        order: 15, 
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F15.png?alt=media&token=70d1c25f-99e3-4efd-b4b7-7999bed4da5a' 
+      }
     }
   ]
 };
