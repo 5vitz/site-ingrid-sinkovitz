@@ -31,13 +31,13 @@ export const seedAuddar = async () => {
       },
       {
         id: 'f2',
-        title: 'O Desafio',
+        title: 'Sobre o Projeto',
         aspectRatio: 1,
         media: {
           type: 'text',
           title: 'Auddar',
-          subtitle: 'Estratégia & Posicionamento',
-          content: 'A Auddar é a maior plataforma de leilões do mercado de luxo no Brasil. O desafio foi humanizar a comunicação e criar uma narrativa que conectasse a exclusividade dos produtos com a confiabilidade da marca.\n\nImplementamos uma estratégia focada em desejo e autoridade, transformando cada leilão em um evento digital de alto impacto.',
+          subtitle: 'Techospitality',
+          content: 'Estruturação de Marketing e Materiais de Venda | Auddar (Techospitality)\n\nProjeto de estruturação da comunicação e dos serviços da Audaar, empresa de tecnologia para o setor de hospedagem. Objetivo de organizar a proposta de valor da marca, desenvolver narrativa e materiais estratégicos de venda, com foco em clareza, consistência e conversão.\n\nMeu papel:\nGerente de Marketing, atuando de forma integrada ao time comercial para estruturar comunicação, presença digital e suporte às vendas.\n\nEscopo de atuação:\n• Desenvolvimento de narrativa, tom de voz e posicionamento\n• Criação de apresentações comerciais e materiais de venda (propostas, serviços e pitch)\n• Estruturação do Instagram (bio, destaques e identidade inicial)\n• Produção de conteúdos estratégicos (carrosséis informativos)\n• Criação de e-mail marketing (copy e layout) para relacionamento e apoio comercial\n• Planejamento de ações e conteúdos alinhados à aquisição e posicionamento\n• Apoio a demandas internas de comunicação (endomarketing)\n\nEntrega:\n• Organização e clareza na comunicação dos serviços\n• Materiais estruturados para apoio direto ao time comercial\n• Base de presença digital alinhada ao posicionamento da marca\n• Conteúdos voltados à educação do público e geração de demanda\n\nFoco estratégico:\nTradução de soluções técnicas em comunicação acessível e orientada à conversão, conectando marketing, conteúdo e processo comercial',
           layout: 'default'
         }
       }
