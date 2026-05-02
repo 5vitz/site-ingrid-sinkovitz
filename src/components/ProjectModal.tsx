@@ -146,12 +146,18 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   
   const currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || (1);
   
-  // Altura baseada na proporção inicial
-  let playerHeight = playerWidth / currentAspectRatio;
+  // Altura baseada na proporção
+  // O usuário deseja que o player seja quadrado (540x540) por padrão, 
+  // mas que a altura aumente se a mídia for vertical (aspectRatio < 1).
+  let playerHeight = playerWidth; 
+  if (currentAspectRatio < 1) {
+    playerHeight = playerWidth / currentAspectRatio;
+  }
+
   const maxAllowedHeight = viewportHeight * 0.88;
 
   // Se o conteúdo permitir scroll OU ultrapassar a altura da tela, 
-  // travamos a altura no limite e MANTEMOS a largura em 540px.
+  // travamos a altura no limite.
   if (currentMedia?.allowScroll || playerHeight > maxAllowedHeight) {
     playerHeight = maxAllowedHeight;
   }
@@ -361,11 +367,16 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
       const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(media.url || '')}&embedded=true`;
       
       return (
-        <div className="w-full h-full bg-zinc-900 overflow-hidden relative flex flex-col">
+        <div className="w-full h-full bg-zinc-900 overflow-hidden relative">
           <iframe 
             src={viewerUrl}
-            className="w-full h-full border-none pointer-events-auto block scale-[1.02]"
-            style={{ width: '100%', height: '100%', minWidth: '100%' }}
+            className="absolute border-none pointer-events-auto block"
+            style={{ 
+              width: '100%', 
+              height: 'calc(100% + 80px)', // Aumentamos para esconder as barras de ferramentas
+              top: '-40px',               // Centralizamos o corte (movemos para cima)
+              left: 0 
+            }}
             title={media.title || 'PDF Document'}
           />
         </div>
@@ -429,7 +440,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
     }
     if (!media.url) return <div className="w-full h-full bg-zinc-900 animate-pulse" />;
     return (
-      <div className="w-full h-full relative overflow-hidden">
+      <div className={`w-full h-full relative ${media.allowScroll ? 'overflow-y-auto custom-scrollbar' : 'overflow-hidden'}`}>
         <img 
           src={media.url} 
           className={`w-full ${media.allowScroll ? 'h-auto block min-h-0' : 'h-full object-cover'}`}

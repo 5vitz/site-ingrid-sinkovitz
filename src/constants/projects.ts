@@ -196,7 +196,7 @@ export const LION_JUMP_PROJECT: Project = {
     {
       id: 'lj-feed-01',
       title: 'Sobre o Projeto',
-      aspectRatio: 1.77777777778,
+      aspectRatio: 1,
       media: { 
         type: 'image', 
         order: 1, 
@@ -217,7 +217,7 @@ export const LION_JUMP_PROJECT: Project = {
     {
       id: 'lj-feed-02',
       title: 'Sobre a Banda',
-      aspectRatio: 1.77777777778,
+      aspectRatio: 1,
       media: { 
         type: 'image', 
         order: 3, 
@@ -245,7 +245,7 @@ export const LION_JUMP_PROJECT: Project = {
     {
       id: 'lj-feed-03',
       title: 'SuperStar',
-      aspectRatio: 1.77777777778,
+      aspectRatio: 1,
       media: { 
         type: 'image', 
         order: 6, 
@@ -274,7 +274,7 @@ export const LION_JUMP_PROJECT: Project = {
     {
       id: 'lj-feed-04',
       title: 'África',
-      aspectRatio: 1.77777777778,
+      aspectRatio: 1,
       media: { 
         type: 'image',
         order: 9,
@@ -311,7 +311,7 @@ export const LION_JUMP_PROJECT: Project = {
     {
       id: 'lj-feed-05',
       title: 'Itália',
-      aspectRatio: 1.77777777778,
+      aspectRatio: 1,
       media: { 
         type: 'image', 
         order: 13, 

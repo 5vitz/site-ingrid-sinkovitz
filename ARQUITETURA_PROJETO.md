@@ -96,7 +96,8 @@ Esta seção serve de modelo para todas as outras áreas editáveis.
 ### Formatos Padronizados (Componentes Fixos):
 A formatação é rígida para garantir a estética do portfólio. O sistema prioriza a largura perfeita de leitura e exposição:
 1.  **Largura Fixa (Desktop):** Independente do formato da mídia, a largura do player é chumbada em **540px**. Isso garante consistência visual absoluta na navegação.
-2.  **Altura Dinâmica/Scroll:** Se a mídia ultrapassar a proporção ou altura útil da tela, o player trava na altura máxima permitida (88vh) e habilita o **Scroll Vertical Técnico**, mantendo os 540px de largura.
+2.  **Altura Quadrada ou Vertical:** Por padrão, o player é quadrado (**540px x 540px**). Se a mídia for vertical (proporção altura > largura), a altura se ajusta até o limite técnico de **88vh** da tela. Mídias largas são exibidas em formato quadrado com recorte inteligente (`object-cover`).
+3.  **Scroll Vertical Técnico:** Se a mídia ultrapassar a altura útil da tela (88vh), o player trava no limite e habilita o scroll interno, mantendo os 540px de largura.
 
 ### Fluxo de Criação (PainelADM):
 1.  **Seleção de Formato:** Primeira etapa obrigatória (Vertical ou Horizontal).
