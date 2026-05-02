@@ -188,7 +188,7 @@ export const LION_JUMP_PROJECT: Project = {
     accentColor: '#FEF200',
     playerBg: 'bg-black',
     playerBorder: 'border-[#FEF200]/40',
-    playerShadow: 'shadow-[0_0_50px_rgba(254,242,0,0.25)] animate-pulse',
+    playerShadow: 'shadow-[0_0_50px_rgba(254,242,0,0.25)] animate-neon-pulse',
     navButtonBg: 'bg-[#FEF200]/40',
     navButtonColor: 'text-black'
   },
@@ -348,10 +348,10 @@ export const AUDDAR_PROJECT: Project = {
   order: 6,
   mediaItems: [],
   theme: {
-    accentColor: '#2563eb',
+    accentColor: '#172554',
     playerBg: 'bg-zinc-950',
-    playerBorder: 'border-[#2563eb]/60',
-    playerShadow: 'shadow-[0_0_50px_rgba(37,99,235,0.4)] animate-pulse'
+    playerBorder: 'border-[#172554]/60',
+    playerShadow: 'shadow-[0_0_50px_rgba(23,37,84,0.4)] animate-neon-pulse'
   },
   feed: []
 };

@@ -227,7 +227,11 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
               >
                 {/* O Player propriamente dito */}
                 <div 
-                  className={`w-full h-full ${theme.playerBg || 'bg-black'} rounded-[12px] overflow-hidden relative shadow-[0_40px_100px_rgba(0,0,0,0.8)] border ${theme.playerBorder || 'border-white/10'} ${theme.playerShadow || ''}`}
+                  className={`w-full h-full ${theme.playerBg || 'bg-black'} rounded-[12px] overflow-hidden relative border ${theme.playerBorder || 'border-white/10'} ${theme.playerShadow || ''}`}
+                  style={{
+                    '--glow-color': theme.accentColor ? `${theme.accentColor}dd` : undefined,
+                    '--border-color': theme.accentColor ? `${theme.accentColor}88` : undefined,
+                  } as React.CSSProperties}
                 >
                   {/* Glass Header (Auddar style) */}
                   <div className="absolute top-0 inset-x-0 h-20 bg-gradient-to-b from-black/80 via-black/40 to-transparent z-[10015] pointer-events-none flex items-start justify-between px-8 pt-6">

@@ -14,9 +14,9 @@ export const seedAuddar = async () => {
     layoutType: 'horizontal',
     theme: {
       playerBg: 'bg-zinc-950',
-      accentColor: '#2563eb',
-      playerBorder: 'border-[#2563eb]/60',
-      playerShadow: 'shadow-[0_0_40px_rgba(37,99,235,0.4)] animate-pulse'
+      accentColor: '#172554',
+      playerBorder: 'border-[#172554]/60',
+      playerShadow: 'shadow-[0_0_50px_rgba(23,37,84,0.4)] animate-neon-pulse'
     },
     feed: [
       {
