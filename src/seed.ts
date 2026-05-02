@@ -48,7 +48,8 @@ export const seedAuddar = async () => {
         media: {
           type: 'image',
           url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F03-Apresentacao.pdf?alt=media&token=e1773370-5a15-409c-9f1b-9cbbc8a5d284',
-          objectFit: 'contain'
+          objectFit: 'contain',
+          allowScroll: true
         }
       },
       {

@@ -387,21 +387,13 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
     const isPDF = media.url?.toLowerCase().includes('.pdf');
     if (isPDF) {
       return (
-        <div className="w-full h-full relative flex flex-col items-center justify-center bg-zinc-900 p-8 text-center">
-          <div className="w-16 h-16 bg-accent/20 rounded-2xl flex items-center justify-center mb-6">
-            <svg className="w-8 h-8 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-            </svg>
-          </div>
-          <h3 className="text-white font-bold uppercase tracking-widest text-sm mb-4">{media.title || 'Documento PDF'}</h3>
-          <a 
-            href={media.url} 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            className="px-6 py-3 bg-accent text-white font-black uppercase tracking-widest text-[10px] rounded-full hover:scale-105 transition-all shadow-xl pointer-events-auto"
-          >
-            Visualizar PDF
-          </a>
+        <div className="w-full h-full bg-zinc-950 overflow-hidden">
+          <iframe 
+            src={`${media.url}#toolbar=0&navpanes=0&scrollbar=1`}
+            className="w-full h-full border-none pointer-events-auto"
+            title={media.title || 'PDF Document'}
+            style={{ width: '100%', height: '100%' }}
+          />
         </div>
       );
     }
