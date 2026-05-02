@@ -373,8 +373,8 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
             className="absolute border-none pointer-events-auto block"
             style={{ 
               width: '100%', 
-              height: 'calc(100% + 80px)', // Aumentamos para esconder as barras de ferramentas
-              top: '-40px',               // Centralizamos o corte (movemos para cima)
+              height: 'calc(100% + 200px)', // Aumentado para dar margem de manobra
+              top: '-100px',               // Subimos 100px para sumir a numeração "1/1"
               left: 0 
             }}
             title={media.title || 'PDF Document'}

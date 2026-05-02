@@ -196,7 +196,7 @@ export const LION_JUMP_PROJECT: Project = {
     {
       id: 'lj-feed-01',
       title: 'Sobre o Projeto',
-      aspectRatio: 1,
+      aspectRatio: 1.77777777778,
       media: { 
         type: 'image', 
         order: 1, 
@@ -217,7 +217,7 @@ export const LION_JUMP_PROJECT: Project = {
     {
       id: 'lj-feed-02',
       title: 'Sobre a Banda',
-      aspectRatio: 1,
+      aspectRatio: 1.77777777778,
       media: { 
         type: 'image', 
         order: 3, 
@@ -245,7 +245,7 @@ export const LION_JUMP_PROJECT: Project = {
     {
       id: 'lj-feed-03',
       title: 'SuperStar',
-      aspectRatio: 1,
+      aspectRatio: 1.77777777778,
       media: { 
         type: 'image', 
         order: 6, 
@@ -274,7 +274,7 @@ export const LION_JUMP_PROJECT: Project = {
     {
       id: 'lj-feed-04',
       title: 'África',
-      aspectRatio: 1,
+      aspectRatio: 1.77777777778,
       media: { 
         type: 'image',
         order: 9,
@@ -311,7 +311,7 @@ export const LION_JUMP_PROJECT: Project = {
     {
       id: 'lj-feed-05',
       title: 'Itália',
-      aspectRatio: 1,
+      aspectRatio: 1.77777777778,
       media: { 
         type: 'image', 
         order: 13, 
@@ -353,7 +353,64 @@ export const AUDDAR_PROJECT: Project = {
     playerBorder: 'border-[#172554]/60',
     playerShadow: 'shadow-[0_0_50px_rgba(23,37,84,0.4)] animate-neon-pulse'
   },
-  feed: []
+  feed: [
+    {
+      id: 'auddar-feed-01',
+      aspectRatio: 1,
+      media: { 
+        type: 'image', 
+        order: 1, 
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F01-Capa.jpg?alt=media&token=ce795f6e-1aea-4fa7-8f93-d6797b6a2450' 
+      }
+    },
+    {
+      id: 'auddar-feed-02',
+      aspectRatio: 1,
+      media: { 
+        type: 'pdf', 
+        order: 2, 
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2FAuddar-PDF.pdf?alt=media&token=98c3e8a1-8d2b-4f9e-a82c-4e3b1c8d7e6f' 
+      }
+    },
+    {
+      id: 'auddar-feed-03',
+      aspectRatio: 1,
+      media: { 
+        type: 'image', 
+        order: 3, 
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F03-Estrategia.jpg?alt=media&token=a1b2c3d4' 
+      }
+    },
+    {
+      id: 'auddar-feed-04',
+      aspectRatio: 1,
+      media: { 
+        type: 'image', 
+        order: 4, 
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F04-GestaoConteudo.jpg?alt=media&token=b2c3d4e5',
+        allowScroll: true
+      }
+    },
+    {
+      id: 'auddar-feed-05',
+      aspectRatio: 1,
+      media: { 
+        type: 'image', 
+        order: 5, 
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F05-SocialMedia.jpg?alt=media&token=c3d4e5f6',
+        allowScroll: true
+      }
+    },
+    {
+      id: 'auddar-feed-06',
+      aspectRatio: 1,
+      media: { 
+        type: 'image', 
+        order: 6, 
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F06-FotoQuadrada1.jpg?alt=media&token=d4e5f6g7' 
+      }
+    }
+  ]
 };
 
 export const PROJECTS_LIST: Project[] = [
