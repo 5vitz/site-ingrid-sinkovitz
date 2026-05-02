@@ -187,7 +187,8 @@ export const LION_JUMP_PROJECT: Project = {
   theme: {
     accentColor: '#FEF200',
     playerBg: 'bg-black',
-    playerBorder: 'border-none',
+    playerBorder: 'border-[#FEF200]/40',
+    playerShadow: 'shadow-[0_0_50px_rgba(254,242,0,0.25)] animate-pulse',
     navButtonBg: 'bg-[#FEF200]/40',
     navButtonColor: 'text-black'
   },
@@ -337,16 +338,21 @@ export const LION_JUMP_PROJECT: Project = {
   ]
 };
 
-export const PLACEHOLDER_6: Project = {
-  id: 'projeto-06',
-  title: 'Projeto 06',
-  description: 'Em breve...',
-  layoutType: '2d',
-  galleryThumbnail: '',
-  coverImage: '',
-  audioUrl: '',
+export const AUDDAR_PROJECT: Project = {
+  id: 'projeto-auddar',
+  title: 'Auddar',
+  description: 'Estratégia e Gestão de Conteúdo para Techospitality.',
+  layoutType: 'horizontal',
+  galleryThumbnail: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F01-Capa.jpg?alt=media&token=ce795f6e-1aea-4fa7-8f93-d6797b6a2450',
+  coverImage: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F01-Capa.jpg?alt=media&token=ce795f6e-1aea-4fa7-8f93-d6797b6a2450',
   order: 6,
   mediaItems: [],
+  theme: {
+    accentColor: '#2563eb',
+    playerBg: 'bg-zinc-950',
+    playerBorder: 'border-[#2563eb]/60',
+    playerShadow: 'shadow-[0_0_50px_rgba(37,99,235,0.4)] animate-pulse'
+  },
   feed: []
 };
 
@@ -355,5 +361,5 @@ export const PROJECTS_LIST: Project[] = [
   GOOD_STORAGE_PROJECT, 
   ELOBIKE_PROJECT, 
   LION_JUMP_PROJECT,
-  PLACEHOLDER_6
+  AUDDAR_PROJECT
 ];
