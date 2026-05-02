@@ -359,7 +359,8 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
   if (media.type === 'image' || media.type === 'pdf') {
     const isPDF = media.type === 'pdf' || media.url?.toLowerCase().includes('.pdf');
     if (isPDF) {
-      const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(media.url || '')}&embedded=true`;
+      // Usando link direto para permitir renderização nativa (Mozilla style / PDF.js)
+      const viewerUrl = `${media.url}#toolbar=0&navpanes=0&scrollbar=0`;
       
       return (
         <div className="w-full h-full bg-[#0a0a0a] overflow-hidden relative">
@@ -369,9 +370,8 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
             style={{ 
               width: '100%',
               height: '100%',
-              transform: 'scale(1.08)',     // Zoom leve para tirar bordas mantendo o texto limpo
-              transformOrigin: '50% 0%',   // Origem no topo para preservar a "cabeça" do layout
-              filter: 'contrast(1.02) brightness(1.02)',
+              transform: 'scale(1)',
+              transformOrigin: '50% 0%',
               pointerEvents: 'auto'
             }}
             title={media.title || 'PDF Document'}

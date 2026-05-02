@@ -403,142 +403,30 @@ export const AUDDAR_PROJECT: Project = {
   },
   feed: [
     {
-      id: 'auddar-feed-01',
-      aspectRatio: 1,
+      id: 'auddar-main-horizontal',
+      aspectRatio: 1.414,
       media: { 
         type: 'image', 
         order: 1, 
         url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F01-Capa.jpg?alt=media&token=ce795f6e-1aea-4fa7-8f93-d6797b6a2450' 
-      }
-    },
-    {
-      id: 'auddar-feed-02',
-      aspectRatio: 1,
-      media: { 
-        type: 'pdf', 
-        order: 2, 
-        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2FAuddar-PDF.pdf?alt=media&token=98c3e8a1-8d2b-4f9e-a82c-4e3b1c8d7e6f',
-        allowScroll: true
-      }
-    },
-    {
-      id: 'auddar-feed-03',
-      aspectRatio: 1,
-      media: { 
-        type: 'image', 
-        order: 3, 
-        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F03-Estrategia.jpg?alt=media&token=a1b2c3d4' 
-      }
-    },
-    {
-      id: 'auddar-feed-04',
-      aspectRatio: 0.7,
-      media: { 
-        type: 'image', 
-        order: 4, 
-        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F04-GestaoConteudo.jpg?alt=media&token=b2c3d4e5',
-        allowScroll: true
-      }
-    },
-    {
-      id: 'auddar-feed-05',
-      aspectRatio: 0.7,
-      media: { 
-        type: 'image', 
-        order: 5, 
-        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F05-SocialMedia.jpg?alt=media&token=c3d4e5f6',
-        allowScroll: true
-      }
-    },
-    {
-      id: 'auddar-feed-06',
-      aspectRatio: 1,
-      media: { 
-        type: 'image', 
-        order: 6, 
-        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F06-FotoQuadrada1.jpg?alt=media&token=d4e5f6g7' 
-      }
-    },
-    {
-      id: 'auddar-feed-07',
-      aspectRatio: 1,
-      media: { 
-        type: 'image', 
-        order: 7, 
-        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F07.png?alt=media&token=2ea91a9d-1abb-488e-9911-1c8cd0030b30' 
-      }
-    },
-    {
-      id: 'auddar-feed-08',
-      aspectRatio: 1,
-      media: { 
-        type: 'image', 
-        order: 8, 
-        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F08.png?alt=media&token=2ac67681-97d5-460c-ba2b-3c6333e61b57' 
-      }
-    },
-    {
-      id: 'auddar-feed-09',
-      aspectRatio: 1,
-      media: { 
-        type: 'image', 
-        order: 9, 
-        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F09.png?alt=media&token=469b3533-2836-4c5a-a9e0-ce5e2e6c3ac6' 
-      }
-    },
-    {
-      id: 'auddar-feed-10',
-      aspectRatio: 1,
-      media: { 
-        type: 'image', 
-        order: 10, 
-        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F10.png?alt=media&token=8435034c-7286-47b1-869b-8effb8d596e8' 
-      }
-    },
-    {
-      id: 'auddar-feed-11',
-      aspectRatio: 1,
-      media: { 
-        type: 'image', 
-        order: 11, 
-        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F11.png?alt=media&token=bbac69b3-ca53-46dd-b369-ee036a522217' 
-      }
-    },
-    {
-      id: 'auddar-feed-12',
-      aspectRatio: 1,
-      media: { 
-        type: 'image', 
-        order: 12, 
-        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F12.png?alt=media&token=12da4f64-c577-45b5-a25e-36c7eee38a82' 
-      }
-    },
-    {
-      id: 'auddar-feed-13',
-      aspectRatio: 1,
-      media: { 
-        type: 'image', 
-        order: 13, 
-        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F13.png?alt=media&token=e5182804-7b53-4df9-b6f2-6a3cf412c304' 
-      }
-    },
-    {
-      id: 'auddar-feed-14',
-      aspectRatio: 1,
-      media: { 
-        type: 'image', 
-        order: 14, 
-        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F14.png?alt=media&token=34ab42ad-e3fb-4360-9b82-d74a20b79fdd' 
-      }
-    },
-    {
-      id: 'auddar-feed-15',
-      aspectRatio: 1,
-      media: { 
-        type: 'image', 
-        order: 15, 
-        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F15.png?alt=media&token=70d1c25f-99e3-4efd-b4b7-7999bed4da5a' 
-      }
+      },
+      stories: [
+        { type: 'image', order: 1, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F01-Capa.jpg?alt=media&token=ce795f6e-1aea-4fa7-8f93-d6797b6a2450' },
+        { type: 'pdf', order: 2, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2FAuddar-PDF.pdf?alt=media&token=98c3e8a1-8d2b-4f9e-a82c-4e3b1c8d7e6f', allowScroll: true },
+        { type: 'image', order: 3, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F03-Estrategia.jpg?alt=media&token=a1b2c3d4' },
+        { type: 'image', order: 4, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F04-GestaoConteudo.jpg?alt=media&token=b2c3d4e5', allowScroll: true },
+        { type: 'image', order: 5, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F05-SocialMedia.jpg?alt=media&token=c3d4e5f6', allowScroll: true },
+        { type: 'image', order: 6, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F06-FotoQuadrada1.jpg?alt=media&token=d4e5f6g7' },
+        { type: 'image', order: 7, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F07.png?alt=media&token=2ea91a9d-1abb-488e-9911-1c8cd0030b30' },
+        { type: 'image', order: 8, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F08.png?alt=media&token=2ac67681-97d5-460c-ba2b-3c6333e61b57' },
+        { type: 'image', order: 9, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F09.png?alt=media&token=469b3533-2836-4c5a-a9e0-ce5e2e6c3ac6' },
+        { type: 'image', order: 10, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F10.png?alt=media&token=8435034c-7286-47b1-869b-8effb8d596e8' },
+        { type: 'image', order: 11, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F11.png?alt=media&token=bbac69b3-ca53-46dd-b369-ee036a522217' },
+        { type: 'image', order: 12, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F12.png?alt=media&token=12da4f64-c577-45b5-a25e-36c7eee38a82' },
+        { type: 'image', order: 13, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F13.png?alt=media&token=e5182804-7b53-4df9-b6f2-6a3cf412c304' },
+        { type: 'image', order: 14, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F14.png?alt=media&token=34ab42ad-e3fb-4360-9b82-d74a20b79fdd' },
+        { type: 'image', order: 15, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F15.png?alt=media&token=70d1c25f-99e3-4efd-b4b7-7999bed4da5a' }
+      ]
     }
   ]
 };
