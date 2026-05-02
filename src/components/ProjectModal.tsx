@@ -158,8 +158,13 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
 
   // Se o conteúdo permitir scroll OU ultrapassar a altura da tela, 
   // travamos a altura no limite.
-  if (currentMedia?.allowScroll || playerHeight > maxAllowedHeight) {
+  if (playerHeight > maxAllowedHeight) {
     playerHeight = maxAllowedHeight;
+  }
+  
+  // Se for scrollable, preferimos uma altura maior para aproveitar o espaço
+  if (currentMedia?.allowScroll && playerHeight < maxAllowedHeight) {
+    playerHeight = Math.max(playerHeight, Math.min(650, maxAllowedHeight));
   }
 
   const handleStartTour = (e: React.MouseEvent) => {
@@ -360,25 +365,38 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
     );
   }
 
-  if (media.type === 'image') {
-    const isPDF = media.url?.toLowerCase().includes('.pdf');
+  if (media.type === 'image' || media.type === 'pdf') {
+    const isPDF = media.type === 'pdf' || media.url?.toLowerCase().includes('.pdf');
     if (isPDF) {
       // Usamos o Google Docs Viewer para evitar bloqueios de segurança do Chrome/CORS
       const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(media.url || '')}&embedded=true`;
       
       return (
-        <div className="w-full h-full bg-zinc-900 overflow-hidden relative">
-          <iframe 
-            src={viewerUrl}
-            className="absolute border-none pointer-events-auto block"
-            style={{ 
-              width: '100%', 
-              height: 'calc(100% + 200px)', // Aumentado para dar margem de manobra
-              top: '-100px',               // Subimos 100px para sumir a numeração "1/1"
-              left: 0 
-            }}
-            title={media.title || 'PDF Document'}
-          />
+        <div className="w-full h-full bg-[#0a0a0a] overflow-hidden relative">
+          {/* Scrollable Container (Scroll visível e controlado por aqui) */}
+          <div 
+            className="w-full h-full overflow-y-scroll overflow-x-hidden custom-scrollbar relative outline-none" 
+            tabIndex={0}
+          >
+            {/* Altura que apenas permite um pouco de folga para esconder o rodapé do Google */}
+            <div className="relative w-full" style={{ height: '110%' }}>
+              <iframe 
+                src={viewerUrl}
+                className="absolute border-none pointer-events-auto block"
+                style={{ 
+                  width: '106%',               // Cobre as bordas laterais sem forçar scroll horizontal largo
+                  height: '110%',              // Garante que o indicador "1/1" fique abaixo da linha do container pai
+                  top: '-28px',                // Esconde a barra superior do Google sem cortar a cabeça.
+                  left: '-3%',                 // Centraliza o conteúdo cortado
+                  filter: 'contrast(1.01) brightness(1.02)',
+                  pointerEvents: 'auto'
+                }}
+                title={media.title || 'PDF Document'}
+              />
+            </div>
+          </div>
+          {/* Fina máscara preta no rodapé para garantir que o "1/1" nunca suba indesejadamente */}
+          <div className="absolute bottom-0 left-0 w-full h-[8px] bg-[#0a0a0a] z-50 pointer-events-none" />
         </div>
       );
     }

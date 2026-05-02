@@ -369,7 +369,8 @@ export const AUDDAR_PROJECT: Project = {
       media: { 
         type: 'pdf', 
         order: 2, 
-        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2FAuddar-PDF.pdf?alt=media&token=98c3e8a1-8d2b-4f9e-a82c-4e3b1c8d7e6f' 
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2FAuddar-PDF.pdf?alt=media&token=98c3e8a1-8d2b-4f9e-a82c-4e3b1c8d7e6f',
+        allowScroll: true
       }
     },
     {
@@ -383,7 +384,7 @@ export const AUDDAR_PROJECT: Project = {
     },
     {
       id: 'auddar-feed-04',
-      aspectRatio: 1,
+      aspectRatio: 0.7,
       media: { 
         type: 'image', 
         order: 4, 
@@ -393,7 +394,7 @@ export const AUDDAR_PROJECT: Project = {
     },
     {
       id: 'auddar-feed-05',
-      aspectRatio: 1,
+      aspectRatio: 0.7,
       media: { 
         type: 'image', 
         order: 5, 
@@ -408,6 +409,69 @@ export const AUDDAR_PROJECT: Project = {
         type: 'image', 
         order: 6, 
         url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F06-FotoQuadrada1.jpg?alt=media&token=d4e5f6g7' 
+      }
+    },
+    {
+      id: 'auddar-feed-07',
+      aspectRatio: 1,
+      media: { 
+        type: 'image', 
+        order: 7, 
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F07.png?alt=media&token=2ea91a9d-1abb-488e-9911-1c8cd0030b30' 
+      }
+    },
+    {
+      id: 'auddar-feed-08',
+      aspectRatio: 1,
+      media: { 
+        type: 'image', 
+        order: 8, 
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F08.png?alt=media&token=2ac67681-97d5-460c-ba2b-3c6333e61b57' 
+      }
+    },
+    {
+      id: 'auddar-feed-09',
+      aspectRatio: 1,
+      media: { 
+        type: 'image', 
+        order: 9, 
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F09.png?alt=media&token=469b3533-2836-4c5a-a9e0-ce5e2e6c3ac6' 
+      }
+    },
+    {
+      id: 'auddar-feed-10',
+      aspectRatio: 1,
+      media: { 
+        type: 'image', 
+        order: 10, 
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F10.png?alt=media&token=8435034c-7286-47b1-869b-8effb8d596e8' 
+      }
+    },
+    {
+      id: 'auddar-feed-11',
+      aspectRatio: 1,
+      media: { 
+        type: 'image', 
+        order: 11, 
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F11.png?alt=media&token=bbac69b3-ca53-46dd-b369-ee036a522217' 
+      }
+    },
+    {
+      id: 'auddar-feed-12',
+      aspectRatio: 1,
+      media: { 
+        type: 'image', 
+        order: 12, 
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F12.png?alt=media&token=12da4f64-c577-45b5-a25e-36c7eee38a82' 
+      }
+    },
+    {
+      id: 'auddar-feed-13',
+      aspectRatio: 1,
+      media: { 
+        type: 'image', 
+        order: 13, 
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F13.png?alt=media&token=e5182804-7b53-4df9-b6f2-6a3cf412c304' 
       }
     },
     {
