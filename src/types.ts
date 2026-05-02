@@ -41,6 +41,8 @@ export interface MediaItem {
   objectFit?: 'cover' | 'contain';
   allowScroll?: boolean;
   aspectRatio?: number;
+  playerWidth?: number;
+  playerHeight?: number;
   overlays?: Overlay[];
 }
 

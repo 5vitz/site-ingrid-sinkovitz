@@ -141,14 +141,14 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const isDesktop = viewportWidth > 1024;
   
   // Ajuste de dimensões: Altura fixa em 540px como base absoluta
-  const baseHeight = theme.playerHeight || 540;
+  const baseHeight = currentMedia?.playerHeight || theme.playerHeight || 540;
   
   // Largura definida no tema ou calculada pela proporção (mantedo fallback seguro)
   const currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || 1;
   const isHorizontal = currentAspectRatio > 1.2;
   
-  // Se houver playerWidth no tema, usamos ele. Caso contrário, fallback baseado no tipo de layout
-  const baseWidth = theme.playerWidth || (isHorizontal ? 960 : 540);
+  // Se houver playerWidth no tema ou no card, usamos ele. Caso contrário, fallback baseado no tipo de layout
+  const baseWidth = currentMedia?.playerWidth || theme.playerWidth || (isHorizontal ? 960 : 540);
   
   const playerWidth = isDesktop ? baseWidth : Math.min(baseWidth, viewportWidth * 0.95);
   
