@@ -233,21 +233,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                     '--border-color': theme.accentColor ? `${theme.accentColor}88` : undefined,
                   } as React.CSSProperties}
                 >
-                  {/* Glass Header (Auddar style) */}
-                  <div className="absolute top-0 inset-x-0 h-20 bg-gradient-to-b from-black/80 via-black/40 to-transparent z-[10015] pointer-events-none flex items-start justify-between px-8 pt-6">
-                    <div className="flex flex-col">
-                      <span className="text-[11px] font-black uppercase tracking-[0.4em] text-accent leading-none mb-1.5 shadow-sm">
-                        {currentFeed?.title || project.title}
-                      </span>
-                      <div className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-                        <span className="text-[9px] font-black text-white/50 uppercase tracking-[0.2em]">
-                          Item {feedIndex + 1} de {totalFeed}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
                   {/* Conteúdo interno */}
                   <div className="w-full h-full overflow-hidden">
                     {totalFeed > 0 ? (
@@ -394,28 +379,6 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
             className="w-full h-full border-none pointer-events-auto"
             title={media.title || 'PDF Document'}
           />
-          
-          {/* Overlay de título discreto */}
-          <div className="absolute inset-x-0 top-0 p-4 bg-gradient-to-b from-black/60 to-transparent pointer-events-none opacity-0 group-hover/pdf:opacity-100 transition-opacity">
-            <span className="text-[9px] text-white/70 uppercase tracking-widest font-black">
-              {media.title || 'Visualização de Documento'}
-            </span>
-          </div>
-
-          {/* Botão de segurança/tela cheia */}
-          <div className="absolute bottom-6 right-6 z-50">
-            <a 
-              href={media.url} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="flex items-center gap-2 bg-accent text-white text-[10px] font-black uppercase tracking-widest px-5 py-2.5 rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all pointer-events-auto"
-            >
-              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-              </svg>
-              Tela Cheia
-            </a>
-          </div>
         </div>
       );
     }
