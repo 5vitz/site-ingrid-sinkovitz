@@ -236,9 +236,9 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                   style={{
                     width: '100%',
                     height: '100%',
-                    boxShadow: `0 0 40px ${theme.accentColor}15`,
-                    '--glow-color': theme.accentColor ? `${theme.accentColor}dd` : undefined,
-                    '--border-color': theme.accentColor ? `${theme.accentColor}88` : undefined,
+                    boxShadow: `0 0 25px ${theme.accentColor}08`,
+                    '--glow-color': theme.accentColor ? `${theme.accentColor}bb` : undefined,
+                    '--border-color': theme.accentColor ? `${theme.accentColor}66` : undefined,
                   } as React.CSSProperties}
                 >
                   {/* Conteúdo interno */}
@@ -261,17 +261,17 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                     <>
                       <button 
                         onClick={(e) => { e.stopPropagation(); navigateStory(-1); }}
-                        className={`absolute -left-14 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-[#22c55e] text-white shadow-[0_0_15px_rgba(0,0,0,0.5)] z-[10020] transition-all hover:scale-110 active:scale-95 ${storyIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                        className={`absolute -left-[53px] top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-[#4ade80] text-white shadow-[0_0_12px_rgba(0,0,0,0.5)] z-[10020] transition-all hover:scale-110 active:scale-95 ${storyIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
                         title="Anterior"
                       >
-                        <ChevronLeft size={22} strokeWidth={3} />
+                        <ChevronLeft size={18} strokeWidth={3} />
                       </button>
                       <button 
                         onClick={(e) => { e.stopPropagation(); navigateStory(1); }}
-                        className={`absolute -right-14 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-[#22c55e] text-white shadow-[0_0_15px_rgba(0,0,0,0.5)] z-[10020] transition-all hover:scale-110 active:scale-95 ${storyIndex === totalStories - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                        className={`absolute -right-[53px] top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-[#4ade80] text-white shadow-[0_0_12px_rgba(0,0,0,0.5)] z-[10020] transition-all hover:scale-110 active:scale-95 ${storyIndex === totalStories - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
                         title="Próximo"
                       >
-                        <ChevronRight size={22} strokeWidth={3} />
+                        <ChevronRight size={18} strokeWidth={3} />
                       </button>
                     </>
                   )}
@@ -286,23 +286,23 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                 </button>
 
                 {/* Botões de Navegação Verticais (Capítulos/Feeds) - Estilo Verde */}
-                <div className="hidden md:flex absolute inset-y-0 left-1/2 -translate-x-1/2 -top-14 -bottom-14 flex-col items-center justify-between pointer-events-none z-[10010]">
+                <div className="hidden md:flex absolute inset-y-0 left-1/2 -translate-x-1/2 -top-[53px] -bottom-[53px] flex-col items-center justify-between pointer-events-none z-[10010]">
                   <button 
                     disabled={feedIndex === 0}
                     onClick={(e) => { e.stopPropagation(); navigateFeed(-1); }}
-                    className={`w-10 h-10 rounded-full flex items-center justify-center bg-[#22c55e] text-white shadow-[0_0_15px_rgba(0,0,0,0.5)] pointer-events-auto transition-all ${feedIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 active:scale-95'}`}
+                    className={`w-8 h-8 rounded-full flex items-center justify-center bg-[#4ade80] text-white shadow-[0_0_12px_rgba(0,0,0,0.5)] pointer-events-auto transition-all ${feedIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 active:scale-95'}`}
                     title="Capítulo Anterior"
                   >
-                    <ChevronUp size={22} strokeWidth={3} />
+                    <ChevronUp size={18} strokeWidth={3} />
                   </button>
                   
                   <button 
                     disabled={feedIndex === totalFeed - 1}
                     onClick={(e) => { e.stopPropagation(); navigateFeed(1); }}
-                    className={`w-10 h-10 rounded-full flex items-center justify-center bg-[#22c55e] text-white shadow-[0_0_15px_rgba(0,0,0,0.5)] pointer-events-auto transition-all ${feedIndex === totalFeed - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 active:scale-95'}`}
+                    className={`w-8 h-8 rounded-full flex items-center justify-center bg-[#4ade80] text-white shadow-[0_0_12px_rgba(0,0,0,0.5)] pointer-events-auto transition-all ${feedIndex === totalFeed - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 active:scale-95'}`}
                     title="Próximo Capítulo"
                   >
-                    <ChevronDown size={22} strokeWidth={3} />
+                    <ChevronDown size={18} strokeWidth={3} />
                   </button>
                 </div>
               </motion.div>
