@@ -138,33 +138,24 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
 
   const viewportHeight = windowSize.height;
   const viewportWidth = windowSize.width;
-  const maxPlayerHeight = Math.max(300, Math.min(viewportHeight - 120, 850));
   
-  // AJUSTE CRUCIAL: Largura FIXA de 540px para Desktop
-  const isDesktop = viewportWidth > 1024;
-  const playerWidth = isDesktop ? 540 : Math.min(540, viewportWidth * 0.95);
+  // Ajuste de dimensões: Priorizamos o aspectRatio do projeto
+  // Se o projeto for horizontal (Lion Jump), permitimos que ele seja maior
+  const currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || 1;
+  const isHorizontal = currentAspectRatio > 1.2;
   
-  const currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || (1);
+  const baseWidth = isHorizontal ? 960 : 540;
+  const playerWidth = Math.min(baseWidth, viewportWidth * 0.9);
   
   // Altura baseada na proporção
-  // O usuário deseja que o player seja quadrado (540x540) por padrão, 
-  // mas que a altura aumente se a mídia for vertical (aspectRatio < 1).
-  let playerHeight = playerWidth; 
-  if (currentAspectRatio < 1) {
-    playerHeight = playerWidth / currentAspectRatio;
-  }
+  let playerHeight = playerWidth / currentAspectRatio;
+  
+  const maxAllowedHeight = viewportHeight * 0.85;
 
-  const maxAllowedHeight = viewportHeight * 0.88;
-
-  // Se o conteúdo permitir scroll OU ultrapassar a altura da tela, 
-  // travamos a altura no limite.
+  // Se a altura calculada for muito grande para a tela, reduzimos proporcionalmente
   if (playerHeight > maxAllowedHeight) {
     playerHeight = maxAllowedHeight;
-  }
-  
-  // Se for scrollable, preferimos uma altura maior para aproveitar o espaço
-  if (currentMedia?.allowScroll && playerHeight < maxAllowedHeight) {
-    playerHeight = Math.max(playerHeight, Math.min(650, maxAllowedHeight));
+    // Não ajustamos a largura para não quebrar o layout, mas mantemos centralizado
   }
 
   const handleStartTour = (e: React.MouseEvent) => {
@@ -242,6 +233,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                   style={{
                     width: '100%',
                     height: '100%',
+                    boxShadow: `0 0 40px ${theme.accentColor}15`,
                     '--glow-color': theme.accentColor ? `${theme.accentColor}dd` : undefined,
                     '--border-color': theme.accentColor ? `${theme.accentColor}88` : undefined,
                   } as React.CSSProperties}
@@ -260,21 +252,21 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                   </div>
                 </div>
 
-                {/* Setas de Navegação interna (Stories) - FORA do overflow-hidden */}
+                {/* Botões de Navegação Horizontais (Cards/Stories) - Estilo Verde */}
                 <div className="hidden md:block">
                   {totalStories > 1 && (
                     <>
                       <button 
                         onClick={(e) => { e.stopPropagation(); navigateStory(-1); }}
-                        className={`absolute -left-12 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-black/40 border border-white/5 text-white/40 hover:text-white hover:bg-black/60 z-[10020] transition-all ${storyIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                        className={`absolute -left-16 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-accent text-white shadow-[0_0_20px_rgba(0,0,0,0.4)] z-[10020] transition-all hover:scale-110 active:scale-95 ${storyIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
                       >
-                        <ChevronLeft size={16} />
+                        <ChevronLeft size={24} strokeWidth={3} />
                       </button>
                       <button 
                         onClick={(e) => { e.stopPropagation(); navigateStory(1); }}
-                        className={`absolute -right-12 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-black/40 border border-white/5 text-white/40 hover:text-white hover:bg-black/60 z-[10020] transition-all ${storyIndex === totalStories - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                        className={`absolute -right-16 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-accent text-white shadow-[0_0_20px_rgba(0,0,0,0.4)] z-[10020] transition-all hover:scale-110 active:scale-95 ${storyIndex === totalStories - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
                       >
-                        <ChevronRight size={16} />
+                        <ChevronRight size={24} strokeWidth={3} />
                       </button>
                     </>
                   )}
@@ -288,24 +280,24 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                   <X size={18} strokeWidth={3} />
                 </button>
 
-                {/* Controles do Feed (Navegação Vertical) */}
+                {/* Botões de Navegação Verticais (Capítulos/Feeds) - Estilo Verde */}
                 <div className="hidden md:flex absolute inset-y-0 left-1/2 -translate-x-1/2 -top-20 -bottom-20 flex-col items-center justify-between pointer-events-none z-[10010]">
                   <button 
                     disabled={feedIndex === 0}
                     onClick={(e) => { e.stopPropagation(); navigateFeed(-1); }}
-                    className={`w-[44px] h-[44px] rounded-full flex items-center justify-center bg-black/40 backdrop-blur-xl border border-white/10 text-white/50 hover:text-accent hover:border-accent/40 pointer-events-auto transition-all shadow-2xl ${feedIndex === 0 ? 'opacity-0 pointer-events-none scale-50' : 'opacity-100 hover:scale-110 active:scale-95'}`}
+                    className={`w-12 h-12 rounded-full flex items-center justify-center bg-accent text-white shadow-[0_0_20px_rgba(0,0,0,0.4)] pointer-events-auto transition-all ${feedIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 active:scale-95'}`}
                     title="Capítulo Anterior"
                   >
-                    <ChevronUp size={24} strokeWidth={2.5} />
+                    <ChevronUp size={24} strokeWidth={3} />
                   </button>
                   
                   <button 
                     disabled={feedIndex === totalFeed - 1}
                     onClick={(e) => { e.stopPropagation(); navigateFeed(1); }}
-                    className={`w-[44px] h-[44px] rounded-full flex items-center justify-center bg-black/40 backdrop-blur-xl border border-white/10 text-white/50 hover:text-accent hover:border-accent/40 pointer-events-auto transition-all shadow-2xl ${feedIndex === totalFeed - 1 ? 'opacity-0 pointer-events-none scale-50' : 'opacity-100 hover:scale-110 active:scale-95'}`}
+                    className={`w-12 h-12 rounded-full flex items-center justify-center bg-accent text-white shadow-[0_0_20px_rgba(0,0,0,0.4)] pointer-events-auto transition-all ${feedIndex === totalFeed - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 active:scale-95'}`}
                     title="Próximo Capítulo"
                   >
-                    <ChevronDown size={24} strokeWidth={2.5} />
+                    <ChevronDown size={24} strokeWidth={3} />
                   </button>
                 </div>
               </motion.div>
