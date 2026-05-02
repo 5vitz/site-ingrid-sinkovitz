@@ -141,10 +141,10 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const isDesktop = viewportWidth > 1024;
   
   // Ajuste de dimensões: Priorizamos o aspectRatio do projeto
-  // Se o projeto for horizontal (Lion Jump), permitimos que ele seja maior
   const currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || 1;
   const isHorizontal = currentAspectRatio > 1.2;
   
+  // Lion Jump usa 960px. Projetos verticais (Good Storage, Elo) usam 540px
   const baseWidth = isHorizontal ? 960 : 540;
   const playerWidth = isDesktop ? baseWidth : Math.min(baseWidth, viewportWidth * 0.95);
   
@@ -243,15 +243,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                 >
                   {/* Conteúdo interno */}
                   <div className="w-full h-full">
-                    {totalFeed > 0 ? (
-                      <MediaRenderer media={currentMedia} isActive={showPlayer} isMuted={isMuted} theme={theme} projectId={project.id} />
-                    ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center p-8 text-center bg-zinc-950 text-zinc-500">
-                        <div className="w-12 h-12 border-2 border-accent/20 border-t-accent rounded-full animate-spin mb-6" />
-                        <p className="text-[11px] font-black uppercase tracking-[0.4em] text-accent/60">Configurando Projeto...</p>
-                        <p className="text-[9px] mt-2 opacity-30 uppercase tracking-widest">Sincronizando Banco de Dados</p>
-                      </div>
-                    )}
+                    <MediaRenderer media={currentMedia} isActive={showPlayer} isMuted={isMuted} theme={theme} projectId={project.id} />
                   </div>
                 </div>
 

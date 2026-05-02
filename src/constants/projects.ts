@@ -83,7 +83,7 @@ export const GOOD_STORAGE_PROJECT: Project = {
   order: 2,
   mediaItems: [],
   theme: {
-    accentColor: '#fbbf24', // Amarelo Good Storage
+    accentColor: '#fbbf24', // Amarelo Good Storage restaurado
     playerBg: 'bg-black',
     playerBorder: 'border-[#fbbf24]/30',
     playerShadow: 'shadow-[0_0_40px_rgba(251,191,36,0.15)]',
