@@ -97,78 +97,103 @@ export const GOOD_STORAGE_PROJECT: Project = {
 export const ELOBIKE_PROJECT: Project = {
   id: 'projeto-elobike',
   title: 'EloBike',
-  description: 'Uma jornada de cicloturismo explorando belas paisagens e histórias.',
-  layoutType: '2d',
-  galleryThumbnail: '',
-  coverImage: '',
+  description: 'EloBike: Cicloturismo, histórias e paisagens em uma jornada de conexão.',
+  layoutType: 'vertical',
+  galleryThumbnail: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F01-Marau%2F01-Marau.jpg?alt=media&token=4d54362a-0846-47e3-a6d4-d61b41b1cbd3',
+  coverImage: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F01-Marau%2F01-Marau.jpg?alt=media&token=4d54362a-0846-47e3-a6d4-d61b41b1cbd3',
   audioUrl: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Trilha%2FMetavix.mp3?alt=media&token=866a461d-6169-450f-90e9-74cb96e95b00',
   order: 3,
   mediaItems: [],
   theme: {
-    accentColor: '#00D154',
-    playerBorder: 'border-white/10',
-    navButtonBg: 'bg-[#00D154]/35'
+    accentColor: '#22c55e', // Verde cicloturismo
+    playerBg: 'bg-black',
+    playerBorder: 'border-[#22c55e]/30',
+    playerShadow: 'shadow-[0_0_40px_rgba(34,197,94,0.15)]',
+    navButtonBg: 'bg-[#22c55e]/40',
+    navButtonColor: 'text-white'
   },
   feed: [
     {
       id: 'eb-marau',
-      aspectRatio: 0.80,
-      media: { type: 'video', order: 1, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F01-Marau%2F00.mp4?alt=media&token=60a6fe52-c33c-41f5-a2aa-65c2b842af15' },
+      title: 'Marau',
+      aspectRatio: 0.5625, // 9:16
+      media: { 
+        type: 'video', 
+        order: 1, 
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F01-Marau%2F00.mp4?alt=media&token=60a6fe52-c33c-41f5-a2aa-65c2b842af15',
+        objectFit: 'contain'
+      },
       stories: [
-        { type: 'image', order: 2, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F01-Marau%2F01-Marau.jpg?alt=media&token=4d54362a-0846-47e3-a6d4-d61b41b1cbd3' },
-        { type: 'image', order: 3, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F01-Marau%2FDia01.jpg?alt=media&token=4c4013a9-befb-4640-92ba-3e670984edb8' },
-        { type: 'image', order: 4, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F01-Marau%2FDia02.jpg?alt=media&token=c5ceeef4-760d-4a12-82a2-4e09f1e1a2b0' },
-        { type: 'image', order: 5, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F01-Marau%2FDia03.jpg?alt=media&token=a128f4c7-1ea7-439d-93cc-84a878fd3b46' },
-        { type: 'image', order: 6, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F01-Marau%2FDia04.jpg?alt=media&token=3a65065f-8cf5-4c71-929e-53549481fb47' },
-        { type: 'image', order: 7, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F01-Marau%2FDia05.jpg?alt=media&token=d59eec19-db47-42a9-a67e-3159dbfebc4e' },
-        { type: 'image', order: 8, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F01-Marau%2FDia06.jpg?alt=media&token=13eedb37-6252-4b95-9a45-29e90b3d73fe' },
-        { type: 'image', order: 9, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F01-Marau%2FDia07.jpg?alt=media&token=7014c649-7fb1-4798-8515-8546a2abac19' },
-        { type: 'image', order: 10, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F01-Marau%2FDia08.jpg?alt=media&token=3b71f199-785c-4031-96ff-5a41afc1da6b' },
-        { type: 'image', order: 11, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F01-Marau%2FHospedagem.jpg?alt=media&token=7e5110ec-889b-4893-ad3f-761f093ae323' }
+        { id: 'eb-s01-02', type: 'image', order: 2, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F01-Marau%2F01-Marau.jpg?alt=media&token=4d54362a-0846-47e3-a6d4-d61b41b1cbd3' },
+        { id: 'eb-s01-03', type: 'image', order: 3, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F01-Marau%2FDia01.jpg?alt=media&token=4c4013a9-befb-4640-92ba-3e670984edb8' },
+        { id: 'eb-s01-04', type: 'image', order: 4, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F01-Marau%2FDia02.jpg?alt=media&token=c5ceeef4-760d-4a12-82a2-4e09f1e1a2b0' },
+        { id: 'eb-s01-05', type: 'image', order: 5, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F01-Marau%2FDia03.jpg?alt=media&token=a128f4c7-1ea7-439d-93cc-84a878fd3b46' },
+        { id: 'eb-s01-06', type: 'image', order: 6, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F01-Marau%2FDia04.jpg?alt=media&token=3a65065f-8cf5-4c71-929e-53549481fb47' },
+        { id: 'eb-s01-07', type: 'image', order: 7, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F01-Marau%2FDia05.jpg?alt=media&token=d59eec19-db47-42a9-a67e-3159dbfebc4e' },
+        { id: 'eb-s01-08', type: 'image', order: 8, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F01-Marau%2FDia06.jpg?alt=media&token=13eedb37-6252-4b95-9a45-29e90b3d73fe' },
+        { id: 'eb-s01-09', type: 'image', order: 9, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F01-Marau%2FDia07.jpg?alt=media&token=7014c649-7fb1-4798-8515-8546a2abac19' },
+        { id: 'eb-s01-10', type: 'image', order: 10, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F01-Marau%2FDia08.jpg?alt=media&token=3b71f199-785c-4031-96ff-5a41afc1da6b' },
+        { id: 'eb-s01-11', type: 'image', order: 11, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F01-Marau%2FHospedagem.jpg?alt=media&token=7e5110ec-889b-4893-ad3f-761f093ae323' }
       ]
     },
     {
       id: 'eb-cacau',
-      aspectRatio: 0.80,
-      media: { type: 'video', order: 12, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F02-Cacau%2F00.mp4?alt=media&token=3e83b1ef-0676-4adb-a08e-052e6c6dbe0a' },
+      title: 'Cacau',
+      aspectRatio: 0.5625,
+      media: { 
+        type: 'video', 
+        order: 12, 
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F02-Cacau%2F00.mp4?alt=media&token=3e83b1ef-0676-4adb-a08e-052e6c6dbe0a',
+        objectFit: 'contain'
+      },
       stories: [
-        { type: 'image', order: 13, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F02-Cacau%2F01.jpg?alt=media&token=69f2ca5c-aba6-4578-a103-ca1158c5adbd' },
-        { type: 'image', order: 14, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F02-Cacau%2FDia01.jpg?alt=media&token=62187d4a-208e-4ad0-8355-3091d80082aa' },
-        { type: 'image', order: 15, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F02-Cacau%2FDia02.jpg?alt=media&token=bc47bbc0-0135-49a5-8614-1bd06708f425' },
-        { type: 'image', order: 16, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F02-Cacau%2FDia03.jpg?alt=media&token=5c6d3b4b-cdab-402f-804e-4c353c7a4968' },
-        { type: 'image', order: 17, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F02-Cacau%2FDia04.jpg?alt=media&token=e90c9853-cec9-4dfd-a078-c653de7f2172' },
-        { type: 'image', order: 18, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F02-Cacau%2FDia05.jpg?alt=media&token=9654f369-116a-4a97-95b8-8a4bdd2f237b' },
-        { type: 'image', order: 19, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F02-Cacau%2FDia06.jpg?alt=media&token=bb88bac7-8def-4aa9-b2e8-093bcca01a7a' },
-        { type: 'image', order: 20, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F02-Cacau%2FDia07.jpg?alt=media&token=210d975c-8e3d-464c-bab2-53c5a6c686b5' }
+        { id: 'eb-s02-13', type: 'image', order: 13, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F02-Cacau%2F01.jpg?alt=media&token=69f2ca5c-aba6-4578-a103-ca1158c5adbd' },
+        { id: 'eb-s02-14', type: 'image', order: 14, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F02-Cacau%2FDia01.jpg?alt=media&token=62187d4a-208e-4ad0-8355-3091d80082aa' },
+        { id: 'eb-s02-15', type: 'image', order: 15, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F02-Cacau%2FDia02.jpg?alt=media&token=bc47bbc0-0135-49a5-8614-1bd06708f425' },
+        { id: 'eb-s02-16', type: 'image', order: 16, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F02-Cacau%2FDia03.jpg?alt=media&token=5c6d3b4b-cdab-402f-804e-4c353c7a4968' },
+        { id: 'eb-s02-17', type: 'image', order: 17, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F02-Cacau%2FDia04.jpg?alt=media&token=e90c9853-cec9-4dfd-a078-c653de7f2172' },
+        { id: 'eb-s02-18', type: 'image', order: 18, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F02-Cacau%2FDia05.jpg?alt=media&token=9654f369-116a-4a97-95b8-8a4bdd2f237b' },
+        { id: 'eb-s02-19', type: 'image', order: 19, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F02-Cacau%2FDia06.jpg?alt=media&token=bb88bac7-8def-4aa9-b2e8-093bcca01a7a' },
+        { id: 'eb-s02-20', type: 'image', order: 20, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F02-Cacau%2FDia07.jpg?alt=media&token=210d975c-8e3d-464c-bab2-53c5a6c686b5' }
       ]
     },
     {
       id: 'eb-viajar',
-      aspectRatio: 0.80,
-      media: { type: 'image', order: 21, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F03-ViajarSozinha%2F01.jpg?alt=media&token=eb3f3aab-792f-4243-ba7a-85a39e5168a4' },
+      title: 'Viajar Sozinha',
+      aspectRatio: 0.5625,
+      media: { 
+        type: 'image', 
+        order: 21, 
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F03-ViajarSozinha%2F01.jpg?alt=media&token=eb3f3aab-792f-4243-ba7a-85a39e5168a4' 
+      },
       stories: [
-        { type: 'image', order: 22, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F03-ViajarSozinha%2F02.jpg?alt=media&token=9029dcf8-4cd6-48f9-a359-a90d82adc272' },
-        { type: 'image', order: 23, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F03-ViajarSozinha%2F03.jpg?alt=media&token=833d7830-4754-4f3b-a5fe-8fb0975ca12e' },
-        { type: 'image', order: 24, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F03-ViajarSozinha%2F04.jpg?alt=media&token=8b576951-4c76-4bb4-b624-528abe04c5a0' },
-        { type: 'image', order: 25, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F03-ViajarSozinha%2F05.jpg?alt=media&token=783b2f2d-6028-4d9d-8145-e016df0a3fd8' },
-        { type: 'image', order: 26, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F03-ViajarSozinha%2F06.jpg?alt=media&token=83f87512-fe9b-4bd3-9959-fa07ba49d733' },
-        { type: 'image', order: 27, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F03-ViajarSozinha%2F07.jpg?alt=media&token=c24521d2-7b58-4c77-b5ee-30fa40facaa6' }
+        { id: 'eb-s03-22', type: 'image', order: 22, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F03-ViajarSozinha%2F02.jpg?alt=media&token=9029dcf8-4cd6-48f9-a359-a90d82adc272' },
+        { id: 'eb-s03-23', type: 'image', order: 23, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F03-ViajarSozinha%2F03.jpg?alt=media&token=833d7830-4754-4f3b-a5fe-8fb0975ca12e' },
+        { id: 'eb-s03-24', type: 'image', order: 24, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F03-ViajarSozinha%2F04.jpg?alt=media&token=8b576951-4c76-4bb4-b624-528abe04c5a0' },
+        { id: 'eb-s03-25', type: 'image', order: 25, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F03-ViajarSozinha%2F05.jpg?alt=media&token=783b2f2d-6028-4d9d-8145-e016df0a3fd8' },
+        { id: 'eb-s03-26', type: 'image', order: 26, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F03-ViajarSozinha%2F06.jpg?alt=media&token=83f87512-fe9b-4bd3-9959-fa07ba49d733' },
+        { id: 'eb-s03-27', type: 'image', order: 27, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F03-ViajarSozinha%2F07.jpg?alt=media&token=c24521d2-7b58-4c77-b5ee-30fa40facaa6' }
       ]
     },
     {
       id: 'eb-indica',
-      aspectRatio: 0.80,
-      media: { type: 'image', order: 28, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F04-EloIndica%2F00.jpg?alt=media&token=7d14ff63-f81a-4a96-9a8d-d8382158149f' },
+      title: 'Elo Indica',
+      aspectRatio: 0.5625,
+      media: { 
+        type: 'image', 
+        order: 28, 
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F04-EloIndica%2F00.jpg?alt=media&token=7d14ff63-f81a-4a96-9a8d-d8382158149f' 
+      },
       stories: [
-        { type: 'image', order: 29, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F04-EloIndica%2F01.jpg?alt=media&token=d7802010-5112-489a-8c3a-93722a6c349e' },
-        { type: 'image', order: 30, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F04-EloIndica%2F02.jpg?alt=media&token=9ca2e2f1-f44e-4268-a76e-df2226d4563b' },
-        { type: 'image', order: 31, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F04-EloIndica%2F03.jpg?alt=media&token=71254303-800a-4471-be5f-64b227c7c5f8' },
-        { type: 'image', order: 32, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F04-EloIndica%2F04.jpg?alt=media&token=1fc84ecd-0d82-4748-bfa6-ac953b4ee651' },
-        { type: 'image', order: 33, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F04-EloIndica%2F05.jpg?alt=media&token=4b57a143-5ddf-4a74-bdbb-fd5275cf8f7f' },
-        { type: 'image', order: 34, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F04-EloIndica%2F06.jpg?alt=media&token=596d93fb-2601-48d1-8c0c-492c2c9ba992' },
-        { type: 'image', order: 35, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F04-EloIndica%2F07.jpg?alt=media&token=c5577db4-3633-4ac3-997a-3a39b2d0e89b' },
-        { type: 'image', order: 36, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F04-EloIndica%2F08.jpg?alt=media&token=cd48cdc9-0d01-410c-b7b8-3af05b4ac9c3' },
-        { type: 'image', order: 37, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F04-EloIndica%2F09.jpg?alt=media&token=530f5e94-128e-4ddc-8a4e-18e37b467d44' }
+        { id: 'eb-s04-29', type: 'image', order: 29, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F04-EloIndica%2F01.jpg?alt=media&token=d7802010-5112-489a-8c3a-93722a6c349e' },
+        { id: 'eb-s04-30', type: 'image', order: 30, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F04-EloIndica%2F02.jpg?alt=media&token=9ca2e2f1-f44e-4268-a76e-df2226d4563b' },
+        { id: 'eb-s04-31', type: 'image', order: 31, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F04-EloIndica%2F03.jpg?alt=media&token=71254303-800a-4471-be5f-64b227c7c5f8' },
+        { id: 'eb-s04-32', type: 'image', order: 32, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F04-EloIndica%2F04.jpg?alt=media&token=1fc84ecd-0d82-4748-bfa6-ac953b4ee651' },
+        { id: 'eb-s04-33', type: 'image', order: 33, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F04-EloIndica%2F05.jpg?alt=media&token=4b57a143-5ddf-4a74-bdbb-fd5275cf8f7f' },
+        { id: 'eb-s04-34', type: 'image', order: 34, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F04-EloIndica%2F06.jpg?alt=media&token=596d93fb-2601-48d1-8c0c-492c2c9ba992' },
+        { id: 'eb-s04-35', type: 'image', order: 35, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F04-EloIndica%2F07.jpg?alt=media&token=c5577db4-3633-4ac3-997a-3a39b2d0e89b' },
+        { id: 'eb-s04-36', type: 'image', order: 36, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F04-EloIndica%2F08.jpg?alt=media&token=cd48cdc9-0d01-410c-b7b8-3af05b4ac9c3' },
+        { id: 'eb-s04-37', type: 'image', order: 37, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F04-EloIndica%2F09.jpg?alt=media&token=530f5e94-128e-4ddc-8a4e-18e37b467d44' }
       ]
     }
   ]
