@@ -75,22 +75,58 @@ export const METAVIX_PROJECT: Project = {
 export const GOOD_STORAGE_PROJECT: Project = {
   id: 'projeto-good-storage',
   title: 'Good Storage',
-  description: 'Trabalho cinematográfico focado em organização e espaço.',
-  layoutType: '2d',
-  galleryThumbnail: '',
-  coverImage: '',
+  description: 'Uma série de Reels produzidos para a campanha de comunicação da Good Storage.',
+  layoutType: 'vertical',
+  galleryThumbnail: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto2%2FReels_Aline_SoulSmile.mp4?alt=media&token=0e21b470-de72-48be-95bc-935659fdcfca',
+  coverImage: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto2%2FReels_Aline_SoulSmile.mp4?alt=media&token=0e21b470-de72-48be-95bc-935659fdcfca',
   audioUrl: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Trilha%2FMetavix.mp3?alt=media&token=866a461d-6169-450f-90e9-74cb96e95b00',
   order: 2,
   mediaItems: [],
   theme: {
-    accentColor: '#00D154',
-    playerBorder: 'border-white/10',
-    navButtonBg: 'bg-[#00D154]/35'
+    accentColor: '#fbbf24', // Amarelo Good Storage
+    playerBg: 'bg-black',
+    playerBorder: 'border-[#fbbf24]/30',
+    playerShadow: 'shadow-[0_0_40px_rgba(251,191,36,0.15)]',
+    navButtonBg: 'bg-[#fbbf24]/40',
+    navButtonColor: 'text-white'
   },
   feed: [
-    { id: 'gs-01', aspectRatio: 0.56, media: { type: 'video', order: 1, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2FVideos%2FEloBike_01.mp4?alt=media&token=8eb6b3d4-8d4e-4f3b-8b9a-7c9d6e5f4a3b' } },
-    { id: 'gs-02', aspectRatio: 0.56, media: { type: 'video', order: 2, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2FVideos%2FEloBike_02.mp4?alt=media&token=7d5c4b3a-9e8d-4f2c-1a0b-9c8d7e6f5a4b' } },
-    { id: 'gs-03', aspectRatio: 0.56, media: { type: 'video', order: 3, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2FVideos%2FEloBike_03.mp4?alt=media&token=6b5a4d3c-2e1f-0b9a-8c7d-6e5f4a3b2c1d' } }
+    {
+      id: 'gs-feed-01',
+      title: 'Aline Soul Smile',
+      aspectRatio: 0.5625, // 9:16
+      media: { 
+        type: 'video', 
+        order: 1, 
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto2%2FReels_Aline_SoulSmile.mp4?alt=media&token=0e21b470-de72-48be-95bc-935659fdcfca',
+        objectFit: 'contain'
+      },
+      stories: []
+    },
+    {
+      id: 'gs-feed-02',
+      title: 'DJ Dre',
+      aspectRatio: 0.5625,
+      media: { 
+        type: 'video', 
+        order: 2, 
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto2%2FReels_DJDre.mp4?alt=media&token=5649c5f7-03ea-4d8b-a05c-fd889dbda36f',
+        objectFit: 'contain'
+      },
+      stories: []
+    },
+    {
+      id: 'gs-feed-03',
+      title: 'Lennon Banho de Gato',
+      aspectRatio: 0.5625,
+      media: { 
+        type: 'video', 
+        order: 3, 
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto2%2FReels_Lennon_BanhodeGato.mp4?alt=media&token=f2d22066-0327-4d67-99ef-9675899a0239',
+        objectFit: 'contain'
+      },
+      stories: []
+    }
   ]
 };
 
