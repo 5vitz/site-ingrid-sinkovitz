@@ -262,8 +262,8 @@ export const LION_JUMP_PROJECT: Project = {
     playerBg: 'bg-black',
     playerBorder: 'border-[#FEF200]/40',
     playerShadow: 'shadow-[0_0_50px_rgba(254,242,0,0.25)] animate-neon-pulse',
-    navButtonBg: 'bg-[#FEF200]/40',
-    navButtonColor: 'text-black',
+    navButtonBg: 'bg-[#0c9347]',
+    navButtonColor: 'text-white',
     playerWidth: 960, // 16:9
     playerHeight: 540,
     borderWidth: '1px',

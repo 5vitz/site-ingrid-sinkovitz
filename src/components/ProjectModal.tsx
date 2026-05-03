@@ -297,7 +297,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                         onClick={(e) => { e.stopPropagation(); navigateStory(-1); }}
                         className={`absolute -left-[47px] top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 shadow-[0_0_10px_rgba(0,0,0,0.5)] z-[10020]
                           ${isLionJump 
-                            ? (theme.navButtonBg || 'bg-accent/40') + ' ' + (theme.navButtonColor || 'text-white')
+                            ? 'bg-[#0c9347] text-white hover:bg-[#0c9347]/80'
                             : 'bg-white/40 backdrop-blur-md text-black border border-white/10'
                           } 
                           ${storyIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
@@ -309,7 +309,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                         onClick={(e) => { e.stopPropagation(); navigateStory(1); }}
                         className={`absolute -right-[47px] top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 shadow-[0_0_10px_rgba(0,0,0,0.5)] z-[10020]
                           ${isLionJump 
-                            ? (theme.navButtonBg || 'bg-accent/40') + ' ' + (theme.navButtonColor || 'text-white')
+                            ? 'bg-[#0c9347] text-white hover:bg-[#0c9347]/80'
                             : 'bg-white/40 backdrop-blur-md text-black border border-white/10'
                           }
                           ${storyIndex === totalStories - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
@@ -336,7 +336,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                     onClick={(e) => { e.stopPropagation(); navigateFeed(-1); }}
                     className={`w-8 h-8 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(0,0,0,0.5)] pointer-events-auto transition-all
                       ${isLionJump 
-                        ? (theme.navButtonBg || 'bg-accent/40') + ' ' + (theme.navButtonColor || 'text-white')
+                        ? 'bg-[#0c9347] text-white hover:bg-[#0c9347]/80'
                         : 'bg-white/40 backdrop-blur-md text-black border border-white/10'
                       }
                       ${feedIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 active:scale-95'}`}
@@ -350,7 +350,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                     onClick={(e) => { e.stopPropagation(); navigateFeed(1); }}
                     className={`w-8 h-8 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(0,0,0,0.5)] pointer-events-auto transition-all
                       ${isLionJump 
-                        ? (theme.navButtonBg || 'bg-accent/40') + ' ' + (theme.navButtonColor || 'text-white')
+                        ? 'bg-[#0c9347] text-white hover:bg-[#0c9347]/80'
                         : 'bg-white/40 backdrop-blur-md text-black border border-white/10'
                       }
                       ${feedIndex === totalFeed - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 active:scale-95'}`}
