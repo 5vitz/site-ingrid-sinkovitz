@@ -28,6 +28,12 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     height: typeof window !== 'undefined' ? window.innerHeight : 800 
   });
   
+  const totalFeed = project && Array.isArray(project.feed) ? project.feed.length : 0;
+  const currentFeed = project && totalFeed > 0 ? project.feed[feedIndex] : null;
+  const currentStories = currentFeed && Array.isArray(currentFeed.stories) ? currentFeed.stories : [];
+  const totalStories = currentStories.length + (currentFeed ? 1 : 0);
+  const totalStoriesForNav = totalStories;
+
   const touchStartRef = useRef<{ x: number, y: number } | null>(null);
   const isScrollingRef = useRef(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -45,38 +51,15 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     }
   }, [feedIndex, project?.feed]);
 
-  const currentFeedForNav = Array.isArray(project?.feed) ? project?.feed[feedIndex] : null;
-  const currentStoriesForNav = Array.isArray(currentFeedForNav?.stories) ? currentFeedForNav?.stories : [];
-  const totalStoriesForNav = currentStoriesForNav.length + (currentFeedForNav ? 1 : 0);
-
   const navigateStory = useCallback((direction: 1 | -1) => {
     if (isScrollingRef.current) return;
     const next = storyIndex + direction;
-
-    if (project?.layoutType === 'horizontal') {
-      if (next < 0) {
-        if (feedIndex > 0) {
-          const prevFeed = project.feed[feedIndex - 1];
-          const prevStoriesCount = (Array.isArray(prevFeed.stories) ? prevFeed.stories.length : 0) + 1;
-          setFeedIndex(feedIndex - 1);
-          setStoryIndex(prevStoriesCount - 1);
-        }
-      } else if (next >= totalStoriesForNav) {
-        if (feedIndex < totalFeed - 1) {
-          setFeedIndex(feedIndex + 1);
-          setStoryIndex(0);
-        }
-      } else {
-        setStoryIndex(next);
-      }
-    } else {
-      if (next >= 0 && next < totalStoriesForNav) {
-        isScrollingRef.current = true;
-        setStoryIndex(next);
-        setTimeout(() => { isScrollingRef.current = false; }, 400);
-      }
+    if (next >= 0 && next < totalStoriesForNav) {
+      isScrollingRef.current = true;
+      setStoryIndex(next);
+      setTimeout(() => { isScrollingRef.current = false; }, 400);
     }
-  }, [storyIndex, totalStoriesForNav, project, feedIndex, totalFeed]);
+  }, [storyIndex, totalStoriesForNav]);
 
   useEffect(() => {
     if (project) {
@@ -100,28 +83,31 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       return;
     }
     
+    // Always update src when audioUrl of the specific project changes
     audio.src = project.audioUrl;
     audio.load();
     audio.muted = isMuted;
     audio.volume = shouldDuck ? audioVolume * 0.2 : audioVolume;
 
     const attemptPlay = () => {
+      // Browsers often block autoplay without interaction. 
+      // Since clicking the project is an interaction, this should work.
       if (!isMuted && showPlayer) {
         audio.play().catch(err => {
-          console.warn("Autoplay blocked/failed. User interaction likely needed.", err);
+          console.warn("Autoplay blocked/failed.", err);
         });
       }
     };
 
     audio.addEventListener('canplaythrough', attemptPlay);
-    // Tenta tocar imediatamente em caso de cache
+    // Try to play immediately if cached or already ready
     attemptPlay();
 
     return () => {
       audio.removeEventListener('canplaythrough', attemptPlay);
       audio.pause();
     };
-  }, [project?.audioUrl, project?.id]);
+  }, [project?.audioUrl]); // Removing project.id to avoid unnecessary resets if URL is same
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -205,11 +191,11 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     }
   };
 
-  const isLionJump = project.id === 'projeto-lion-jump';
-  const isEloBike = project.id === 'projeto-elobike';
-  const isAuddar = project.id === 'projeto-auddar';
+  const isLionJump = project?.id === 'projeto-lion-jump';
+  const isEloBike = project?.id === 'projeto-elobike';
+  const isAuddar = project?.id === 'projeto-auddar';
 
-  const theme = project.theme || {
+  const theme = project?.theme || {
     playerBg: 'bg-black',
     accentColor: '#00D154',
     playerBorder: 'border-white/10',
@@ -217,10 +203,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     navButtonColor: 'text-black'
   };
 
-  const totalFeed = Array.isArray(project.feed) ? project.feed.length : 0;
-  const currentFeed = totalFeed > 0 ? project.feed[feedIndex] : null;
-  const currentStories = Array.isArray(currentFeed?.stories) ? currentFeed.stories : [];
-  const totalStories = currentStories.length + (currentFeed ? 1 : 0);
   const currentMedia = storyIndex === 0 ? currentFeed?.media : currentStories[storyIndex - 1];
 
   const viewportHeight = windowSize.height;
@@ -282,13 +264,13 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                   } as React.CSSProperties}
                 >
                   <div className="w-full h-full">
-                    <MediaRenderer media={currentMedia} isActive={true} isMuted={isMuted} theme={theme} projectId={project.id} />
+                    <MediaRenderer media={currentMedia} isActive={true} isMuted={isMuted} theme={theme} projectId={project?.id} />
                   </div>
                 </div>
 
                 <div className="hidden md:block">
                   {/* Story Navigation (Sides) */}
-                  {(totalStories > 1 || project.layoutType === 'horizontal') && (
+                  {totalStories > 1 && (
                     <>
                       <button 
                         onClick={(e) => { 
@@ -300,7 +282,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                             ? 'bg-[#0c9347] text-white hover:bg-[#0c9347]/80'
                             : 'bg-white/40 backdrop-blur-md text-black border border-white/10'
                           } 
-                          ${(storyIndex === 0 && (project.layoutType !== 'horizontal' || feedIndex === 0)) ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                          ${storyIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
                       >
                         <ChevronLeft size={18} strokeWidth={3} />
                       </button>
@@ -314,7 +296,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                             ? 'bg-[#0c9347] text-white hover:bg-[#0c9347]/80'
                             : 'bg-white/40 backdrop-blur-md text-black border border-white/10'
                           }
-                          ${(storyIndex === totalStories - 1 && (project.layoutType !== 'horizontal' || feedIndex === totalFeed - 1)) ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                          ${storyIndex === totalStories - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
                       >
                         <ChevronRight size={18} strokeWidth={3} />
                       </button>
