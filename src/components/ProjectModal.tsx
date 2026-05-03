@@ -15,10 +15,11 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   onClose, 
   onVideoStateChange,
 }) => {
-  // 1. Definição de todos os Hooks (Sempre no topo, nunca pulados)
+  // 1. Definição de todos os Hooks
   const [feedIndex, setFeedIndex] = useState(0);
   const [storyIndex, setStoryIndex] = useState(0);
-  const [isMuted, setIsMuted] = useState(false);
+  const [showPlayer, setShowPlayer] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const [audioVolume, setAudioVolume] = useState(0.8);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [shouldDuck, setShouldDuck] = useState(false);
@@ -31,7 +32,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const isScrollingRef = useRef(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // 2. Callbacks e Efeitos (Todos antes de qualquer return condicional)
+  // 2. Callbacks e Efeitos
   
   const navigateFeed = useCallback((direction: 1 | -1) => {
     if (isScrollingRef.current) return;
@@ -44,7 +45,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     }
   }, [feedIndex, project?.feed]);
 
-  // Calculamos o totalStories dentro do storyIndex para manter o hook estável
   const currentFeedForNav = Array.isArray(project?.feed) ? project?.feed[feedIndex] : null;
   const currentStoriesForNav = Array.isArray(currentFeedForNav?.stories) ? currentFeedForNav?.stories : [];
   const totalStoriesForNav = currentStoriesForNav.length + (currentFeedForNav ? 1 : 0);
@@ -59,12 +59,12 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     }
   }, [storyIndex, totalStoriesForNav]);
 
-  // Zera o estado ao trocar de projeto
   useEffect(() => {
     if (project) {
       setFeedIndex(0);
       setStoryIndex(0);
-      setIsMuted(false);
+      setShowPlayer(false);
+      setIsMuted(true);
       setShouldDuck(false);
 
       if (audioRef.current) {
@@ -74,7 +74,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     }
   }, [project?.id]);
 
-  // Carrega o áudio
   useEffect(() => {
     if (project?.audioUrl && audioRef.current) {
       audioRef.current.src = project.audioUrl;
@@ -82,27 +81,25 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     }
   }, [project?.audioUrl]);
 
-  // Audio mute/volume
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
+    
     audio.muted = isMuted;
     audio.volume = shouldDuck ? audioVolume * 0.2 : audioVolume;
 
-    // A pedido do usuário, alguns projetos (como Auddar) devem tocar áudio desde o início do modal
-    // No entanto, para evitar bloqueio de autoplay, mantemos a dependência do modal estar aberto
-    const shouldPlay = !isMuted;
+    const shouldPlay = !isMuted && showPlayer;
 
     if (shouldPlay) {
       audio.play().catch(() => {});
     } else {
       audio.pause();
     }
-  }, [isMuted, shouldDuck, audioVolume, project?.id]);
+  }, [isMuted, shouldDuck, showPlayer, audioVolume]);
 
-  // Teclado
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (!showPlayer) return;
       switch (e.key) {
         case 'ArrowRight':
           navigateStory(1);
@@ -124,21 +121,32 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [navigateStory, navigateFeed, onClose]);
+  }, [showPlayer, navigateStory, navigateFeed, onClose]);
 
   // Bloqueio de scroll do body
   useEffect(() => {
     if (project) {
+      document.body.classList.add('scrollbar-hide');
+      document.documentElement.classList.add('scrollbar-hide');
       document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.paddingRight = '0px';
     } else {
+      document.body.classList.remove('scrollbar-hide');
+      document.documentElement.classList.remove('scrollbar-hide');
       document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+      document.body.style.paddingRight = '';
     }
     return () => {
+      document.body.classList.remove('scrollbar-hide');
+      document.documentElement.classList.remove('scrollbar-hide');
       document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+      document.body.style.paddingRight = '';
     };
   }, [project]);
 
-  // Resize listener
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const handleResize = () => setWindowSize({ width: window.innerWidth, height: window.innerHeight });
@@ -146,8 +154,18 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // 3. Verificações de Dados e Renderização
   if (!project) return null;
+
+  const handleStartTour = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowPlayer(true);
+    setIsMuted(false); 
+    if (audioRef.current) {
+      audioRef.current.muted = false;
+      audioRef.current.play().catch(() => {});
+    }
+  };
+
   const isLionJump = project.id === 'projeto-lion-jump';
   const isEloBike = project.id === 'projeto-elobike';
 
@@ -169,37 +187,21 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const viewportWidth = windowSize.width;
   const isDesktop = viewportWidth > 1024;
   
-  // Ajuste de dimensões: Altura fixa em 540px como base absoluta
   const baseHeight = isEloBike ? 540 : (currentMedia?.playerHeight || theme.playerHeight || 540);
-  
-  // Largura definida no tema ou calculada pela proporção (mantedo fallback seguro)
   const currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || 1;
   const isHorizontal = currentAspectRatio > 1.2;
-  
-  // Se houver playerWidth no tema ou no card, usamos ele. Caso contrário, fallback baseado no tipo de layout
   const baseWidth = isEloBike ? 432 : (currentMedia?.playerWidth || theme.playerWidth || (isHorizontal ? 960 : 540));
   
   const playerWidth = isDesktop ? baseWidth : Math.min(baseWidth, viewportWidth * 0.95);
-  
-  // Altura baseada na largura final para manter proporção se redimensionado no mobile
   let playerHeight = playerWidth / (baseWidth / baseHeight);
-  
   const maxAllowedHeight = viewportHeight * 0.88;
 
-  // Se a altura calculada for muito grande para a tela, reduzimos proporcionalmente
   if (playerHeight > maxAllowedHeight) {
-    const ratio = maxAllowedHeight / playerHeight;
     playerHeight = maxAllowedHeight;
-    // No mobile, se a altura for o limite, ajustamos a largura para manter o aspect ratio se necessário
-    // Mas no desktop, preferimos manter a largura e permitir o crop se for PDF/Imagem scrollable
   }
 
   const handleToggleMute = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (audioRef.current) {
-      if (isMuted) audioRef.current.play().catch(() => {});
-      else audioRef.current.pause();
-    }
     setIsMuted(!isMuted);
   };
 
@@ -209,7 +211,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       animate={{ opacity: 1 }}
       className="fixed inset-0 z-[9999] bg-[#050510]/98 backdrop-blur-3xl flex items-center justify-center select-none overflow-hidden"
     >
-      {/* Fundo para fechar ao clicar fora */}
       <div className="absolute inset-0 z-0 bg-transparent" onClick={onClose} />
 
       <div 
@@ -217,22 +218,39 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
         onClick={e => e.stopPropagation()}
       >
         <div className="flex items-center justify-center w-full h-full relative">
-          <div className="relative flex items-center justify-center">
-          {/* Player Principal Container */}
-            <motion.div 
-              key={`${feedIndex}-${storyIndex}`}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.15, ease: 'linear' }}
-              className="relative z-10"
-              style={{ 
-                width: `${playerWidth}px`,
-                height: `${playerHeight}px`,
-                minWidth: `${playerWidth}px`,
-                maxWidth: `${playerWidth}px`,
-              }}
-            >
-                {/* O Player propriamente dito */}
+          {!showPlayer ? (
+            <div className="flex flex-col items-center text-center max-w-lg bg-zinc-900 p-12 rounded-[8px] border border-white/5 shadow-2xl relative z-[10020]">
+              {project.coverImage && (
+                <img 
+                  src={project.coverImage} 
+                  className="w-32 h-32 md:w-40 md:h-40 rounded-[8px] object-cover mb-10 shadow-2xl border border-white/10"
+                  alt=""
+                />
+              )}
+              <h2 className="text-3xl md:text-5xl font-black mb-6 italic uppercase tracking-tighter text-white leading-none">{project.title}</h2>
+              <p className="text-zinc-400 font-medium mb-12 text-sm leading-relaxed max-w-xs">{project.description}</p>
+              <button
+                onClick={handleStartTour}
+                className="px-14 py-5 bg-white text-black font-black uppercase tracking-[0.2em] text-[10px] rounded-full hover:scale-105 transition-all shadow-2xl pointer-events-auto"
+              >
+                Iniciar Tour
+              </button>
+            </div>
+          ) : (
+            <div className="relative flex items-center justify-center">
+              <motion.div 
+                key={`${feedIndex}-${storyIndex}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.15, ease: 'linear' }}
+                className="relative z-10"
+                style={{ 
+                  width: `${playerWidth}px`,
+                  height: `${playerHeight}px`,
+                  minWidth: `${playerWidth}px`,
+                  maxWidth: `${playerWidth}px`,
+                }}
+              >
                 <div 
                   className={`w-full h-full ${theme.playerBg || 'bg-black'} overflow-hidden relative border ${isLionJump ? (theme.playerBorder || 'border-white/10') : 'border-zinc-500/20'} ${theme.playerShadow || ''}`}
                   style={{
@@ -240,18 +258,13 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                     height: '100%',
                     borderRadius: '8px',
                     borderWidth: '1px',
-                    boxShadow: theme.playerShadow ? undefined : `0 0 15px ${theme.accentColor}03`,
-                    '--glow-color': theme.accentColor ? `${theme.accentColor}33` : undefined,
-                    '--border-color': theme.accentColor ? `${theme.accentColor}11` : undefined,
                   } as React.CSSProperties}
                 >
-                  {/* Conteúdo interno */}
                   <div className="w-full h-full">
-                    <MediaRenderer media={currentMedia} isActive={true} isMuted={isMuted} theme={theme} projectId={project.id} />
+                    <MediaRenderer media={currentMedia} isActive={showPlayer} isMuted={isMuted} theme={theme} projectId={project.id} />
                   </div>
                 </div>
 
-                {/* Botões de Navegação Horizontais (Cards/Stories) */}
                 <div className="hidden md:block">
                   {totalStories > 1 && (
                     <>
@@ -263,7 +276,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                             : 'bg-white/40 backdrop-blur-md text-black border border-white/10'
                           } 
                           ${storyIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
-                        title="Anterior"
                       >
                         <ChevronLeft size={18} strokeWidth={3} />
                       </button>
@@ -275,7 +287,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                             : 'bg-white/40 backdrop-blur-md text-black border border-white/10'
                           }
                           ${storyIndex === totalStories - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
-                        title="Próximo"
                       >
                         <ChevronRight size={18} strokeWidth={3} />
                       </button>
@@ -283,15 +294,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                   )}
                 </div>
 
-                {/* Botão Fechar (X) */}
-                <button 
-                  onClick={(e) => { e.stopPropagation(); onClose(); }}
-                  className={`absolute -top-4 -right-4 z-[10025] w-10 h-10 ${theme.closeButtonBg || 'bg-zinc-900'} border border-white/10 ${theme.closeButtonColor || 'text-white'} rounded-full flex items-center justify-center hover:scale-110 hover:border-accent/40 hover:text-accent transition-all shadow-2xl`}
-                >
-                  <X size={18} strokeWidth={3} />
-                </button>
-
-                {/* Botões de Navegação Verticais (Capítulos/Feeds) */}
                 <div className="hidden md:flex absolute inset-y-0 left-1/2 -translate-x-1/2 -top-[47px] -bottom-[47px] flex-col items-center justify-between pointer-events-none z-[10010]">
                   <button 
                     disabled={feedIndex === 0}
@@ -302,7 +304,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                         : 'bg-white/40 backdrop-blur-md text-black border border-white/10'
                       }
                       ${feedIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 active:scale-95'}`}
-                    title="Capítulo Anterior"
                   >
                     <ChevronUp size={18} strokeWidth={3} />
                   </button>
@@ -316,34 +317,40 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                         : 'bg-white/40 backdrop-blur-md text-black border border-white/10'
                       }
                       ${feedIndex === totalFeed - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 active:scale-95'}`}
-                    title="Próximo Capítulo"
                   >
                     <ChevronDown size={18} strokeWidth={3} />
                   </button>
                 </div>
               </motion.div>
             </div>
+          )}
+          {/* Botão Fechar (X) Sempre Visível */}
+          <button 
+            onClick={(e) => { e.stopPropagation(); onClose(); }}
+            className={`absolute top-4 right-4 md:-top-4 md:-right-4 z-[10025] w-10 h-10 bg-zinc-900 border border-white/10 text-white rounded-full flex items-center justify-center hover:scale-110 transition-all shadow-2xl`}
+          >
+            <X size={18} strokeWidth={3} />
+          </button>
         </div>
       </div>
 
-        {project.audioUrl && (
-          <>
-            <audio 
-              ref={audioRef} 
-              src={project.audioUrl}
-              loop 
-              playsInline 
-              preload="auto" 
-              crossOrigin="anonymous"
-            />
-            <AudioPlayer 
-              isMuted={isMuted}
-              onToggleMute={handleToggleMute}
-              volume={audioVolume}
-              onVolumeChange={setAudioVolume}
-            />
-          </>
-        )}
+      {project.audioUrl && (
+        <>
+          <audio 
+            ref={audioRef} 
+            src={project.audioUrl}
+            loop 
+            playsInline 
+            preload="auto" 
+          />
+          <AudioPlayer 
+            isMuted={isMuted}
+            onToggleMute={handleToggleMute}
+            volume={audioVolume}
+            onVolumeChange={setAudioVolume}
+          />
+        </>
+      )}
     </motion.div>
   );
 };
@@ -388,11 +395,9 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
       return (
         <div className="w-full h-full bg-[#0a0a0a] overflow-hidden relative">
           <iframe 
-            src={pdfUrl}
-            className="absolute border-none pointer-events-auto block"
+            src={`https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(pdfUrl)}#toolbar=0`}
+            className="absolute inset-0 w-full h-full border-none pointer-events-auto"
             style={{ 
-              width: '100%',
-              height: '100%',
               backgroundColor: '#333'
             }}
             title={media.title || 'PDF Document'}
