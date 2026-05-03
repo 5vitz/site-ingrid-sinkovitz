@@ -30,6 +30,11 @@ export const seedAuddar = async () => {
         },
         stories: [
           {
+            type: 'image',
+            url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F01-Capa.jpg?alt=media&token=ce795f6e-1aea-4fa7-8f93-d6797b6a2450',
+            objectFit: 'contain'
+          },
+          {
             type: 'text',
             title: 'Auddar',
             subtitle: 'Techospitality',
@@ -89,6 +94,16 @@ export const seedAuddar = async () => {
           {
             type: 'image',
             url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F13.png?alt=media&token=e5182804-7b53-4df9-b6f2-6a3cf412c304',
+            objectFit: 'contain'
+          },
+          {
+            type: 'image',
+            url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F14.png?alt=media&token=34ab42ad-e3fb-4360-9b82-d74a20b79fdd',
+            objectFit: 'contain'
+          },
+          {
+            type: 'image',
+            url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F15.png?alt=media&token=70d1c25f-99e3-4efd-b4b7-7999bed4da5a',
             objectFit: 'contain'
           }
         ]
