@@ -18,7 +18,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   // 1. Definição de todos os Hooks (Sempre no topo, nunca pulados)
   const [feedIndex, setFeedIndex] = useState(0);
   const [storyIndex, setStoryIndex] = useState(0);
-  const [showPlayer, setShowPlayer] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
   const [audioVolume, setAudioVolume] = useState(0.8);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
@@ -65,7 +64,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     if (project) {
       setFeedIndex(0);
       setStoryIndex(0);
-      setShowPlayer(true);
       setIsMuted(false);
       setShouldDuck(false);
 
@@ -92,21 +90,19 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     audio.volume = shouldDuck ? audioVolume * 0.2 : audioVolume;
 
     // A pedido do usuário, alguns projetos (como Auddar) devem tocar áudio desde o início do modal
-    // No entanto, para evitar bloqueio de autoplay, mantemos a dependência de showPlayer OU bypass para Auddar
-    const shouldPlay = !isMuted && (showPlayer || project?.id === 'projeto-auddar');
+    // No entanto, para evitar bloqueio de autoplay, mantemos a dependência do modal estar aberto
+    const shouldPlay = !isMuted;
 
     if (shouldPlay) {
       audio.play().catch(() => {});
     } else {
       audio.pause();
     }
-  }, [isMuted, shouldDuck, showPlayer, audioVolume, project?.id]);
+  }, [isMuted, shouldDuck, audioVolume, project?.id]);
 
   // Teclado
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (!showPlayer) return;
-      
       switch (e.key) {
         case 'ArrowRight':
           navigateStory(1);
@@ -128,7 +124,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [showPlayer, navigateStory, navigateFeed, onClose]);
+  }, [navigateStory, navigateFeed, onClose]);
 
   // Bloqueio de scroll do body
   useEffect(() => {
@@ -201,17 +197,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     // Mas no desktop, preferimos manter a largura e permitir o crop se for PDF/Imagem scrollable
   }
 
-  const handleStartTour = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setShowPlayer(true);
-    setIsMuted(false); 
-    if (audioRef.current) {
-      audioRef.current.muted = false;
-      audioRef.current.volume = 0.8;
-      audioRef.current.play().catch(() => {});
-    }
-  };
-
   const handleToggleMute = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (audioRef.current) {
@@ -236,40 +221,21 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
         onClick={e => e.stopPropagation()}
       >
         <div className="flex items-center justify-center w-full h-full relative">
-          {!showPlayer ? (
-            <div className="flex flex-col items-center text-center max-w-lg bg-zinc-900 p-12 rounded-[8px] border border-white/5 shadow-2xl">
-              {project.coverImage && (
-                <img 
-                  src={project.coverImage} 
-                  className="w-32 h-32 md:w-40 md:h-40 rounded-[8px] object-cover mb-10 shadow-2xl border border-white/10"
-                  alt=""
-                />
-              )}
-              <h2 className="text-3xl md:text-5xl font-black mb-6 italic uppercase tracking-tighter text-white leading-none">{project.title}</h2>
-              <p className="text-zinc-400 font-medium mb-12 text-sm leading-relaxed max-w-xs">{project.description}</p>
-              <button
-                onClick={handleStartTour}
-                className="px-14 py-5 bg-accent text-white font-black uppercase tracking-[0.2em] text-[10px] rounded-full hover:scale-105 transition-all shadow-2xl pointer-events-auto"
-              >
-                Iniciar Tour
-              </button>
-            </div>
-          ) : (
-            <div className="relative flex items-center justify-center">
-            {/* Player Principal Container */}
-              <motion.div 
-                key={`${feedIndex}-${storyIndex}`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.15, ease: 'linear' }}
-                className="relative z-10"
-                style={{ 
-                  width: `${playerWidth}px`,
-                  height: `${playerHeight}px`,
-                  minWidth: `${playerWidth}px`,
-                  maxWidth: `${playerWidth}px`,
-                }}
-              >
+          <div className="relative flex items-center justify-center">
+          {/* Player Principal Container */}
+            <motion.div 
+              key={`${feedIndex}-${storyIndex}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.15, ease: 'linear' }}
+              className="relative z-10"
+              style={{ 
+                width: `${playerWidth}px`,
+                height: `${playerHeight}px`,
+                minWidth: `${playerWidth}px`,
+                maxWidth: `${playerWidth}px`,
+              }}
+            >
                 {/* O Player propriamente dito */}
                 <div 
                   className={`w-full h-full ${theme.playerBg || 'bg-black'} overflow-hidden relative border ${isLionJump ? (theme.playerBorder || 'border-white/10') : 'border-zinc-500/20'} ${theme.playerShadow || ''}`}
@@ -285,7 +251,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                 >
                   {/* Conteúdo interno */}
                   <div className="w-full h-full">
-                    <MediaRenderer media={currentMedia} isActive={showPlayer} isMuted={isMuted} theme={theme} projectId={project.id} />
+                    <MediaRenderer media={currentMedia} isActive={true} isMuted={isMuted} theme={theme} projectId={project.id} />
                   </div>
                 </div>
 
@@ -361,7 +327,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                 </div>
               </motion.div>
             </div>
-          )}
         </div>
       </div>
 
@@ -423,22 +388,29 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
   if (media.type === 'image' || media.type === 'pdf') {
     const isPDF = media.type === 'pdf' || media.url?.toLowerCase().includes('.pdf');
     if (isPDF) {
-      // Usando o visualizador nativo, mas garantindo que o URL seja tratado corretamente
-      // Para o style Mozilla (nativo), apenas o link direto funciona melhor
       const pdfUrl = media.url || '';
+      // Usando o Google Docs Viewer para garantir compatibilidade em todos os navegadores
+      const embedUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(pdfUrl)}&embedded=true`;
       
       return (
-        <div className="w-full h-full bg-[#0a0a0a] overflow-hidden relative">
+        <div className="w-full h-full bg-[#1a1a1a] flex flex-col relative overflow-hidden group">
           <iframe 
-            src={pdfUrl}
-            className="absolute border-none pointer-events-auto block"
-            style={{ 
-              width: '100%',
-              height: '100%',
-              backgroundColor: '#333'
-            }}
+            src={embedUrl}
+            className="w-full h-full border-none pointer-events-auto"
             title={media.title || 'PDF Document'}
           />
+          
+          {/* Botão de fallback/ação direta se o iframe falhar ou para melhor experiência */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity z-50">
+            <a 
+              href={pdfUrl} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="px-6 py-2.5 bg-accent text-zinc-950 font-bold rounded-full shadow-2xl flex items-center gap-2 hover:scale-105 active:scale-95 transition-all text-sm uppercase tracking-wider"
+            >
+              Abrir em Nova Aba
+            </a>
+          </div>
         </div>
       );
     }
