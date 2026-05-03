@@ -52,12 +52,31 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const navigateStory = useCallback((direction: 1 | -1) => {
     if (isScrollingRef.current) return;
     const next = storyIndex + direction;
-    if (next >= 0 && next < totalStoriesForNav) {
-      isScrollingRef.current = true;
-      setStoryIndex(next);
-      setTimeout(() => { isScrollingRef.current = false; }, 400);
+
+    if (project?.layoutType === 'horizontal') {
+      if (next < 0) {
+        if (feedIndex > 0) {
+          const prevFeed = project.feed[feedIndex - 1];
+          const prevStoriesCount = (Array.isArray(prevFeed.stories) ? prevFeed.stories.length : 0) + 1;
+          setFeedIndex(feedIndex - 1);
+          setStoryIndex(prevStoriesCount - 1);
+        }
+      } else if (next >= totalStoriesForNav) {
+        if (feedIndex < totalFeed - 1) {
+          setFeedIndex(feedIndex + 1);
+          setStoryIndex(0);
+        }
+      } else {
+        setStoryIndex(next);
+      }
+    } else {
+      if (next >= 0 && next < totalStoriesForNav) {
+        isScrollingRef.current = true;
+        setStoryIndex(next);
+        setTimeout(() => { isScrollingRef.current = false; }, 400);
+      }
     }
-  }, [storyIndex, totalStoriesForNav]);
+  }, [storyIndex, totalStoriesForNav, project, feedIndex, totalFeed]);
 
   useEffect(() => {
     if (project) {
@@ -75,11 +94,34 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   }, [project?.id]);
 
   useEffect(() => {
-    if (project?.audioUrl && audioRef.current) {
-      audioRef.current.src = project.audioUrl;
-      audioRef.current.load();
+    const audio = audioRef.current;
+    if (!audio || !project?.audioUrl) {
+      if (audio) audio.pause();
+      return;
     }
-  }, [project?.audioUrl]);
+    
+    audio.src = project.audioUrl;
+    audio.load();
+    audio.muted = isMuted;
+    audio.volume = shouldDuck ? audioVolume * 0.2 : audioVolume;
+
+    const attemptPlay = () => {
+      if (!isMuted && showPlayer) {
+        audio.play().catch(err => {
+          console.warn("Autoplay blocked/failed. User interaction likely needed.", err);
+        });
+      }
+    };
+
+    audio.addEventListener('canplaythrough', attemptPlay);
+    // Tenta tocar imediatamente em caso de cache
+    attemptPlay();
+
+    return () => {
+      audio.removeEventListener('canplaythrough', attemptPlay);
+      audio.pause();
+    };
+  }, [project?.audioUrl, project?.id]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -246,7 +288,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
 
                 <div className="hidden md:block">
                   {/* Story Navigation (Sides) */}
-                  {(totalStories > 1) && (
+                  {(totalStories > 1 || project.layoutType === 'horizontal') && (
                     <>
                       <button 
                         onClick={(e) => { 
@@ -258,7 +300,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                             ? 'bg-[#0c9347] text-white hover:bg-[#0c9347]/80'
                             : 'bg-white/40 backdrop-blur-md text-black border border-white/10'
                           } 
-                          ${storyIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                          ${(storyIndex === 0 && (project.layoutType !== 'horizontal' || feedIndex === 0)) ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
                       >
                         <ChevronLeft size={18} strokeWidth={3} />
                       </button>
@@ -272,7 +314,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                             ? 'bg-[#0c9347] text-white hover:bg-[#0c9347]/80'
                             : 'bg-white/40 backdrop-blur-md text-black border border-white/10'
                           }
-                          ${storyIndex === totalStories - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                          ${(storyIndex === totalStories - 1 && (project.layoutType !== 'horizontal' || feedIndex === totalFeed - 1)) ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
                       >
                         <ChevronRight size={18} strokeWidth={3} />
                       </button>
