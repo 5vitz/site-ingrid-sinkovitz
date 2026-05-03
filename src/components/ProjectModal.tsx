@@ -105,26 +105,16 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       
       switch (e.key) {
         case 'ArrowRight':
-          if (isHorizontalLayout && storyIndex === totalStoriesForNav - 1) {
-            navigateFeed(1);
-          } else {
-            navigateStory(1);
-          }
+          navigateStory(1);
           break;
         case 'ArrowLeft':
-          if (isHorizontalLayout && storyIndex === 0) {
-            navigateFeed(-1);
-            // Ao voltar de capítulo, ideally ir para o último slide do capítulo anterior
-            // Mas para manter simples agora, vamos apenas mudar o capítulo
-          } else {
-            navigateStory(-1);
-          }
+          navigateStory(-1);
           break;
         case 'ArrowUp':
-          if (!isHorizontalLayout) navigateFeed(-1);
+          navigateFeed(-1);
           break;
         case 'ArrowDown':
-          if (!isHorizontalLayout) navigateFeed(1);
+          navigateFeed(1);
           break;
         case 'Escape':
           onClose();
@@ -256,41 +246,33 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
 
                 <div className="hidden md:block">
                   {/* Story Navigation (Sides) */}
-                  {(totalStories > 1 || project.layoutType === 'horizontal') && (
+                  {(totalStories > 1) && (
                     <>
                       <button 
                         onClick={(e) => { 
                           e.stopPropagation(); 
-                          if (project.layoutType === 'horizontal' && storyIndex === 0) {
-                            navigateFeed(-1);
-                          } else {
-                            navigateStory(-1);
-                          }
+                          navigateStory(-1);
                         }}
                         className={`absolute -left-[47px] top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 shadow-[0_0_10px_rgba(0,0,0,0.5)] z-[10020]
                           ${isLionJump 
                             ? 'bg-[#0c9347] text-white hover:bg-[#0c9347]/80'
                             : 'bg-white/40 backdrop-blur-md text-black border border-white/10'
                           } 
-                          ${(storyIndex === 0 && (project.layoutType !== 'horizontal' || feedIndex === 0)) ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                          ${storyIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
                       >
                         <ChevronLeft size={18} strokeWidth={3} />
                       </button>
                       <button 
                         onClick={(e) => { 
                           e.stopPropagation(); 
-                          if (project.layoutType === 'horizontal' && storyIndex === totalStories - 1) {
-                            navigateFeed(1);
-                          } else {
-                            navigateStory(1);
-                          }
+                          navigateStory(1);
                         }}
                         className={`absolute -right-[47px] top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 shadow-[0_0_10px_rgba(0,0,0,0.5)] z-[10020]
                           ${isLionJump 
                             ? 'bg-[#0c9347] text-white hover:bg-[#0c9347]/80'
                             : 'bg-white/40 backdrop-blur-md text-black border border-white/10'
                           }
-                          ${(storyIndex === totalStories - 1 && (project.layoutType !== 'horizontal' || feedIndex === totalFeed - 1)) ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                          ${storyIndex === totalStories - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
                       >
                         <ChevronRight size={18} strokeWidth={3} />
                       </button>
