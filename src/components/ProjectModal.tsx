@@ -63,7 +63,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     if (project) {
       setFeedIndex(0);
       setStoryIndex(0);
-      setShowPlayer(false);
+      setShowPlayer(true);
       setIsMuted(true);
       setShouldDuck(false);
 
@@ -175,6 +175,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
 
   const isLionJump = project.id === 'projeto-lion-jump';
   const isEloBike = project.id === 'projeto-elobike';
+  const isAuddar = project.id === 'projeto-auddar';
 
   const theme = project.theme || {
     playerBg: 'bg-black',
@@ -194,10 +195,10 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const viewportWidth = windowSize.width;
   const isDesktop = viewportWidth > 1024;
   
-  const baseHeight = isEloBike ? 540 : (currentMedia?.playerHeight || theme.playerHeight || 540);
+  const baseHeight = (isEloBike || isAuddar) ? 540 : (currentMedia?.playerHeight || theme.playerHeight || 540);
   const currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || 1;
   const isHorizontal = currentAspectRatio > 1.2;
-  const baseWidth = isEloBike ? 432 : (currentMedia?.playerWidth || theme.playerWidth || (isHorizontal ? 960 : 540));
+  const baseWidth = isEloBike ? 432 : (isAuddar ? 540 : (currentMedia?.playerWidth || theme.playerWidth || (isHorizontal ? 960 : 540)));
   
   const playerWidth = isDesktop ? baseWidth : Math.min(baseWidth, viewportWidth * 0.95);
   let playerHeight = playerWidth / (baseWidth / baseHeight);
@@ -471,7 +472,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
       <div className={`w-full h-full relative ${media.allowScroll ? 'overflow-y-scroll overflow-x-hidden custom-scrollbar pr-1' : 'overflow-hidden'}`}>
         <img 
           src={media.url} 
-          className={`w-full ${media.allowScroll ? 'h-auto block min-h-0' : 'h-full object-cover'}`}
+          className={`w-full ${media.allowScroll ? 'h-auto block min-h-0' : `h-full ${media.objectFit === 'contain' ? 'object-contain' : 'object-cover'}`}`}
           style={{ 
             transform: `scale(${media.zoom || 1}) translateX(${media.xOffset || 0}px) translateY(${media.yOffset || 0}px)`,
             transformOrigin: media.allowScroll ? 'top center' : 'center center',

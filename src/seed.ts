@@ -22,7 +22,7 @@ export const seedAuddar = async () => {
       {
         id: 'auddar-main',
         title: 'Techospitality Strategy',
-        aspectRatio: 1.777,
+        aspectRatio: 1,
         media: {
           type: 'image',
           url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F01-Capa.jpg?alt=media&token=ce795f6e-1aea-4fa7-8f93-d6797b6a2450',
