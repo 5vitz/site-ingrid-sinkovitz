@@ -349,6 +349,7 @@ export const LION_JUMP_PROJECT: Project = {
         type: 'image',
         order: 9,
         url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F04-Africa%2FBanner_Lan%C3%A7amento_AFRICA_04.png?alt=media&token=0da585e6-641b-493e-ac1d-0a3d4d3ac928',
+        objectPosition: 'left center'
       },
       stories: [
         {

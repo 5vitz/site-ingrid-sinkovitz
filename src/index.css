@@ -54,12 +54,12 @@
   /* Reset Scrollbar - Eliminar scroll grosso branco */
   * {
     scrollbar-width: thin;
-    scrollbar-color: #333 transparent;
+    scrollbar-color: #222 transparent;
   }
   
   ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
   }
   ::-webkit-scrollbar-track {
     background: transparent;
@@ -67,6 +67,9 @@
   ::-webkit-scrollbar-thumb {
     background: #333;
     border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #444;
   }
 
   html, body {

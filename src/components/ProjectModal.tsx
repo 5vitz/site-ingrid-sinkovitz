@@ -366,11 +366,11 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
     const isPDF = media.type === 'pdf' || media.url?.toLowerCase().includes('.pdf');
     if (isPDF) {
       const pdfUrl = media.url || '';
-      const proxiedUrl = `https://corsproxy.io/?${encodeURIComponent(pdfUrl)}`;
-      const viewerUrl = `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(proxiedUrl)}`;
+      // Wrapper do Google Docs para embutir PDF sem erros de CORS ou Frame
+      const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(pdfUrl)}&embedded=true`;
       
       return (
-        <div className="w-full h-full bg-[#0a0a0a] overflow-hidden relative flex items-center justify-center">
+        <div className="w-full h-full bg-[#0a0a0a] overflow-hidden relative">
           <iframe 
             src={viewerUrl}
             className="absolute inset-0 w-full h-full border-none pointer-events-auto"
@@ -444,6 +444,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
           style={{ 
             transform: `scale(${media.zoom || 1}) translateX(${media.xOffset || 0}px) translateY(${media.yOffset || 0}px)`,
             transformOrigin: media.allowScroll ? 'top center' : 'center center',
+            objectPosition: media.objectPosition || 'center center',
             display: 'block',
             width: '100%',
           }}
