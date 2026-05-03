@@ -3,6 +3,7 @@ import { Project, FeedItem, MediaItem } from '../types';
 import { X, ChevronLeft, ChevronRight, ChevronUp, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { AudioPlayer } from './AudioPlayer';
+import { PDFViewer } from './PDFViewer';
 
 interface ProjectModalProps {
   project: Project | null;
@@ -388,14 +389,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
       const pdfUrl = media.url || '';
       return (
         <div className="w-full h-full bg-[#0a0a0a] overflow-hidden relative">
-          <iframe 
-            src={pdfUrl}
-            className="absolute inset-0 w-full h-full border-none pointer-events-auto"
-            style={{ 
-              backgroundColor: '#333'
-            }}
-            title={media.title || 'PDF Document'}
-          />
+          <PDFViewer url={pdfUrl} />
         </div>
       );
     }
