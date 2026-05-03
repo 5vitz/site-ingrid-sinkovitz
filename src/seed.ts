@@ -46,13 +46,13 @@ export const seedAuddar = async () => {
             type: 'image',
             url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F04-Parceria.png?alt=media&token=88d95213-2428-441a-8b02-587733d0cfae',
             objectFit: 'cover',
-            zoom: 1.13
+            zoom: 1.10
           },
           {
             type: 'image',
             url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F05-Email.png?alt=media&token=b4a3b159-284e-463f-9de8-8075862e73c7',
             objectFit: 'cover',
-            zoom: 1.13
+            zoom: 1.10
           },
           {
             type: 'image',
