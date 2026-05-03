@@ -93,14 +93,14 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
 
     // A pedido do usuário, alguns projetos (como Auddar) devem tocar áudio desde o início do modal
     // No entanto, para evitar bloqueio de autoplay, mantemos a dependência de showPlayer OU bypass para Auddar
-    const shouldPlay = !isMuted && (showPlayer || project.id === 'projeto-auddar');
+    const shouldPlay = !isMuted && (showPlayer || project?.id === 'projeto-auddar');
 
     if (shouldPlay) {
       audio.play().catch(() => {});
     } else {
       audio.pause();
     }
-  }, [isMuted, shouldDuck, showPlayer, audioVolume, project.id]);
+  }, [isMuted, shouldDuck, showPlayer, audioVolume, project?.id]);
 
   // Teclado
   useEffect(() => {
