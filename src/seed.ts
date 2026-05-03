@@ -26,7 +26,8 @@ export const seedAuddar = async () => {
         media: {
           type: 'image',
           url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F01-Capa.jpg?alt=media&token=ce795f6e-1aea-4fa7-8f93-d6797b6a2450',
-          objectFit: 'contain'
+          objectFit: 'cover',
+          zoom: 1.03
         },
         stories: [
           {
