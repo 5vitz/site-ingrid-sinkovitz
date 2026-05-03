@@ -39,6 +39,7 @@ export interface MediaItem {
   yOffset?: number;
   xOffset?: number;
   objectFit?: 'cover' | 'contain';
+  objectPosition?: string;
   allowScroll?: boolean;
   aspectRatio?: number;
   playerWidth?: number;

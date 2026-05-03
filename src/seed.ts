@@ -20,140 +20,78 @@ export const seedAuddar = async () => {
     },
     feed: [
       {
-        id: 'f1',
-        title: 'Capa do Projeto',
-        aspectRatio: 1,
+        id: 'auddar-main',
+        title: 'Techospitality Strategy',
+        aspectRatio: 1.777,
         media: {
           type: 'image',
           url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F01-Capa.jpg?alt=media&token=ce795f6e-1aea-4fa7-8f93-d6797b6a2450',
-          zoom: 1,
-          objectFit: 'cover'
-        }
-      },
-      {
-        id: 'f2',
-        title: 'Sobre o Projeto',
-        aspectRatio: 1,
-        media: {
-          type: 'text',
-          title: 'Auddar',
-          subtitle: 'Techospitality',
-          content: 'Estruturação de Marketing e Materiais de Venda | Auddar (Techospitality)\n\nProjeto de estruturação da comunicação e dos serviços da Audaar, empresa de tecnologia para o setor de hospedagem. Objetivo de organizar a proposta de valor da marca, desenvolver narrativa e materiais estratégicos de venda, com foco em clareza, consistência e conversão.\n\nMeu papel:\nGerente de Marketing, atuando de forma integrada ao time comercial para estruturar comunicação, presença digital e suporte às vendas.\n\nEscopo de atuação:\n• Desenvolvimento de narrativa, tom de voz e posicionamento\n• Criação de apresentações comerciais e materiais de venda (propostas, serviços e pitch)\n• Estruturação do Instagram (bio, destaques e identidade inicial)\n• Produção de conteúdos estratégicos (carrosséis informativos)\n• Criação de e-mail marketing (copy e layout) para relacionamento e apoio comercial\n• Planejamento de ações e conteúdos alinhados à aquisição e posicionamento\n• Apoio a demandas internas de comunicação (endomarketing)\n\nEntrega:\n• Organização e clareza na comunicação dos serviços\n• Materiais estruturados para apoio direto ao time comercial\n• Base de presença digital alinhada ao posicionamento da marca\n• Conteúdos voltados à educação do público e geração de demanda\n\nFoco estratégico:\nTradução de soluções técnicas em comunicação acessível e orientada à conversão, conectando marketing, conteúdo e processo comercial',
-          layout: 'default'
-        }
-      },
-      {
-        id: 'f3',
-        title: 'Apresentação Comercial',
-        aspectRatio: 1,
-        media: {
-          type: 'image',
-          url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F03-Apresentacao.pdf?alt=media&token=e1773370-5a15-409c-9f1b-9cbbc8a5d284',
-          objectFit: 'contain',
-          allowScroll: true
-        }
-      },
-      {
-        id: 'f4',
-        title: 'Proposta de Parceria',
-        aspectRatio: 1,
-        media: {
-          type: 'image',
-          url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F04-Parceria.png?alt=media&token=88d95213-2428-441a-8b02-587733d0cfae',
-          objectFit: 'cover',
-          allowScroll: true
-        }
-      },
-      {
-        id: 'f5',
-        title: 'E-mail Marketing',
-        aspectRatio: 1,
-        media: {
-          type: 'image',
-          url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F05-Email.png?alt=media&token=b4a3b159-284e-463f-9de8-8075862e73c7',
-          objectFit: 'cover',
-          allowScroll: true
-        }
-      },
-      {
-        id: 'f6',
-        title: 'Social Media 01',
-        aspectRatio: 1,
-        media: {
-          type: 'image',
-          url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F06.png?alt=media&token=680da923-89b6-42c0-9137-dfa6fc042f2c',
           objectFit: 'contain'
-        }
-      },
-      {
-        id: 'f7',
-        title: 'Social Media 02',
-        aspectRatio: 1,
-        media: {
-          type: 'image',
-          url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F07.png?alt=media&token=2ea91a9d-1abb-488e-9911-1c8cd0030b30',
-          objectFit: 'contain'
-        }
-      },
-      {
-        id: 'f8',
-        title: 'Social Media 03',
-        aspectRatio: 1,
-        media: {
-          type: 'image',
-          url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F08.png?alt=media&token=2ac67681-97d5-460c-ba2b-3c6333e61b57',
-          objectFit: 'contain'
-        }
-      },
-      {
-        id: 'f9',
-        title: 'Social Media 04',
-        aspectRatio: 1,
-        media: {
-          type: 'image',
-          url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F09.png?alt=media&token=469b3533-2836-4c5a-a9e0-ce5e2e6c3ac6',
-          objectFit: 'contain'
-        }
-      },
-      {
-        id: 'f10',
-        title: 'Social Media 05',
-        aspectRatio: 1,
-        media: {
-          type: 'image',
-          url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F10.png?alt=media&token=8435034c-7286-47b1-869b-8effb8d596e8',
-          objectFit: 'contain'
-        }
-      },
-      {
-        id: 'f11',
-        title: 'Social Media 06',
-        aspectRatio: 1,
-        media: {
-          type: 'image',
-          url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F11.png?alt=media&token=bbac69b3-ca53-46dd-b369-ee036a522217',
-          objectFit: 'contain'
-        }
-      },
-      {
-        id: 'f12',
-        title: 'Social Media 07',
-        aspectRatio: 1,
-        media: {
-          type: 'image',
-          url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F12.png?alt=media&token=12da4f64-c577-45b5-a25e-36c7eee38a82',
-          objectFit: 'contain'
-        }
-      },
-      {
-        id: 'f13',
-        title: 'Social Media 08',
-        aspectRatio: 1,
-        media: {
-          type: 'image',
-          url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F13.png?alt=media&token=e5182804-7b53-4df9-b6f2-6a3cf412c304',
-          objectFit: 'contain'
-        }
+        },
+        stories: [
+          {
+            type: 'text',
+            title: 'Auddar',
+            subtitle: 'Techospitality',
+            content: 'Estruturação de Marketing e Materiais de Venda | Auddar (Techospitality)\n\nProjeto de estruturação da comunicação e dos serviços da Audaar, empresa de tecnologia para o setor de hospedagem. Objetivo de organizar a proposta de valor da marca, desenvolver narrativa e materiais estratégicos de venda, com foco em clareza, consistência e conversão.\n\nMeu papel:\nGerente de Marketing, atuando de forma integrada ao time comercial para estruturar comunicação, presença digital e suporte às vendas.\n\nEscopo de atuação:\n• Desenvolvimento de narrativa, tom de voz e posicionamento\n• Criação de apresentações comerciais e materiais de venda (propostas, serviços e pitch)\n• Estruturação do Instagram (bio, destaques e identidade inicial)\n• Produção de conteúdos estratégicos (carrosséis informativos)\n• Criação de e-mail marketing (copy e layout) para relacionamento e apoio comercial\n• Planejamento de ações e conteúdos alinhados à aquisição e posicionamento\n• Apoio a demandas internas de comunicação (endomarketing)\n\nEntrega:\n• Organização e clareza na comunicação dos serviços\n• Materiais estruturados para apoio direto ao time comercial\n• Base de presença digital alinhada ao posicionamento da marca\n• Conteúdos voltados à educação do público e geração de demanda\n\nFoco estratégico:\nTradução de soluções técnicas em comunicação acessível e orientada à conversão, conectando marketing, conteúdo e processo comercial',
+            layout: 'default'
+          },
+          {
+            type: 'pdf',
+            url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2FAuddar-PDF.pdf?alt=media&token=98c3e8a1-8d2b-4f9e-a82c-4e3b1c8d7e6f',
+            title: 'Apresentação Comercial'
+          },
+          {
+            type: 'image',
+            url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F04-Parceria.png?alt=media&token=88d95213-2428-441a-8b02-587733d0cfae',
+            objectFit: 'contain'
+          },
+          {
+            type: 'image',
+            url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F05-Email.png?alt=media&token=b4a3b159-284e-463f-9de8-8075862e73c7',
+            objectFit: 'contain'
+          },
+          {
+            type: 'image',
+            url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F06.png?alt=media&token=680da923-89b6-42c0-9137-dfa6fc042f2c',
+            objectFit: 'contain'
+          },
+          {
+            type: 'image',
+            url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F07.png?alt=media&token=2ea91a9d-1abb-488e-9911-1c8cd0030b30',
+            objectFit: 'contain'
+          },
+          {
+            type: 'image',
+            url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F08.png?alt=media&token=2ac67681-97d5-460c-ba2b-3c6333e61b57',
+            objectFit: 'contain'
+          },
+          {
+            type: 'image',
+            url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F09.png?alt=media&token=469b3533-2836-4c5a-a9e0-ce5e2e6c3ac6',
+            objectFit: 'contain'
+          },
+          {
+            type: 'image',
+            url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F10.png?alt=media&token=8435034c-7286-47b1-869b-8effb8d596e8',
+            objectFit: 'contain'
+          },
+          {
+            type: 'image',
+            url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F11.png?alt=media&token=bbac69b3-ca53-46dd-b369-ee036a522217',
+            objectFit: 'contain'
+          },
+          {
+            type: 'image',
+            url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F12.png?alt=media&token=12da4f64-c577-45b5-a25e-36c7eee38a82',
+            objectFit: 'contain'
+          },
+          {
+            type: 'image',
+            url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F13.png?alt=media&token=e5182804-7b53-4df9-b6f2-6a3cf412c304',
+            objectFit: 'contain'
+          }
+        ]
       }
     ]
   };

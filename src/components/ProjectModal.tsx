@@ -100,18 +100,31 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!showPlayer) return;
+      
+      const isHorizontalLayout = project?.layoutType === 'horizontal';
+      
       switch (e.key) {
         case 'ArrowRight':
-          navigateStory(1);
+          if (isHorizontalLayout && storyIndex === totalStoriesForNav - 1) {
+            navigateFeed(1);
+          } else {
+            navigateStory(1);
+          }
           break;
         case 'ArrowLeft':
-          navigateStory(-1);
+          if (isHorizontalLayout && storyIndex === 0) {
+            navigateFeed(-1);
+            // Ao voltar de capítulo, ideally ir para o último slide do capítulo anterior
+            // Mas para manter simples agora, vamos apenas mudar o capítulo
+          } else {
+            navigateStory(-1);
+          }
           break;
         case 'ArrowUp':
-          navigateFeed(-1);
+          if (!isHorizontalLayout) navigateFeed(-1);
           break;
         case 'ArrowDown':
-          navigateFeed(1);
+          if (!isHorizontalLayout) navigateFeed(1);
           break;
         case 'Escape':
           onClose();
@@ -121,7 +134,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [showPlayer, navigateStory, navigateFeed, onClose]);
+  }, [showPlayer, navigateStory, navigateFeed, onClose, project?.layoutType, storyIndex, totalStoriesForNav]);
 
   // Bloqueio de scroll do body
   useEffect(() => {
@@ -241,27 +254,42 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                 </div>
 
                 <div className="hidden md:block">
-                  {totalStories > 1 && (
+                  {/* Story Navigation (Sides) */}
+                  {(totalStories > 1 || project.layoutType === 'horizontal') && (
                     <>
                       <button 
-                        onClick={(e) => { e.stopPropagation(); navigateStory(-1); }}
+                        onClick={(e) => { 
+                          e.stopPropagation(); 
+                          if (project.layoutType === 'horizontal' && storyIndex === 0) {
+                            navigateFeed(-1);
+                          } else {
+                            navigateStory(-1);
+                          }
+                        }}
                         className={`absolute -left-[47px] top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 shadow-[0_0_10px_rgba(0,0,0,0.5)] z-[10020]
                           ${isLionJump 
                             ? 'bg-[#0c9347] text-white hover:bg-[#0c9347]/80'
                             : 'bg-white/40 backdrop-blur-md text-black border border-white/10'
                           } 
-                          ${storyIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                          ${(storyIndex === 0 && (project.layoutType !== 'horizontal' || feedIndex === 0)) ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
                       >
                         <ChevronLeft size={18} strokeWidth={3} />
                       </button>
                       <button 
-                        onClick={(e) => { e.stopPropagation(); navigateStory(1); }}
+                        onClick={(e) => { 
+                          e.stopPropagation(); 
+                          if (project.layoutType === 'horizontal' && storyIndex === totalStories - 1) {
+                            navigateFeed(1);
+                          } else {
+                            navigateStory(1);
+                          }
+                        }}
                         className={`absolute -right-[47px] top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 shadow-[0_0_10px_rgba(0,0,0,0.5)] z-[10020]
                           ${isLionJump 
                             ? 'bg-[#0c9347] text-white hover:bg-[#0c9347]/80'
                             : 'bg-white/40 backdrop-blur-md text-black border border-white/10'
                           }
-                          ${storyIndex === totalStories - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                          ${(storyIndex === totalStories - 1 && (project.layoutType !== 'horizontal' || feedIndex === totalFeed - 1)) ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
                       >
                         <ChevronRight size={18} strokeWidth={3} />
                       </button>
@@ -269,33 +297,36 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                   )}
                 </div>
 
-                <div className="hidden md:flex absolute inset-y-0 left-1/2 -translate-x-1/2 -top-[47px] -bottom-[47px] flex-col items-center justify-between pointer-events-none z-[10010]">
-                  <button 
-                    disabled={feedIndex === 0}
-                    onClick={(e) => { e.stopPropagation(); navigateFeed(-1); }}
-                    className={`w-8 h-8 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(0,0,0,0.5)] pointer-events-auto transition-all
-                      ${isLionJump 
-                        ? 'bg-[#0c9347] text-white hover:bg-[#0c9347]/80'
-                        : 'bg-white/40 backdrop-blur-md text-black border border-white/10'
-                      }
-                      ${feedIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 active:scale-95'}`}
-                  >
-                    <ChevronUp size={18} strokeWidth={3} />
-                  </button>
-                  
-                  <button 
-                    disabled={feedIndex === totalFeed - 1}
-                    onClick={(e) => { e.stopPropagation(); navigateFeed(1); }}
-                    className={`w-8 h-8 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(0,0,0,0.5)] pointer-events-auto transition-all
-                      ${isLionJump 
-                        ? 'bg-[#0c9347] text-white hover:bg-[#0c9347]/80'
-                        : 'bg-white/40 backdrop-blur-md text-black border border-white/10'
-                      }
-                      ${feedIndex === totalFeed - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 active:scale-95'}`}
-                  >
-                    <ChevronDown size={18} strokeWidth={3} />
-                  </button>
-                </div>
+                {/* Feed Navigation (Vertical) - Hidden if layout is horizontal */}
+                {project.layoutType !== 'horizontal' && (
+                  <div className="hidden md:flex absolute inset-y-0 left-1/2 -translate-x-1/2 -top-[47px] -bottom-[47px] flex-col items-center justify-between pointer-events-none z-[10010]">
+                    <button 
+                      disabled={feedIndex === 0}
+                      onClick={(e) => { e.stopPropagation(); navigateFeed(-1); }}
+                      className={`w-8 h-8 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(0,0,0,0.5)] pointer-events-auto transition-all
+                        ${isLionJump 
+                          ? 'bg-[#0c9347] text-white hover:bg-[#0c9347]/80'
+                          : 'bg-white/40 backdrop-blur-md text-black border border-white/10'
+                        }
+                        ${feedIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 active:scale-95'}`}
+                    >
+                      <ChevronUp size={18} strokeWidth={3} />
+                    </button>
+                    
+                    <button 
+                      disabled={feedIndex === totalFeed - 1}
+                      onClick={(e) => { e.stopPropagation(); navigateFeed(1); }}
+                      className={`w-8 h-8 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(0,0,0,0.5)] pointer-events-auto transition-all
+                        ${isLionJump 
+                          ? 'bg-[#0c9347] text-white hover:bg-[#0c9347]/80'
+                          : 'bg-white/40 backdrop-blur-md text-black border border-white/10'
+                        }
+                        ${feedIndex === totalFeed - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 active:scale-95'}`}
+                    >
+                      <ChevronDown size={18} strokeWidth={3} />
+                    </button>
+                  </div>
+                )}
               </motion.div>
             </div>
           {/* Botão Fechar (X) Sempre Visível */}
