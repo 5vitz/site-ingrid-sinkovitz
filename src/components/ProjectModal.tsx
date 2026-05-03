@@ -3,7 +3,6 @@ import { Project, FeedItem, MediaItem } from '../types';
 import { X, ChevronLeft, ChevronRight, ChevronUp, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { AudioPlayer } from './AudioPlayer';
-import { PDFViewer } from './PDFViewer';
 
 interface ProjectModalProps {
   project: Project | null;
@@ -19,7 +18,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   // 1. Definição de todos os Hooks
   const [feedIndex, setFeedIndex] = useState(0);
   const [storyIndex, setStoryIndex] = useState(0);
-  const [showPlayer, setShowPlayer] = useState(false);
+  const [showPlayer, setShowPlayer] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
   const [audioVolume, setAudioVolume] = useState(0.8);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
@@ -213,26 +212,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
         onClick={e => e.stopPropagation()}
       >
         <div className="flex items-center justify-center w-full h-full relative">
-          {!showPlayer ? (
-            <div className="flex flex-col items-center text-center max-w-lg bg-zinc-900 p-12 rounded-[8px] border border-white/5 shadow-2xl relative z-[10020]">
-              {project.coverImage && (
-                <img 
-                  src={project.coverImage} 
-                  className="w-32 h-32 md:w-40 md:h-40 rounded-[8px] object-cover mb-10 shadow-2xl border border-white/10"
-                  alt=""
-                />
-              )}
-              <h2 className="text-3xl md:text-5xl font-black mb-6 italic uppercase tracking-tighter text-white leading-none">{project.title}</h2>
-              <p className="text-zinc-400 font-medium mb-12 text-sm leading-relaxed max-w-xs">{project.description}</p>
-              <button
-                onClick={handleStartTour}
-                className="px-14 py-5 bg-white text-black font-black uppercase tracking-[0.2em] text-[10px] rounded-full hover:scale-105 transition-all shadow-2xl pointer-events-auto"
-              >
-                Iniciar Tour
-              </button>
-            </div>
-          ) : (
-            <div className="relative flex items-center justify-center">
+          <div className="relative flex items-center justify-center">
               <motion.div 
                 key={`${feedIndex}-${storyIndex}`}
                 initial={{ opacity: 0 }}
@@ -256,7 +236,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                   } as React.CSSProperties}
                 >
                   <div className="w-full h-full">
-                    <MediaRenderer media={currentMedia} isActive={showPlayer} isMuted={isMuted} theme={theme} projectId={project.id} />
+                    <MediaRenderer media={currentMedia} isActive={true} isMuted={isMuted} theme={theme} projectId={project.id} />
                   </div>
                 </div>
 
@@ -318,7 +298,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                 </div>
               </motion.div>
             </div>
-          )}
           {/* Botão Fechar (X) Sempre Visível */}
           <button 
             onClick={(e) => { e.stopPropagation(); onClose(); }}
@@ -387,9 +366,16 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
     const isPDF = media.type === 'pdf' || media.url?.toLowerCase().includes('.pdf');
     if (isPDF) {
       const pdfUrl = media.url || '';
+      const proxiedUrl = `https://corsproxy.io/?${encodeURIComponent(pdfUrl)}`;
+      const viewerUrl = `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(proxiedUrl)}`;
+      
       return (
-        <div className="w-full h-full bg-[#0a0a0a] overflow-hidden relative">
-          <PDFViewer url={pdfUrl} />
+        <div className="w-full h-full bg-[#0a0a0a] overflow-hidden relative flex items-center justify-center">
+          <iframe 
+            src={viewerUrl}
+            className="absolute inset-0 w-full h-full border-none pointer-events-auto"
+            title={media.title || 'PDF Document'}
+          />
         </div>
       );
     }

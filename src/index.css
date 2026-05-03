@@ -51,16 +51,27 @@
   h3 { font-size: var(--font-size-h3); @apply leading-tight; }
   h4 { font-size: var(--font-size-h4); }
 
-  /* Global Scrollbar Reset */
-  html, body {
-    background-color: #09090b;
-    overflow-x: hidden;
+  /* Reset Scrollbar - Eliminar scroll grosso branco */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #333 transparent;
+  }
+  
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 10px;
   }
 
-  /* Support for Firefox */
-  html {
-    scrollbar-color: #27272a #09090b;
-    scrollbar-width: thin;
+  html, body {
+    background-color: #050510;
+    overflow-x: hidden;
   }
 }
 
