@@ -19,13 +19,13 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, hasR
     <motion.div 
       whileHover={{ y: -10 }}
       onClick={onClick}
-      className={`${cardClass} cursor-pointer group rounded-[8px] snap-center ${project.cardBg || 'bg-zinc-900'} shadow-2xl overflow-hidden relative flex items-center justify-center`}
+      className={`${cardClass} cursor-pointer group rounded-[8px] snap-center ${project.cardBg || 'bg-zinc-900'} shadow-2xl overflow-hidden relative flex items-center justify-center border border-white/10`}
     >
       {project.galleryThumbnail ? (
         <img 
           src={project.galleryThumbnail} 
           alt={project.title}
-          className={`absolute inset-0 w-full h-full transition-all duration-700 ${
+          className={`absolute inset-0 w-full h-full transition-all duration-700 rounded-[8px] ${
             project.title.includes('Metavix') 
               ? 'p-10 object-contain scale-[0.5] group-hover:scale-[0.55]' 
               : 'group-hover:scale-105 ' + (project.thumbnailFit === 'contain' ? 'object-contain' : 'object-cover')

@@ -155,6 +155,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
 
   // 3. Verificações de Dados e Renderização
   if (!project) return null;
+  const isLionJump = project.id === 'projeto-lion-jump';
 
   const theme = project.theme || {
     playerBg: 'bg-black',
@@ -235,11 +236,11 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       >
         <div className="flex items-center justify-center w-full h-full relative">
           {!showPlayer ? (
-            <div className="flex flex-col items-center text-center max-w-lg bg-zinc-900 p-12 rounded-[12px] border border-white/10 shadow-2xl">
+            <div className="flex flex-col items-center text-center max-w-lg bg-zinc-900 p-12 rounded-[8px] border border-white/5 shadow-2xl">
               {project.coverImage && (
                 <img 
                   src={project.coverImage} 
-                  className="w-32 h-32 md:w-40 md:h-40 rounded-[8px] object-cover mb-10 shadow-2xl border border-accent/30"
+                  className="w-32 h-32 md:w-40 md:h-40 rounded-[8px] object-cover mb-10 shadow-2xl border border-white/10"
                   alt=""
                 />
               )}
@@ -270,12 +271,12 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
               >
                 {/* O Player propriamente dito */}
                 <div 
-                  className={`w-full h-full ${theme.playerBg || 'bg-black'} overflow-hidden relative border ${theme.playerBorder || 'border-white/10'} ${theme.playerShadow || ''}`}
+                  className={`w-full h-full ${theme.playerBg || 'bg-black'} overflow-hidden relative border ${isLionJump ? (theme.playerBorder || 'border-white/10') : 'border-zinc-500/20'} ${theme.playerShadow || ''}`}
                   style={{
                     width: '100%',
                     height: '100%',
-                    borderRadius: theme.borderRadius || '12px',
-                    borderWidth: theme.borderWidth || '1px',
+                    borderRadius: '8px',
+                    borderWidth: '1px',
                     boxShadow: theme.playerShadow ? undefined : `0 0 15px ${theme.accentColor}03`,
                     '--glow-color': theme.accentColor ? `${theme.accentColor}33` : undefined,
                     '--border-color': theme.accentColor ? `${theme.accentColor}11` : undefined,
@@ -293,14 +294,24 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                     <>
                       <button 
                         onClick={(e) => { e.stopPropagation(); navigateStory(-1); }}
-                        className={`absolute -left-[47px] top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full ${theme.navButtonBg || 'bg-accent/40'} ${theme.navButtonColor || 'text-white'} shadow-[0_0_10px_rgba(0,0,0,0.5)] z-[10020] transition-all hover:scale-110 active:scale-95 ${storyIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                        className={`absolute -left-[47px] top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 shadow-[0_0_10px_rgba(0,0,0,0.5)] z-[10020]
+                          ${isLionJump 
+                            ? (theme.navButtonBg || 'bg-accent/40') + ' ' + (theme.navButtonColor || 'text-white')
+                            : 'bg-white/40 backdrop-blur-md text-black border border-white/10'
+                          } 
+                          ${storyIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
                         title="Anterior"
                       >
                         <ChevronLeft size={18} strokeWidth={3} />
                       </button>
                       <button 
                         onClick={(e) => { e.stopPropagation(); navigateStory(1); }}
-                        className={`absolute -right-[47px] top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full ${theme.navButtonBg || 'bg-accent/40'} ${theme.navButtonColor || 'text-white'} shadow-[0_0_10px_rgba(0,0,0,0.5)] z-[10020] transition-all hover:scale-110 active:scale-95 ${storyIndex === totalStories - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                        className={`absolute -right-[47px] top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95 shadow-[0_0_10px_rgba(0,0,0,0.5)] z-[10020]
+                          ${isLionJump 
+                            ? (theme.navButtonBg || 'bg-accent/40') + ' ' + (theme.navButtonColor || 'text-white')
+                            : 'bg-white/40 backdrop-blur-md text-black border border-white/10'
+                          }
+                          ${storyIndex === totalStories - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
                         title="Próximo"
                       >
                         <ChevronRight size={18} strokeWidth={3} />
@@ -322,7 +333,12 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                   <button 
                     disabled={feedIndex === 0}
                     onClick={(e) => { e.stopPropagation(); navigateFeed(-1); }}
-                    className={`w-8 h-8 rounded-full flex items-center justify-center ${theme.navButtonBg || 'bg-accent/40'} ${theme.navButtonColor || 'text-white'} shadow-[0_0_10px_rgba(0,0,0,0.5)] pointer-events-auto transition-all ${feedIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 active:scale-95'}`}
+                    className={`w-8 h-8 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(0,0,0,0.5)] pointer-events-auto transition-all
+                      ${isLionJump 
+                        ? (theme.navButtonBg || 'bg-accent/40') + ' ' + (theme.navButtonColor || 'text-white')
+                        : 'bg-white/40 backdrop-blur-md text-black border border-white/10'
+                      }
+                      ${feedIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 active:scale-95'}`}
                     title="Capítulo Anterior"
                   >
                     <ChevronUp size={18} strokeWidth={3} />
@@ -331,7 +347,12 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                   <button 
                     disabled={feedIndex === totalFeed - 1}
                     onClick={(e) => { e.stopPropagation(); navigateFeed(1); }}
-                    className={`w-8 h-8 rounded-full flex items-center justify-center ${theme.navButtonBg || 'bg-accent/40'} ${theme.navButtonColor || 'text-white'} shadow-[0_0_10px_rgba(0,0,0,0.5)] pointer-events-auto transition-all ${feedIndex === totalFeed - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 active:scale-95'}`}
+                    className={`w-8 h-8 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(0,0,0,0.5)] pointer-events-auto transition-all
+                      ${isLionJump 
+                        ? (theme.navButtonBg || 'bg-accent/40') + ' ' + (theme.navButtonColor || 'text-white')
+                        : 'bg-white/40 backdrop-blur-md text-black border border-white/10'
+                      }
+                      ${feedIndex === totalFeed - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100 hover:scale-110 active:scale-95'}`}
                     title="Próximo Capítulo"
                   >
                     <ChevronDown size={18} strokeWidth={3} />
