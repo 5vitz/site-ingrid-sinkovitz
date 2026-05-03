@@ -130,14 +130,11 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   useEffect(() => {
     if (project) {
       document.body.style.overflow = 'hidden';
-      document.documentElement.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
     }
     return () => {
       document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
     };
   }, [project]);
 
@@ -211,7 +208,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="fixed inset-0 z-[9999] bg-[#050510]/98 backdrop-blur-3xl flex items-center justify-center select-none overflow-hidden"
-      style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
     >
       {/* Fundo para fechar ao clicar fora */}
       <div className="absolute inset-0 z-0 bg-transparent" onClick={onClose} />
@@ -389,28 +385,18 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
     const isPDF = media.type === 'pdf' || media.url?.toLowerCase().includes('.pdf');
     if (isPDF) {
       const pdfUrl = media.url || '';
-      // Usando o Google Docs Viewer para garantir compatibilidade em todos os navegadores
-      const embedUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(pdfUrl)}&embedded=true`;
-      
       return (
-        <div className="w-full h-full bg-[#1a1a1a] flex flex-col relative overflow-hidden group">
+        <div className="w-full h-full bg-[#0a0a0a] overflow-hidden relative">
           <iframe 
-            src={embedUrl}
-            className="w-full h-full border-none pointer-events-auto"
+            src={pdfUrl}
+            className="absolute border-none pointer-events-auto block"
+            style={{ 
+              width: '100%',
+              height: '100%',
+              backgroundColor: '#333'
+            }}
             title={media.title || 'PDF Document'}
           />
-          
-          {/* Botão de fallback/ação direta se o iframe falhar ou para melhor experiência */}
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity z-50">
-            <a 
-              href={pdfUrl} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="px-6 py-2.5 bg-accent text-zinc-950 font-bold rounded-full shadow-2xl flex items-center gap-2 hover:scale-105 active:scale-95 transition-all text-sm uppercase tracking-wider"
-            >
-              Abrir em Nova Aba
-            </a>
-          </div>
         </div>
       );
     }
