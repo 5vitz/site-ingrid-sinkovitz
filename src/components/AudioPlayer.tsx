@@ -21,12 +21,12 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
 
   return (
     <div 
-      className="fixed bottom-8 right-8 z-[10002] flex flex-col items-center gap-3 pointer-events-auto"
+      className="fixed bottom-8 right-8 z-[10002] flex flex-col items-center gap-2 pointer-events-auto"
       onMouseEnter={() => setShowSlider(true)}
       onMouseLeave={() => setShowSlider(false)}
     >
       {showSlider && (
-        <div className="bg-zinc-900/80 backdrop-blur-md border border-white/10 rounded-full py-4 px-2 shadow-2xl animate-in fade-in slide-in-from-bottom-2 duration-200">
+        <div className="bg-zinc-900/90 backdrop-blur-xl border border-white/10 rounded-full py-3 px-1.5 shadow-2xl animate-in fade-in slide-in-from-bottom-2 duration-200">
           <input
             type="range"
             min="0"
@@ -34,12 +34,15 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
             step="0.01"
             value={volume}
             onChange={(e) => onVolumeChange(parseFloat(e.target.value))}
-            className="h-24 appearance-none bg-transparent cursor-pointer vertical-range"
+            className="h-16 appearance-none bg-transparent cursor-pointer vertical-range"
             style={{ 
               writingMode: 'vertical-lr', 
               direction: 'rtl',
               width: '4px',
-              WebkitAppearance: 'slider-vertical' 
+              WebkitAppearance: 'slider-vertical',
+              // Gradiente dinâmico para simular o preenchimento amarelo
+              background: `linear-gradient(to top, #f2bb32 ${volume * 100}%, rgba(255, 255, 255, 0.1) ${volume * 100}%)`,
+              borderRadius: '10px'
             } as any}
           />
         </div>
@@ -55,36 +58,33 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
       <style>{`
         .vertical-range {
           -webkit-appearance: none;
-          background: transparent;
+          margin: 0;
         }
         .vertical-range::-webkit-slider-runnable-track {
-          background: rgba(255, 255, 255, 0.1);
-          border-radius: 10px;
+          background: transparent;
           width: 4px;
         }
         .vertical-range::-webkit-slider-thumb {
           -webkit-appearance: none;
           background: #f2bb32;
-          width: 14px;
-          height: 14px;
+          width: 12px;
+          height: 12px;
           border-radius: 50%;
-          margin-left: -5px;
-          box-shadow: 0 0 10px rgba(242, 187, 50, 0.3);
+          margin-left: -4px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
           cursor: pointer;
-          border: none;
+          border: 2px solid #18181b;
         }
         .vertical-range::-moz-range-thumb {
           background: #f2bb32;
-          width: 14px;
-          height: 14px;
+          width: 12px;
+          height: 12px;
           border-radius: 50%;
-          border: none;
+          border: 2px solid #18181b;
           cursor: pointer;
         }
         .vertical-range::-moz-range-track {
-          background: rgba(255, 255, 255, 0.1);
-          border-radius: 10px;
-          width: 4px;
+          background: transparent;
         }
       `}</style>
     </div>
