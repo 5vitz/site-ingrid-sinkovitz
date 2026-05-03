@@ -66,7 +66,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       setFeedIndex(0);
       setStoryIndex(0);
       setShowPlayer(false);
-      setIsMuted(true);
+      setIsMuted(false);
       setShouldDuck(false);
 
       if (audioRef.current) {

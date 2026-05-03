@@ -26,7 +26,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
       onMouseLeave={() => setShowSlider(false)}
     >
       {showSlider && (
-        <div className="bg-zinc-900/90 backdrop-blur-xl border border-white/10 rounded-full py-3 px-1.5 shadow-2xl animate-in fade-in slide-in-from-bottom-2 duration-200">
+        <div className="bg-zinc-900/90 backdrop-blur-xl border border-white/10 rounded-full py-2 px-1.5 shadow-2xl animate-in fade-in slide-in-from-bottom-2 duration-200">
           <input
             type="range"
             min="0"
@@ -34,7 +34,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
             step="0.01"
             value={volume}
             onChange={(e) => onVolumeChange(parseFloat(e.target.value))}
-            className="h-16 appearance-none bg-transparent cursor-pointer vertical-range"
+            className="h-10 appearance-none bg-transparent cursor-pointer vertical-range"
             style={{ 
               writingMode: 'vertical-lr', 
               direction: 'rtl',
