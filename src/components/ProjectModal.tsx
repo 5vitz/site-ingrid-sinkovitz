@@ -126,21 +126,15 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   // Bloqueio de scroll do body
   useEffect(() => {
     if (project) {
-      document.body.classList.add('scrollbar-hide');
-      document.documentElement.classList.add('scrollbar-hide');
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
       document.body.style.paddingRight = '0px';
     } else {
-      document.body.classList.remove('scrollbar-hide');
-      document.documentElement.classList.remove('scrollbar-hide');
       document.body.style.overflow = '';
       document.documentElement.style.overflow = '';
       document.body.style.paddingRight = '';
     }
     return () => {
-      document.body.classList.remove('scrollbar-hide');
-      document.documentElement.classList.remove('scrollbar-hide');
       document.body.style.overflow = '';
       document.documentElement.style.overflow = '';
       document.body.style.paddingRight = '';
@@ -395,7 +389,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ media, isActive, isMuted 
       return (
         <div className="w-full h-full bg-[#0a0a0a] overflow-hidden relative">
           <iframe 
-            src={`https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(pdfUrl)}#toolbar=0`}
+            src={pdfUrl}
             className="absolute inset-0 w-full h-full border-none pointer-events-auto"
             style={{ 
               backgroundColor: '#333'

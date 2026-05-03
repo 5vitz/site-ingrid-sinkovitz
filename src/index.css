@@ -57,22 +57,6 @@
     overflow-x: hidden;
   }
 
-  ::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-  }
-  ::-webkit-scrollbar-track {
-    background: #09090b;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: #27272a;
-    border: 2px solid #09090b;
-    border-radius: 10px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #3f3f46;
-  }
-
   /* Support for Firefox */
   html {
     scrollbar-color: #27272a #09090b;
@@ -82,25 +66,24 @@
 
 /* Custom Utilities for the "Cards" */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   display: block;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.1);
   border-radius: 10px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 10px;
-  border: 1px solid rgba(0, 0, 0, 0.8);
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 1);
+  background: rgba(255, 255, 255, 0.2);
 }
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.85) rgba(255, 255, 255, 0.15);
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
 }
 
 .section-container {
