@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from 'motion/react';
 
 import { ProjectSection } from './components/ProjectSection';
 import { ProjectModal } from './components/ProjectModal';
+import { AboutProjectModal } from './components/AboutProjectModal';
 import { MaintenanceMode } from './components/MaintenanceMode';
 import { useCollection } from './hooks/useCollection';
 import { Project, Service, Testimonial, AboutMe, SiteSettings } from './types';
@@ -438,6 +439,23 @@ const AdminLogin = () => {
 const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: AboutMe | null } }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [aboutProject, setAboutProject] = useState<Project | null>(null);
+
+  const handleSelectProject = (project: Project) => {
+    if (project.aboutConfig) {
+      setAboutProject(project);
+    } else {
+      setSelectedProject(project);
+    }
+  };
+
+  const handleStartProject = () => {
+    if (aboutProject) {
+      const p = aboutProject;
+      setAboutProject(null);
+      setSelectedProject(p);
+    }
+  };
 
   const handleVideoStateChange = useCallback((isVideo: boolean) => {
     // Ducking logic removed from here as it will be local to modal
@@ -453,6 +471,7 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
     if (e && e.preventDefault) e.preventDefault();
     setIsMenuOpen(false);
     setSelectedProject(null);
+    setAboutProject(null);
     document.body.style.overflow = '';
     document.documentElement.style.overflow = '';
   }, []);
@@ -528,7 +547,7 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
           )}
         </AnimatePresence>
       </nav>
-      <Home onSelectProject={setSelectedProject} settings={settings} />
+      <Home onSelectProject={handleSelectProject} settings={settings} />
       <footer id="contato" className="section-container scroll-mt-20 !pt-0">
         <div className="section-card p-5 md:p-10 flex flex-col items-center">
           <div className="mt-4 mb-12 text-center">
@@ -598,6 +617,12 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
         project={selectedProject} 
         onClose={closeProject}
         onVideoStateChange={handleVideoStateChange}
+      />
+
+      <AboutProjectModal 
+        project={aboutProject}
+        onClose={() => setAboutProject(null)}
+        onStart={handleStartProject}
       />
     </div>
   );

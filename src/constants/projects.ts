@@ -19,19 +19,41 @@ export const METAVIX_PROJECT: Project = {
     borderWidth: '1px',
     borderRadius: '8px'
   },
+  aboutConfig: {
+    title: 'Estratégia de Conteúdo e Gestão de Social Media',
+    subtitle: 'Metavix - Grupo de Restaurantes',
+    description: `Projeto de estruturação e gestão da comunicação digital do Grupo Metavix, responsável por diferentes marcas no segmento gastronômico. Objetivo de consolidar o posicionamento das marcas nas redes sociais, trazendo consistência de comunicação, fortalecimento de presença digital e apoio à geração de demanda.
+
+Escopo de atuação:
+• Planejamento e condução da estratégia de conteúdo para múltiplas marcas
+• Desenvolvimento de narrativa, tom de voz e linha editorial
+• Estruturação e gestão do calendário editorial
+• Criação de pautas, roteiros e briefings para produção de conteúdo
+• Coordenação de time criativo (design e audiovisual), com direcionamento e acompanhamento de entregas
+• Organização de fluxos de trabalho e processos de produção
+• Condução de alinhamentos e acompanhamento estratégico com stakeholders
+• Monitoramento de qualidade e consistência das entregas
+• Acompanhamento de métricas e otimização contínua de conteúdo
+
+Entrega:
+• Estruturação da presença digital das marcas do grupo no Instagram
+• Padronização de comunicação e fortalecimento de identidade de marca
+• Organização da operação de conteúdo, com mais eficiência e previsibilidade
+• Conteúdos alinhados ao posicionamento e ao público de cada restaurante
+
+Foco estratégico:
+Organização e escalabilidade da comunicação para múltiplas marcas, garantindo consistência, eficiência operacional e conexão entre posicionamento, conteúdo e resultado.`,
+    ctaText: 'Iniciar Tour',
+    width: 'max-w-2xl',
+    backgroundColor: 'bg-zinc-900/90',
+    textColor: 'text-white',
+    ctaColor: 'bg-[#00D154]',
+    ctaTextColor: 'text-white'
+  },
   feed: [
     { id: 'f01', aspectRatio: 0.56, media: { type: 'video', order: 1, playerWidth: 303, playerHeight: 540, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto1%2FVideos%2F01.mp4?alt=media&token=19f0b135-718b-4e94-82a1-c5d1e080005c' } },
-    { id: 'f02', aspectRatio: 0.56, media: { type: 'video', order: 2, playerWidth: 303, playerHeight: 540, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto1%2FVideos%2F03.mp4?alt=media&token=f9d51d7a-966c-4cc6-872a-8ce22d492b54' } },
     { id: 'f03', aspectRatio: 0.56, media: { type: 'video', order: 3, playerWidth: 303, playerHeight: 540, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto1%2FVideos%2F04.mp4?alt=media&token=27704524-5b1d-4835-9ac0-10033ff1078b' } },
     { id: 'f04', aspectRatio: 0.56, media: { type: 'video', order: 4, playerWidth: 303, playerHeight: 540, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto1%2FVideos%2F05.mp4?alt=media&token=523b5061-5011-401c-8c14-e7708433dbe8' } },
-    { id: 'f05', aspectRatio: 0.56, media: { type: 'video', order: 5, playerWidth: 303, playerHeight: 540, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto1%2FVideos%2F07.mp4?alt=media&token=675083eb-6534-4f61-bc3f-fc9b94786543' } },
-    { id: 'f06', aspectRatio: 0.56, media: { type: 'video', order: 6, playerWidth: 303, playerHeight: 540, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto1%2FVideos%2F09.mp4?alt=media&token=3d656f3d-ad65-4f85-a921-6cbba0a2a3ab' } },
-    { id: 'f07', aspectRatio: 0.56, media: { type: 'video', order: 7, playerWidth: 303, playerHeight: 540, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto1%2FVideos%2F18.mp4?alt=media&token=bc96c55d-0895-4c6a-a24f-b29c8aa7385d' } },
-    { id: 'f08', aspectRatio: 0.56, media: { type: 'video', order: 8, playerWidth: 303, playerHeight: 540, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto1%2FVideos%2F23.mp4?alt=media&token=51c2e65d-3939-473f-8cc3-fcebb527f293' } },
-    { id: 'f09', aspectRatio: 0.56, media: { type: 'video', order: 9, playerWidth: 303, playerHeight: 540, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto1%2FVideos%2F25.mp4?alt=media&token=044b72a8-90f3-4fa3-a735-a2828e3782df' } },
-    { id: 'f10', aspectRatio: 0.56, media: { type: 'video', order: 10, playerWidth: 303, playerHeight: 540, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto1%2FVideos%2F27.mp4?alt=media&token=a7d800d2-1ee9-42f6-9f1e-056047929dac' } },
-    { id: 'f11', aspectRatio: 0.56, media: { type: 'video', order: 11, playerWidth: 303, playerHeight: 540, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto1%2FVideos%2F28.mp4?alt=media&token=41b0d434-4cc8-4fa7-b427-9f6b7d58aefc' } },
-    { id: 'f12', aspectRatio: 0.56, media: { type: 'video', order: 12, playerWidth: 303, playerHeight: 540, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto1%2FVideos%2F29.mp4?alt=media&token=0d19ec59-bfb1-47d9-9eaf-1dddb59425ac' } },
     {
       id: 'f13-dekki',
       aspectRatio: 0.80,
@@ -45,6 +67,9 @@ export const METAVIX_PROJECT: Project = {
         { type: 'image', order: 19, playerWidth: 432, playerHeight: 540, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto1%2FFotos%2FDekki%2F07.jpg?alt=media&token=461c4857-aa7e-48cd-a1d0-34bbb0757561' }
       ]
     },
+    { id: 'f05', aspectRatio: 0.56, media: { type: 'video', order: 5, playerWidth: 303, playerHeight: 540, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto1%2FVideos%2F07.mp4?alt=media&token=675083eb-6534-4f61-bc3f-fc9b94786543' } },
+    { id: 'f06', aspectRatio: 0.56, media: { type: 'video', order: 6, playerWidth: 303, playerHeight: 540, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto1%2FVideos%2F09.mp4?alt=media&token=3d656f3d-ad65-4f85-a921-6cbba0a2a3ab' } },
+    { id: 'f07', aspectRatio: 0.56, media: { type: 'video', order: 7, playerWidth: 303, playerHeight: 540, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto1%2FVideos%2F18.mp4?alt=media&token=bc96c55d-0895-4c6a-a24f-b29c8aa7385d' } },
     {
       id: 'f20-sushi',
       aspectRatio: 0.80,
@@ -58,6 +83,9 @@ export const METAVIX_PROJECT: Project = {
         { type: 'image', order: 26, playerWidth: 432, playerHeight: 540, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto1%2FFotos%2FBanzai-Sushi%2F07.jpg?alt=media&token=8434379d-76f8-467e-8d36-44dfa1a57ce9' }
       ]
     },
+    { id: 'f08', aspectRatio: 0.56, media: { type: 'video', order: 8, playerWidth: 303, playerHeight: 540, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto1%2FVideos%2F23.mp4?alt=media&token=51c2e65d-3939-473f-8cc3-fcebb527f293' } },
+    { id: 'f09', aspectRatio: 0.56, media: { type: 'video', order: 9, playerWidth: 303, playerHeight: 540, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto1%2FVideos%2F25.mp4?alt=media&token=044b72a8-90f3-4fa3-a735-a2828e3782df' } },
+    { id: 'f10', aspectRatio: 0.56, media: { type: 'video', order: 10, playerWidth: 303, playerHeight: 540, url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto1%2FVideos%2F27.mp4?alt=media&token=a7d800d2-1ee9-42f6-9f1e-056047929dac' } },
     {
       id: 'f27-ambiente',
       aspectRatio: 0.80,
@@ -83,7 +111,7 @@ export const GOOD_STORAGE_PROJECT: Project = {
   galleryThumbnail: '',
   coverImage: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto2%2FReels_Aline_SoulSmile.mp4?alt=media&token=0e21b470-de72-48be-95bc-935659fdcfca',
   audioUrl: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Trilha%2FMetavix.mp3?alt=media&token=866a461d-6169-450f-90e9-74cb96e95b00',
-  order: 2,
+  order: 3,
   mediaItems: [],
   theme: {
     accentColor: '#fbbf24', // Amarelo Good Storage
@@ -97,6 +125,16 @@ export const GOOD_STORAGE_PROJECT: Project = {
     playerHeight: 540,
     borderWidth: '2px',
     borderRadius: '24px'
+  },
+  aboutConfig: {
+    title: 'Campanha Good Storage',
+    description: 'Estratégia de comunicação focada em lifestyle e soluções de espaço urbano. \n\nAtravés de uma série de Reels dinâmicos, humanizamos a marca apresentando histórias reais de clientes como Aline Soul Smile e DJ Dre. O foco aqui foi criar um conteúdo de "snack-size" que seja altamente compartilhável e visualmente impactante, reforçando o posicionamento da Good Storage como líder em self-storage inteligente.',
+    ctaText: 'Assistir Reels',
+    width: 'max-w-md',
+    backgroundColor: 'bg-zinc-900/90',
+    textColor: 'text-white',
+    ctaColor: 'bg-[#fbbf24]',
+    ctaTextColor: 'text-black'
   },
   feed: [
     {
@@ -146,7 +184,7 @@ export const ELOBIKE_PROJECT: Project = {
   galleryThumbnail: '',
   coverImage: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto3%2F01-Marau%2F01-Marau.jpg?alt=media&token=4d54362a-0846-47e3-a6d4-d61b41b1cbd3',
   audioUrl: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Trilha%2FMetavix.mp3?alt=media&token=866a461d-6169-450f-90e9-74cb96e95b00',
-  order: 3,
+  order: 2,
   mediaItems: [],
   theme: {
     accentColor: '#22c55e', // Verde cicloturismo
@@ -159,6 +197,16 @@ export const ELOBIKE_PROJECT: Project = {
     playerHeight: 540,
     borderWidth: '2px',
     borderRadius: '16px'
+  },
+  aboutConfig: {
+    title: 'EloBike: Conexão e Aventura',
+    description: 'O EloBike não é apenas sobre ciclismo; é sobre a jornada de conexão entre pessoas, paisagens e histórias. \n\nNeste projeto, desenvolvemos uma narrativa visual que captura a essência do cicloturismo, utilizando um layout vertical que prioriza a imersão e a proximidade com o espectador. Cada capítulo é uma nova descoberta, unindo estratégia de conteúdo e sensibilidade estética.',
+    ctaText: 'Ver Jornada',
+    width: 'max-w-md',
+    backgroundColor: 'bg-zinc-900/90',
+    textColor: 'text-white',
+    ctaColor: 'bg-[#22c55e]',
+    ctaTextColor: 'text-white'
   },
   feed: [
     {
@@ -251,11 +299,11 @@ export const LION_JUMP_PROJECT: Project = {
   id: 'projeto-lion-jump',
   title: 'Projeto Lion Jump',
   description: 'Lion Jump: Campanha de Lançamento e Divulgação Artística.',
-  layoutType: 'horizontal',
+  layoutType: 'vertical',
   galleryThumbnail: '',
   coverImage: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F01-SobreProjeto%2FCapaLionJump.png?alt=media&token=ef2677d3-ab36-4eb2-a2e9-7991754fb7f4',
   audioUrl: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Trilha%2FMetavix.mp3?alt=media&token=866a461d-6169-450f-90e9-74cb96e95b00',
-  order: 4,
+  order: 5,
   mediaItems: [],
   theme: {
     accentColor: '#FEF200',
@@ -264,31 +312,45 @@ export const LION_JUMP_PROJECT: Project = {
     playerShadow: 'shadow-[0_0_50px_rgba(254,242,0,0.25)] animate-neon-pulse',
     navButtonBg: 'bg-[#0c9347]',
     navButtonColor: 'text-white',
-    playerWidth: 960, // 16:9
+    playerWidth: 960, // Formato 16:9 original
     playerHeight: 540,
     borderWidth: '1px',
     borderRadius: '8px'
   },
+  aboutConfig: {
+    title: 'Campanha Lion Jump',
+    description: 'Um projeto histórico de lançamento e divulgação artística que desafia os formatos tradicionais. \n\nO Lion Jump exigiu uma comunicação vibrante e energética, capturando a alma da música e a presença de palco da banda. Com um layout 16:9 totalmente voltado para a performance, este tour leva você pelos bastidores e grandes momentos dessa jornada artística que marcou época.',
+    ctaText: 'Iniciar Experiência',
+    width: 'max-w-2xl',
+    backgroundColor: 'bg-zinc-900/90',
+    textColor: 'text-white',
+    ctaColor: 'bg-[#0c9347]',
+    ctaTextColor: 'text-white'
+  },
   feed: [
+    // Seção 01: Sobre o Projeto
     {
       id: 'lj-feed-01',
       title: 'Sobre o Projeto',
-      aspectRatio: 1.77777777778, // 16:9
+      aspectRatio: 1.77777777778,
       media: { 
         type: 'image', 
         order: 1, 
         url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F01-SobreProjeto%2FCapaLionJump.png?alt=media&token=ef2677d3-ab36-4eb2-a2e9-7991754fb7f4',
-      },
-      stories: [
-        {
-          id: 'lj-s01-02',
-          type: 'image',
-          order: 2,
-          url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F01-SobreProjeto%2FTextoProjeto.png?alt=media&token=c064b8fb-c83f-48fb-bb27-939475c9b3a6',
-          allowScroll: true
-        }
-      ]
+      }
     },
+    {
+      id: 'lj-feed-01-text',
+      title: 'Texto do Projeto',
+      aspectRatio: 1.77777777778,
+      media: {
+        type: 'image',
+        order: 2,
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F01-SobreProjeto%2FTextoProjeto.png?alt=media&token=c064b8fb-c83f-48fb-bb27-939475c9b3a6',
+        allowScroll: true
+      }
+    },
+    // Seção 02: Sobre a Banda
     {
       id: 'lj-feed-02',
       title: 'Sobre a Banda',
@@ -297,24 +359,31 @@ export const LION_JUMP_PROJECT: Project = {
         type: 'image', 
         order: 3, 
         url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F02-SobreBanda%2FCapaBanda.png?alt=media&token=77de858c-f5e1-4b8d-bb32-2eeb48cdc889',
-      },
-      stories: [
-        {
-          id: 'lj-s02-04',
-          type: 'image',
-          order: 4,
-          url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F02-SobreBanda%2FGShow2%2FGShow2.png?alt=media&token=01436ae3-a62b-4c08-b16d-ec93cae2f3a8',
-          allowScroll: true
-        },
-        {
-          id: 'lj-s02-05',
-          type: 'video',
-          order: 5,
-          url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F02-SobreBanda%2FNaGaragem.mp4?alt=media&token=46be8878-67a9-4304-b33a-4b56d11a973a',
-          objectFit: 'contain'
-        }
-      ]
+      }
     },
+    {
+      id: 'lj-feed-02-gshow',
+      title: 'GShow 2',
+      aspectRatio: 1.77777777778,
+      media: {
+        type: 'image',
+        order: 4,
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F02-SobreBanda%2FGShow2%2FGShow2.png?alt=media&token=01436ae3-a62b-4c08-b16d-ec93cae2f3a8',
+        allowScroll: true
+      }
+    },
+    {
+      id: 'lj-feed-02-video',
+      title: 'Na Garagem',
+      aspectRatio: 1.77777777778,
+      media: {
+        type: 'video',
+        order: 5,
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F02-SobreBanda%2FNaGaragem.mp4?alt=media&token=46be8878-67a9-4304-b33a-4b56d11a973a',
+        objectFit: 'contain'
+      }
+    },
+    // Seção 03: SuperStar
     {
       id: 'lj-feed-03',
       title: 'SuperStar',
@@ -323,24 +392,31 @@ export const LION_JUMP_PROJECT: Project = {
         type: 'image', 
         order: 6, 
         url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F03-SuperStar%2FCapaSuperStar.png?alt=media&token=4eb58609-525a-4e49-aaa6-ad046da90beb',
-      },
-      stories: [
-        {
-          id: 'lj-s03-07',
-          type: 'image',
-          order: 7,
-          url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F03-SuperStar%2FGShow1%2FGShow1.png?alt=media&token=39148d2c-02c9-4156-beeb-5ef15cfc1841',
-          allowScroll: true
-        },
-        {
-          id: 'lj-s03-08',
-          type: 'video',
-          order: 8,
-          url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F03-SuperStar%2FLionJump_superstarApresenta%C3%A7%C3%A3o.mp4?alt=media&token=c49c92a3-58b4-4c81-a083-344ce4bb1e25',
-          objectFit: 'contain'
-        }
-      ]
+      }
     },
+    {
+      id: 'lj-feed-03-gshow',
+      title: 'GShow 1',
+      aspectRatio: 1.77777777778,
+      media: {
+        type: 'image',
+        order: 7,
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F03-SuperStar%2FGShow1%2FGShow1.png?alt=media&token=39148d2c-02c9-4156-beeb-5ef15cfc1841',
+        allowScroll: true
+      }
+    },
+    {
+      id: 'lj-feed-03-video',
+      title: 'SuperStar Apresentação',
+      aspectRatio: 1.77777777778,
+      media: {
+        type: 'video',
+        order: 8,
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F03-SuperStar%2FLionJump_superstarApresenta%C3%A7%C3%A3o.mp4?alt=media&token=c49c92a3-58b4-4c81-a083-344ce4bb1e25',
+        objectFit: 'contain'
+      }
+    },
+    // Seção 04: África
     {
       id: 'lj-feed-04',
       title: 'África',
@@ -349,33 +425,41 @@ export const LION_JUMP_PROJECT: Project = {
         type: 'image',
         order: 9,
         url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F04-Africa%2FBanner_Lan%C3%A7amento_AFRICA_04.png?alt=media&token=0da585e6-641b-493e-ac1d-0a3d4d3ac928',
-        zoom: 1.1,
-        xOffset: -40,
-        objectPosition: 'right center'
-      },
-      stories: [
-        {
-          id: 'lj-s04-10',
-          type: 'video',
-          order: 10,
-          url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F04-Africa%2FClip_%C3%81frica.mp4?alt=media&token=47f294c8-6420-4b82-9ad9-9a6efd332cd1',
-          objectFit: 'contain'
-        },
-        {
-          id: 'lj-s04-11',
-          type: 'video',
-          order: 11,
-          url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F04-Africa%2FEmMovimentoAfrica.mp4?alt=media&token=75dcf0b9-53aa-4601-9267-e87c8c74e747',
-          objectFit: 'contain'
-        },
-        {
-          id: 'lj-s04-12',
-          type: 'pdf',
-          order: 12,
-          url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F04-Africa%2FEmMovimentoAfrica.pdf?alt=media&token=d63690d8-651a-4ebe-90bf-6ba337fbb5d2',
-        }
-      ]
+      }
     },
+    {
+      id: 'lj-feed-04-video1',
+      title: 'Clip África',
+      aspectRatio: 1.77777777778,
+      media: {
+        type: 'video',
+        order: 10,
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F04-Africa%2FClip_%C3%81frica.mp4?alt=media&token=47f294c8-6420-4b82-9ad9-9a6efd332cd1',
+        objectFit: 'contain'
+      }
+    },
+    {
+      id: 'lj-feed-04-video2',
+      title: 'Em Movimento África',
+      aspectRatio: 1.77777777778,
+      media: {
+        type: 'video',
+        order: 11,
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F04-Africa%2FEmMovimentoAfrica.mp4?alt=media&token=75dcf0b9-53aa-4601-9267-e87c8c74e747',
+        objectFit: 'contain'
+      }
+    },
+    {
+      id: 'lj-feed-04-pdf',
+      title: 'PDF África',
+      aspectRatio: 1.77777777778,
+      media: {
+        type: 'pdf',
+        order: 12,
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F04-Africa%2FEmMovimentoAfrica.pdf?alt=media&token=d63690d8-651a-4ebe-90bf-6ba337fbb5d2',
+      }
+    },
+    // Seção 05: Itália
     {
       id: 'lj-feed-05',
       title: 'Itália',
@@ -384,23 +468,29 @@ export const LION_JUMP_PROJECT: Project = {
         type: 'image', 
         order: 13, 
         url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F05-Italia%2FCapaItalia.png?alt=media&token=21f53070-5798-4113-b692-1fa42cdb7abd',
-      },
-      stories: [
-        {
-          id: 'lj-s05-14',
-          type: 'image',
-          order: 14,
-          url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F05-Italia%2FGShow%2FGShow.png?alt=media&token=35baa827-2dde-4813-8d33-bd1e415e6d2e',
-          allowScroll: true
-        },
-        {
-          id: 'lj-s05-15',
-          type: 'video',
-          order: 15,
-          url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F05-Italia%2FOlhosDeTodasAsCores.mp4?alt=media&token=c7f637dc-85e1-434c-968a-e9dfcf12ac0a',
-          objectFit: 'contain'
-        }
-      ]
+      }
+    },
+    {
+      id: 'lj-feed-05-gshow',
+      title: 'GShow Itália',
+      aspectRatio: 1.77777777778,
+      media: {
+        type: 'image',
+        order: 14,
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F05-Italia%2FGShow%2FGShow.png?alt=media&token=35baa827-2dde-4813-8d33-bd1e415e6d2e',
+        allowScroll: true
+      }
+    },
+    {
+      id: 'lj-feed-05-video',
+      title: 'Olhos de Todas as Cores',
+      aspectRatio: 1.77777777778,
+      media: {
+        type: 'video',
+        order: 15,
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F05-Italia%2FOlhosDeTodasAsCores.mp4?alt=media&token=c7f637dc-85e1-434c-968a-e9dfcf12ac0a',
+        objectFit: 'contain'
+      }
     }
   ]
 };
@@ -412,7 +502,7 @@ export const AUDDAR_PROJECT: Project = {
   layoutType: 'horizontal',
   galleryThumbnail: '',
   coverImage: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F01-Capa.jpg?alt=media&token=ce795f6e-1aea-4fa7-8f93-d6797b6a2450',
-  order: 5,
+  order: 4,
   mediaItems: [],
   theme: {
     accentColor: '#172554',
@@ -425,6 +515,16 @@ export const AUDDAR_PROJECT: Project = {
     playerHeight: 540,
     borderWidth: '1px',
     borderRadius: '8px'
+  },
+  aboutConfig: {
+    title: 'Estratégia Auddar',
+    description: 'Gestão de conteúdo e posicionamento para a Auddar, focada em Techospitality. \n\nEste projeto envolveu desde a criação da linha editorial até a execução de campanhas de social media e materiais institucionais. A abordagem horizontal permite uma leitura mais técnica e detalhada dos processos, ideal para o público B2B da marca, garantindo que a inovação tecnológica da empresa seja comunicada de forma clara e profissional.',
+    ctaText: 'Ver Estratégia',
+    width: 'max-w-xl',
+    backgroundColor: 'bg-zinc-900/90',
+    textColor: 'text-white',
+    ctaColor: 'bg-[#172554]',
+    ctaTextColor: 'text-white'
   },
   feed: [
     {
@@ -475,14 +575,24 @@ export const SCALLA_RECORDS_PROJECT: Project = {
     borderWidth: '1px',
     borderRadius: '12px'
   },
+  aboutConfig: {
+    title: 'Scalla Records',
+    description: 'Em breve: Uma nova visão sobre a indústria fonográfica e produção musical. \n\nAguarde o lançamento de um projeto que une técnica, criatividade e uma gestão de conteúdo focada na identidade única de cada artista.',
+    ctaText: 'Aguarde',
+    width: 'max-w-md',
+    backgroundColor: 'bg-zinc-900/90',
+    textColor: 'text-white',
+    ctaColor: 'bg-zinc-700',
+    ctaTextColor: 'text-white'
+  },
   feed: []
 };
 
 export const PROJECTS_LIST: Project[] = [
   METAVIX_PROJECT, 
+  ELOBIKE_PROJECT,
   GOOD_STORAGE_PROJECT, 
-  ELOBIKE_PROJECT, 
-  LION_JUMP_PROJECT,
   AUDDAR_PROJECT,
+  LION_JUMP_PROJECT,
   SCALLA_RECORDS_PROJECT
 ];

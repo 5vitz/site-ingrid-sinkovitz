@@ -72,6 +72,19 @@ export interface ProjectTheme {
   borderRadius?: string; // Ex: '8px'
 }
 
+export interface AboutConfig {
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  ctaText?: string;
+  width?: string; // Ex: 'max-w-md', 'max-w-2xl'
+  height?: string; // Ex: 'max-h-[80vh]'
+  backgroundColor?: string;
+  textColor?: string;
+  ctaColor?: string;
+  ctaTextColor?: string;
+}
+
 export interface Project {
   id: string;
   title: string;
@@ -86,6 +99,7 @@ export interface Project {
   feed?: FeedItem[]; // Nova estrutura 2D
   order: number;
   theme?: ProjectTheme;
+  aboutConfig?: AboutConfig;
 }
 
 export interface Service {
