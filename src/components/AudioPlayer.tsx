@@ -53,6 +53,10 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
       </button>
 
       <style>{`
+        .vertical-range {
+          -webkit-appearance: none;
+          background: transparent;
+        }
         .vertical-range::-webkit-slider-runnable-track {
           background: rgba(255, 255, 255, 0.1);
           border-radius: 10px;
@@ -60,11 +64,27 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
         }
         .vertical-range::-webkit-slider-thumb {
           -webkit-appearance: none;
-          background: var(--color-accent, #00D154);
-          width: 12px;
-          height: 12px;
+          background: #f2bb32;
+          width: 14px;
+          height: 14px;
           border-radius: 50%;
-          margin-left: -4px;
+          margin-left: -5px;
+          box-shadow: 0 0 10px rgba(242, 187, 50, 0.3);
+          cursor: pointer;
+          border: none;
+        }
+        .vertical-range::-moz-range-thumb {
+          background: #f2bb32;
+          width: 14px;
+          height: 14px;
+          border-radius: 50%;
+          border: none;
+          cursor: pointer;
+        }
+        .vertical-range::-moz-range-track {
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 10px;
+          width: 4px;
         }
       `}</style>
     </div>
