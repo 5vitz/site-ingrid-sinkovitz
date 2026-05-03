@@ -18,7 +18,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   // 1. Definição de todos os Hooks (Sempre no topo, nunca pulados)
   const [feedIndex, setFeedIndex] = useState(0);
   const [storyIndex, setStoryIndex] = useState(0);
-  const [showPlayer, setShowPlayer] = useState(false);
+  const [showPlayer, setShowPlayer] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
   const [audioVolume, setAudioVolume] = useState(0.8);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
@@ -65,7 +65,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     if (project) {
       setFeedIndex(0);
       setStoryIndex(0);
-      setShowPlayer(false);
+      setShowPlayer(true);
       setIsMuted(false);
       setShouldDuck(false);
 
@@ -156,6 +156,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   // 3. Verificações de Dados e Renderização
   if (!project) return null;
   const isLionJump = project.id === 'projeto-lion-jump';
+  const isEloBike = project.id === 'projeto-elobike';
 
   const theme = project.theme || {
     playerBg: 'bg-black',
@@ -176,14 +177,14 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const isDesktop = viewportWidth > 1024;
   
   // Ajuste de dimensões: Altura fixa em 540px como base absoluta
-  const baseHeight = currentMedia?.playerHeight || theme.playerHeight || 540;
+  const baseHeight = isEloBike ? 540 : (currentMedia?.playerHeight || theme.playerHeight || 540);
   
   // Largura definida no tema ou calculada pela proporção (mantedo fallback seguro)
   const currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || 1;
   const isHorizontal = currentAspectRatio > 1.2;
   
   // Se houver playerWidth no tema ou no card, usamos ele. Caso contrário, fallback baseado no tipo de layout
-  const baseWidth = currentMedia?.playerWidth || theme.playerWidth || (isHorizontal ? 960 : 540);
+  const baseWidth = isEloBike ? 432 : (currentMedia?.playerWidth || theme.playerWidth || (isHorizontal ? 960 : 540));
   
   const playerWidth = isDesktop ? baseWidth : Math.min(baseWidth, viewportWidth * 0.95);
   

@@ -155,7 +155,7 @@ export const ELOBIKE_PROJECT: Project = {
     playerShadow: 'shadow-[0_0_40px_rgba(34,197,94,0.15)]',
     navButtonBg: 'bg-[#22c55e]/60',
     navButtonColor: 'text-white',
-    playerWidth: 304,
+    playerWidth: 432,
     playerHeight: 540,
     borderWidth: '2px',
     borderRadius: '16px'
@@ -164,7 +164,7 @@ export const ELOBIKE_PROJECT: Project = {
     {
       id: 'eb-marau',
       title: 'Marau',
-      aspectRatio: 0.5625, // 9:16
+      aspectRatio: 0.8, // 4:5
       media: { 
         type: 'video', 
         order: 1, 
@@ -187,7 +187,7 @@ export const ELOBIKE_PROJECT: Project = {
     {
       id: 'eb-cacau',
       title: 'Cacau',
-      aspectRatio: 0.5625,
+      aspectRatio: 0.8, // 4:5
       media: { 
         type: 'video', 
         order: 12, 
@@ -208,7 +208,7 @@ export const ELOBIKE_PROJECT: Project = {
     {
       id: 'eb-viajar',
       title: 'Viajar Sozinha',
-      aspectRatio: 0.5625,
+      aspectRatio: 0.8, // 4:5
       media: { 
         type: 'image', 
         order: 21, 
@@ -226,7 +226,7 @@ export const ELOBIKE_PROJECT: Project = {
     {
       id: 'eb-indica',
       title: 'Elo Indica',
-      aspectRatio: 0.5625,
+      aspectRatio: 0.8, // 4:5
       media: { 
         type: 'image', 
         order: 28, 
