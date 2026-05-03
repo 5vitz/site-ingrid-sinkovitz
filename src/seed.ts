@@ -32,7 +32,8 @@ export const seedAuddar = async () => {
           {
             type: 'image',
             url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F01-Capa.jpg?alt=media&token=ce795f6e-1aea-4fa7-8f93-d6797b6a2450',
-            objectFit: 'contain'
+            objectFit: 'cover',
+            zoom: 1.05
           },
           {
             type: 'text',
@@ -59,52 +60,62 @@ export const seedAuddar = async () => {
           {
             type: 'image',
             url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F06.png?alt=media&token=680da923-89b6-42c0-9137-dfa6fc042f2c',
-            objectFit: 'contain'
+            objectFit: 'cover',
+            zoom: 1.05
           },
           {
             type: 'image',
             url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F07.png?alt=media&token=2ea91a9d-1abb-488e-9911-1c8cd0030b30',
-            objectFit: 'contain'
+            objectFit: 'cover',
+            zoom: 1.05
           },
           {
             type: 'image',
             url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F08.png?alt=media&token=2ac67681-97d5-460c-ba2b-3c6333e61b57',
-            objectFit: 'contain'
+            objectFit: 'cover',
+            zoom: 1.05
           },
           {
             type: 'image',
             url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F09.png?alt=media&token=469b3533-2836-4c5a-a9e0-ce5e2e6c3ac6',
-            objectFit: 'contain'
+            objectFit: 'cover',
+            zoom: 1.05
           },
           {
             type: 'image',
             url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F10.png?alt=media&token=8435034c-7286-47b1-869b-8effb8d596e8',
-            objectFit: 'contain'
+            objectFit: 'cover',
+            zoom: 1.05
           },
           {
             type: 'image',
             url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F11.png?alt=media&token=bbac69b3-ca53-46dd-b369-ee036a522217',
-            objectFit: 'contain'
+            objectFit: 'cover',
+            zoom: 1.05
           },
           {
             type: 'image',
             url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F12.png?alt=media&token=12da4f64-c577-45b5-a25e-36c7eee38a82',
-            objectFit: 'contain'
+            objectFit: 'cover',
+            zoom: 1.05
           },
           {
             type: 'image',
             url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F13.png?alt=media&token=e5182804-7b53-4df9-b6f2-6a3cf412c304',
-            objectFit: 'contain'
+            objectFit: 'cover',
+            zoom: 1.05
           },
           {
             type: 'image',
             url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F14.png?alt=media&token=34ab42ad-e3fb-4360-9b82-d74a20b79fdd',
-            objectFit: 'contain'
+            objectFit: 'cover',
+            zoom: 1.05
           },
           {
             type: 'image',
             url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F15.png?alt=media&token=70d1c25f-99e3-4efd-b4b7-7999bed4da5a',
-            objectFit: 'contain'
+            objectFit: 'cover',
+            zoom: 1.05
           }
         ]
       }
