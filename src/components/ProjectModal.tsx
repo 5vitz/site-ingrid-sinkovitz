@@ -19,7 +19,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const [feedIndex, setFeedIndex] = useState(0);
   const [storyIndex, setStoryIndex] = useState(0);
   const [showPlayer, setShowPlayer] = useState(true);
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
   const [audioVolume, setAudioVolume] = useState(0.8);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [shouldDuck, setShouldDuck] = useState(false);
@@ -64,7 +64,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       setFeedIndex(0);
       setStoryIndex(0);
       setShowPlayer(true);
-      setIsMuted(true);
+      setIsMuted(false);
       setShouldDuck(false);
 
       if (audioRef.current) {
@@ -298,8 +298,8 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                   )}
                 </div>
 
-                {/* Feed Navigation (Vertical) - Hidden if layout is horizontal */}
-                {project.layoutType !== 'horizontal' && (
+                {/* Feed Navigation (Vertical) */}
+                {totalFeed > 1 && (
                   <div className="hidden md:flex absolute inset-y-0 left-1/2 -translate-x-1/2 -top-[47px] -bottom-[47px] flex-col items-center justify-between pointer-events-none z-[10010]">
                     <button 
                       disabled={feedIndex === 0}
