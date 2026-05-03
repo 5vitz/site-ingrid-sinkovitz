@@ -26,7 +26,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
       onMouseLeave={() => setShowSlider(false)}
     >
       {showSlider && (
-        <div className="bg-zinc-900/90 backdrop-blur-xl border border-white/10 rounded-full py-2 px-1.5 shadow-2xl animate-in fade-in slide-in-from-bottom-2 duration-200">
+        <div className="bg-zinc-900/90 backdrop-blur-xl border border-white/10 rounded-full py-2.5 px-2 shadow-2xl animate-in fade-in slide-in-from-bottom-2 duration-200">
           <input
             type="range"
             min="0"
@@ -34,14 +34,14 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
             step="0.01"
             value={volume}
             onChange={(e) => onVolumeChange(parseFloat(e.target.value))}
-            className="h-10 appearance-none bg-transparent cursor-pointer vertical-range"
+            className="h-14 appearance-none bg-transparent cursor-pointer vertical-range"
             style={{ 
               writingMode: 'vertical-lr', 
               direction: 'rtl',
-              width: '4px',
+              width: '16px',
+              height: '56px', // h-14 equivalent
               WebkitAppearance: 'slider-vertical',
-              // Gradiente dinâmico para simular o preenchimento amarelo
-              background: `linear-gradient(to top, #f2bb32 ${volume * 100}%, rgba(255, 255, 255, 0.1) ${volume * 100}%)`,
+              padding: '0 6px',
               borderRadius: '10px'
             } as any}
           />
@@ -57,11 +57,14 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
 
       <style>{`
         .vertical-range {
-          -webkit-appearance: none;
-          margin: 0;
-        }
-        .vertical-range::-webkit-slider-runnable-track {
+          -webkit-appearance: slider-vertical;
+          width: 4px;
           background: transparent;
+        }
+        /* Colorindo o track no Webkit (Chrome/Edge/Safari) */
+        .vertical-range::-webkit-slider-runnable-track {
+          background: linear-gradient(to top, #f2bb32 ${volume * 100}%, rgba(255, 255, 255, 0.1) ${volume * 100}%);
+          border-radius: 10px;
           width: 4px;
         }
         .vertical-range::-webkit-slider-thumb {
@@ -70,10 +73,20 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
           width: 12px;
           height: 12px;
           border-radius: 50%;
-          margin-left: -4px;
-          box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+          margin-left: -4px; /* Centraliza no track de 4px */
+          box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
           cursor: pointer;
           border: 2px solid #18181b;
+        }
+        /* Firefox */
+        .vertical-range::-moz-range-track {
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 10px;
+          width: 4px;
+        }
+        .vertical-range::-moz-range-progress {
+          background: #f2bb32;
+          border-radius: 10px;
         }
         .vertical-range::-moz-range-thumb {
           background: #f2bb32;
@@ -82,9 +95,6 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
           border-radius: 50%;
           border: 2px solid #18181b;
           cursor: pointer;
-        }
-        .vertical-range::-moz-range-track {
-          background: transparent;
         }
       `}</style>
     </div>
