@@ -20,6 +20,8 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const [storyIndex, setStoryIndex] = useState(0);
   const [showPlayer, setShowPlayer] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const [audioVolume, setAudioVolume] = useState(0.8);
+  const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [shouldDuck, setShouldDuck] = useState(false);
   const [windowSize, setWindowSize] = useState({ 
     width: typeof window !== 'undefined' ? window.innerWidth : 1200, 
@@ -87,14 +89,46 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     const audio = audioRef.current;
     if (!audio) return;
     audio.muted = isMuted;
-    audio.volume = shouldDuck ? 0.15 : 0.8;
+    audio.volume = shouldDuck ? audioVolume * 0.2 : audioVolume;
 
-    if (!isMuted && showPlayer) {
+    // A pedido do usuário, alguns projetos (como Auddar) devem tocar áudio desde o início do modal
+    // No entanto, para evitar bloqueio de autoplay, mantemos a dependência de showPlayer OU bypass para Auddar
+    const shouldPlay = !isMuted && (showPlayer || project.id === 'projeto-auddar');
+
+    if (shouldPlay) {
       audio.play().catch(() => {});
     } else {
       audio.pause();
     }
-  }, [isMuted, shouldDuck, showPlayer]);
+  }, [isMuted, shouldDuck, showPlayer, audioVolume, project.id]);
+
+  // Teclado
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!showPlayer) return;
+      
+      switch (e.key) {
+        case 'ArrowRight':
+          navigateStory(1);
+          break;
+        case 'ArrowLeft':
+          navigateStory(-1);
+          break;
+        case 'ArrowUp':
+          navigateFeed(-1);
+          break;
+        case 'ArrowDown':
+          navigateFeed(1);
+          break;
+        case 'Escape':
+          onClose();
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showPlayer, navigateStory, navigateFeed, onClose]);
 
   // Bloqueio de scroll do body
   useEffect(() => {
@@ -322,6 +356,8 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
             <AudioPlayer 
               isMuted={isMuted}
               onToggleMute={handleToggleMute}
+              volume={audioVolume}
+              onVolumeChange={setAudioVolume}
             />
           </>
         )}
