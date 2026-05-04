@@ -18,7 +18,7 @@ import { MaintenanceMode } from './components/MaintenanceMode';
 import { useCollection } from './hooks/useCollection';
 import { Project, Service, Testimonial, AboutMe, SiteSettings } from './types';
 import { getSettings } from './services/dataService';
-import { seedAuddar, seedTestimonials } from './seed';
+import { seedAuddar, seedTestimonials, seedAboutMe } from './seed';
 
 import { ProjectManager } from './components/Admin/ProjectManager';
 import { ServiceManager } from './components/Admin/ServiceManager';
@@ -642,9 +642,10 @@ export default function App() {
   const [loadingSettings, setLoadingSettings] = useState(true);
 
   useEffect(() => {
-    // Seed Auddar project if needed
+    // Seed database if needed
     seedAuddar();
     seedTestimonials();
+    seedAboutMe();
 
     getSettings().then(data => {
       setSettings(data || { global: null, sobre: null });

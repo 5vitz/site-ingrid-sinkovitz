@@ -163,3 +163,25 @@ export const seedTestimonials = async () => {
     }
   }
 };
+
+export const seedAboutMe = async () => {
+  try {
+    await setDoc(doc(db, 'about', 'sobre_mim'), {
+      description: `Eu sou a Ingrid, e minha trajetória na comunicação nunca foi linear.
+Comecei na rádio, passei pela televisão, mergulhei na produção audiovisual, vivi projetos que chegaram à TV Globo e até uma turnê internacional. Mais tarde, empreendi no setor gastronômico, onde, além de gerir um negócio, também fui responsável por construir e posicionar a marca.
+Cada uma dessas experiências me colocou em lugares diferentes da comunicação: na frente das câmeras, nos bastidores, na operação, na estratégia.
+E foi exatamente isso que moldou a forma como eu enxergo o que faço hoje.
+Eu não vejo conteúdo como uma peça isolada. Nem estratégia como algo que existe só no planejamento.
+Pra mim, comunicação é um sistema. É entender contexto, intenção, público, narrativa e fazer tudo isso se conectar de forma coerente, consistente e sustentável ao longo do tempo.
+Por isso, o meu trabalho não se limita à criação.
+Eu entro nos projetos para organizar, estruturar e dar direção. Trago clareza para marcas que muitas vezes já têm presença, mas não têm consistência. Transformo ideias soltas em uma narrativa sólida. E acompanho de perto a execução para garantir que aquilo que foi pensado realmente aconteça com qualidade e alinhamento.
+Hoje, atuo como gestora e estrategista de conteúdo, com uma visão ampla de todo o processo. Minha forma de trabalhar é atravessada por tudo o que eu já vivi: diferentes formatos, diferentes mercados, diferentes perspectivas.
+E é justamente isso que me permite enxergar além do óbvio e construir algo que não seja só bonito ou bem planejado, mas que faça sentido.
+Não é só produzir conteúdo, é construir percepção.`,
+      videoUrl: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/SobreMim%2FSobreMim.mp4?alt=media&token=ff5c966d-15e2-489f-bedf-f47a1426a7fd'
+    }, { merge: true });
+    console.log('Bio updated successfully');
+  } catch (error) {
+    console.error('Error seeding Bio:', error);
+  }
+};

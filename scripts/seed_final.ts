@@ -60,7 +60,7 @@ async function seed() {
     const aboutData = {
       description: `Eu sou a Ingrid, e minha trajetória na comunicação nunca foi linear.
 Comecei na rádio, passei pela televisão, mergulhei na produção audiovisual, vivi projetos que chegaram à TV Globo e até uma turnê internacional. Mais tarde, empreendi no setor gastronômico, onde, além de gerir um negócio, também fui responsável por construir e posicionar a marca.
-Cada uma dessas experiências me colocou em lugares diferentes da comunicação: na frente das câmeras, nos bastidores, na operação, naestratégia.
+Cada uma dessas experiências me colocou em lugares diferentes da comunicação: na frente das câmeras, nos bastidores, na operação, na estratégia.
 E foi exatamente isso que moldou a forma como eu enxergo o que faço hoje.
 Eu não vejo conteúdo como uma peça isolada. Nem estratégia como algo que existe só no planejamento.
 Pra mim, comunicação é um sistema. É entender contexto, intenção, público, narrativa e fazer tudo isso se conectar de forma coerente, consistente e sustentável ao longo do tempo.
