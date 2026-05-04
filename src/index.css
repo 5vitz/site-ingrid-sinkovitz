@@ -58,50 +58,53 @@
   }
   
   ::-webkit-scrollbar {
-    width: 8px !important;
-    height: 8px !important;
+    width: 10px !important;
+    height: 10px !important;
     display: block !important;
   }
   ::-webkit-scrollbar-track {
-    background: #111111 !important;
+    background: #000000 !important;
   }
   ::-webkit-scrollbar-thumb {
     background: #ffffff !important;
-    border-radius: 4px !important;
+    border-radius: 5px !important;
     border: 2px solid #000000 !important;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #e0e0e0 !important;
+    background: #f0f0f0 !important;
   }
 
   html, body {
     background-color: #050510;
     overflow-x: hidden;
+    scrollbar-width: thin !important;
+    scrollbar-color: #ffffff #000000 !important;
   }
 }
 
 /* Custom Utilities for the "Cards" */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 8px !important;
-  height: 8px !important;
+  width: 10px !important;
+  height: 10px !important;
   display: block !important;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #111111 !important;
-  border-radius: 10px !important;
+  background: #000000 !important;
+  border-radius: 0px !important;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: #ffffff !important;
-  border-radius: 10px !important;
-  border: 1px solid #111111 !important;
+  border-radius: 5px !important;
+  border: 2px solid #000000 !important;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #e0e0e0 !important;
+  background: #f0f0f0 !important;
 }
 .custom-scrollbar {
   scrollbar-width: thin !important;
-  scrollbar-color: #ffffff #111111 !important;
+  scrollbar-color: #ffffff #000000 !important;
   overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
 }
 
 .scrollbar-visible {

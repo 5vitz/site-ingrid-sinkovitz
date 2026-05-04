@@ -67,7 +67,9 @@ Tradução de soluções técnicas em comunicação acessível e orientada à co
         aspectRatio: 0.8,
         media: {
           type: 'image',
-          url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F04-Parceria.png?alt=media&token=88d95213-2428-441a-8b02-587733d0cfae'
+          url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F04-Parceria.png?alt=media&token=88d95213-2428-441a-8b02-587733d0cfae',
+          allowScroll: true,
+          zoom: 1.01
         }
       },
       {
@@ -76,7 +78,9 @@ Tradução de soluções técnicas em comunicação acessível e orientada à co
         aspectRatio: 0.8,
         media: {
           type: 'image',
-          url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F05-Email.png?alt=media&token=b4a3b159-284e-463f-9de8-8075862e73c7'
+          url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F05-Email.png?alt=media&token=b4a3b159-284e-463f-9de8-8075862e73c7',
+          allowScroll: true,
+          zoom: 1.01
         }
       },
       {
@@ -120,5 +124,42 @@ Tradução de soluções técnicas em comunicação acessível e orientada à co
     console.log('Project Auddar seeded successfully with correct URLs');
   } catch (error) {
     console.error('Error seeding Auddar:', error);
+  }
+};
+
+export const seedTestimonials = async () => {
+  const testimonials = [
+    {
+      id: 'testimonial-1',
+      author: "Paulo Buzzo",
+      role: "Gestor Comercial | Growth | IA",
+      text: "Tive a honra de ter a Ingrid na equipe comercial da Auddar. Ela muito além do esperado, cuidando da comunicação interna, eventos e transformando as redes sociais, criando um planejamento estratégico de brilhar os olhos. Sempre proativa e cheia de ideias, destaco sua energia e dedicação inspiraram a todos ao redor.Ela é contagiante! Foi um privilégio ter Ingrid no time, e sei que onde ela estiver, trará sempre excelentes resultados e boas vibrações!",
+      photoUrl: "https://lh3.googleusercontent.com/d/1gOBdoaCX4zcS1xfMYbi-LTtZ_2WFeIva",
+      order: 1
+    },
+    {
+      id: 'testimonial-2',
+      author: "Karina Redivo",
+      role: "Coordinadora de Marketing",
+      text: "A Ingrid é uma profissional multifuncional, muito dedicada, organizada e com senso de resolução incrível. Durante o time em que atuou como Social Media em nosso time de marketing, ela trouxe ideias fantásticas, ajudou a aprimorar processos de rotina conforme as necessidades do setor e estava sempre disposta a realizar tudo com responsabilidade e empenho. Linda, alegre, cativante, serena, cuidadosa com as entregas e resultados! Foi um prazer ter a Ingrid em nosso time. Simplesmente maravilhosa!",
+      photoUrl: "https://lh3.googleusercontent.com/d/1BkSIA3AFFHwMutkS8FVjOnImhIkPq92A",
+      order: 2
+    },
+    {
+      id: 'testimonial-3',
+      author: "Guilherme Bressan",
+      role: "Creative Director at Estoriah",
+      text: "Tive o prazer de trabalhar com a Guigui em minha Produtora de Narrativas em 2022 e 2023. Uma pessoa muito carismática e de excelente comunicação que se destacava sempre por sua versatilidade e habilidade multitask. Além de Produtora Executiva, atuou como Assistente de Direção, acompanhando todas as etapas de produção de conteúdo sempre com uma postura proativa, pontualidade e uma capacidade impressionante de coordenação de equipe. Ela foi essencial em todas as etapas do processo: desde a gestão de produção, atendimento, visita técnica, até a coordenação da equipe envolvida.",
+      photoUrl: "https://lh3.googleusercontent.com/d/1rmHzyu5fdTHMGj6a30KQxElstZ78UGDS",
+      order: 3
+    }
+  ];
+
+  for (const t of testimonials) {
+    try {
+      await setDoc(doc(db, 'testimonials', t.id), t, { merge: true });
+    } catch (error) {
+      console.error(`Error seeding testimonial ${t.author}:`, error);
+    }
   }
 };

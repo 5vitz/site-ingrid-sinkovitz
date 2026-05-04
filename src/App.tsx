@@ -18,7 +18,7 @@ import { MaintenanceMode } from './components/MaintenanceMode';
 import { useCollection } from './hooks/useCollection';
 import { Project, Service, Testimonial, AboutMe, SiteSettings } from './types';
 import { getSettings } from './services/dataService';
-import { seedAuddar } from './seed';
+import { seedAuddar, seedTestimonials } from './seed';
 
 import { ProjectManager } from './components/Admin/ProjectManager';
 import { ServiceManager } from './components/Admin/ServiceManager';
@@ -311,12 +311,12 @@ const Home = ({ onSelectProject, settings: initialSettings }: { onSelectProject:
             </div>
             
             <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6 pb-12">
-              {[
+              {(testimonials && testimonials.length > 0 ? testimonials.sort((a,b) => (a.order || 0) - (b.order || 0)) : [
                 {
                   author: "Paulo Buzzo",
                   role: "Gestor Comercial | Growth | IA",
                   text: "Tive a honra de ter a Ingrid na equipe comercial da Auddar. Ela muito além do esperado, cuidando da comunicação interna, eventos e transformando as redes sociais, criando um planejamento estratégico de brilhar os olhos. Sempre proativa e cheia de ideias, destaco sua energia e dedicação inspiraram a todos ao redor.Ela é contagiante! Foi um privilégio ter Ingrid no time, e sei que onde ela estiver, trará sempre excelentes resultados e boas vibrações!",
-                  photoUrl: "https://lh3.googleusercontent.com/d/1rmHzyu5fdTHMGj6a30KQxElstZ78UGDS"
+                  photoUrl: "https://lh3.googleusercontent.com/d/1gOBdoaCX4zcS1xfMYbi-LTtZ_2WFeIva"
                 },
                 {
                   author: "Karina Redivo",
@@ -328,10 +328,10 @@ const Home = ({ onSelectProject, settings: initialSettings }: { onSelectProject:
                   author: "Guilherme Bressan",
                   role: "Creative Director at Estoriah",
                   text: "Tive o prazer de trabalhar com a Guigui em minha Produtora de Narrativas em 2022 e 2023. Uma pessoa muito carismática e de excelente comunicação que se destacava sempre por sua versatilidade e habilidade multitask. Além de Produtora Executiva, atuou como Assistente de Direção, acompanhando todas as etapas de produção de conteúdo sempre com uma postura proativa, pontualidade e uma capacidade impressionante de coordenação de equipe. Ela foi essencial em todas as etapas do processo: desde a gestão de produção, atendimento, visita técnica, até a coordenação da equipe envolvida.",
-                  photoUrl: "https://lh3.googleusercontent.com/d/1gOBdoaCX4zcS1xfMYbi-LTtZ_2WFeIva"
+                  photoUrl: "https://lh3.googleusercontent.com/d/1rmHzyu5fdTHMGj6a30KQxElstZ78UGDS"
                 }
-              ].map((t, idx) => (
-                <TestimonialCard key={idx} t={t} isWide={idx === 2} />
+              ]).map((t, idx) => (
+                <TestimonialCard key={idx} t={t} isWide={idx === 2 || (testimonials?.length === 3 && idx === 2)} />
               ))}
             </div>
         </div>
@@ -638,6 +638,7 @@ export default function App() {
   useEffect(() => {
     // Seed Auddar project if needed
     seedAuddar();
+    seedTestimonials();
 
     getSettings().then(data => {
       setSettings(data || { global: null, sobre: null });

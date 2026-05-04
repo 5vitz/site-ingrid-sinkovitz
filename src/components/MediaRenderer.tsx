@@ -39,6 +39,11 @@ export const MediaRenderer: React.FC<MediaRendererProps> = ({
 
   if (!media) return null;
   
+  // Fallback for Auddar project if specific media items need scroll but aren't flagged in DB
+  const forceScroll = projectId === 'projeto-auddar' && 
+    (media.id === 'auddar-04' || media.id === 'auddar-05' || media.url?.includes('04-Parceria.png') || media.url?.includes('05-Email.png'));
+  const allowScroll = media.allowScroll || forceScroll;
+
   if (media.type === 'video') {
     if (!media.url) return <div className="w-full h-full bg-zinc-900 animate-pulse" />;
     return (
@@ -75,6 +80,7 @@ export const MediaRenderer: React.FC<MediaRendererProps> = ({
             src={viewerUrl}
             className="absolute inset-0 w-full h-full border-none pointer-events-auto"
             title={media.title || 'PDF Document'}
+            scrolling="yes"
           />
           {/* Instrução visual na base */}
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -145,19 +151,20 @@ export const MediaRenderer: React.FC<MediaRendererProps> = ({
     }
     if (!media.url) return <div className="w-full h-full bg-zinc-900 animate-pulse" />;
     return (
-      <div className={`w-full h-full relative ${media.allowScroll ? 'overflow-y-auto scroll-auto bg-black scrollbar-visible custom-scrollbar' : 'overflow-hidden'}`}>
-        <div className={`w-full flex flex-col items-center ${media.allowScroll ? 'min-h-full' : 'h-full'}`}>
+      <div className={`w-full h-full relative ${allowScroll ? 'overflow-y-auto bg-black custom-scrollbar' : 'overflow-hidden'}`}>
+        <div className={`${allowScroll ? 'w-full block relative' : 'w-full h-full flex items-center justify-center'}`}>
           <img 
             src={media.url} 
-            className={`w-full block ${media.allowScroll ? 'h-auto' : `h-full ${media.objectFit === 'contain' ? 'object-contain' : 'object-cover'}`}`}
+            className={`w-full block ${allowScroll ? 'h-auto !min-h-[101%]' : `h-full ${media.objectFit === 'contain' ? 'object-contain' : 'object-cover'}`}`}
             style={{ 
               transformBasis: 'auto',
-              flexShrink: 0
+              flexShrink: 0,
+              display: 'block'
             }}
             alt={media.title || ''}
             referrerPolicy="no-referrer"
           />
-          {media.allowScroll && <div className="h-40 w-full shrink-0" />} 
+          {allowScroll && <div className="h-64 w-full" />} 
         </div>
       </div>
     );
