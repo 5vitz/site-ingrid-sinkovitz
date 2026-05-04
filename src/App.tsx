@@ -585,7 +585,7 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
                 {[
                   { icon: <MessageCircle size={20} />, label: "WhatsApp", link: "https://wa.me/5527999193525" },
                   { icon: <Linkedin size={20} />, label: "LinkedIn", link: "https://www.linkedin.com/in/ingridsinkovitz/" },
-                  { icon: <Mail size={20} />, label: "E-mail", link: "mailto:ingridsinkovitz@gmail.com" }
+                  { icon: null, label: "ingridsinkovitz@gmail.com", link: "mailto:ingridsinkovitz@gmail.com" }
                 ].map((social, i) => (
                   <a 
                     key={i} 
@@ -594,8 +594,14 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
                     rel="noopener noreferrer"
                     className="flex items-center gap-4 text-sm font-medium text-zinc-400 hover:text-white transition group"
                   >
-                    <span className="p-3 rounded-full bg-white/5 group-hover:bg-accent group-hover:text-black transition-all duration-300">{social.icon}</span>
-                    <span className="tracking-widest uppercase font-bold text-xs">{social.label}</span>
+                    {social.icon && (
+                      <span className="p-3 rounded-full bg-white/5 group-hover:bg-accent group-hover:text-black transition-all duration-300">
+                        {social.icon}
+                      </span>
+                    )}
+                    <span className={`tracking-widest text-xs transition-colors duration-300 ${!social.icon ? 'lowercase text-zinc-500 mt-1 group-hover:text-accent' : 'uppercase font-bold'}`}>
+                      {social.label}
+                    </span>
                   </a>
                 ))}
               </div>

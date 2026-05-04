@@ -28,7 +28,7 @@ export interface MediaItem {
   layout?: 'gshow' | 'standard';
   url?: string;
   thumbnail?: string;
-  order: number;
+  order?: number;
   label?: string;
   title?: string;
   subtitle?: string;
