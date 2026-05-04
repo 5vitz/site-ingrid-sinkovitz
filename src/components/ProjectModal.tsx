@@ -165,6 +165,24 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [showPlayer, navigateStory, navigateFeed, onClose, project?.layoutType, storyIndex, totalStoriesForNav]);
 
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      if (!showPlayer || isScrollingRef.current) return;
+      
+      // Sensibilidade do scroll diminuída para evitar disparos acidentais
+      if (Math.abs(e.deltaY) > 50) {
+        if (e.deltaY > 0) {
+          navigateFeed(1);
+        } else {
+          navigateFeed(-1);
+        }
+      }
+    };
+
+    window.addEventListener('wheel', handleWheel, { passive: true });
+    return () => window.removeEventListener('wheel', handleWheel);
+  }, [showPlayer, navigateFeed]);
+
   // Bloqueio de scroll do body
   useEffect(() => {
     if (project) {
@@ -201,6 +219,36 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     }, 800);
   }, [isPlaying]);
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartRef.current = {
+      x: e.touches[0].clientX,
+      y: e.touches[0].clientY
+    };
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!touchStartRef.current) return;
+    
+    const deltaX = e.changedTouches[0].clientX - touchStartRef.current.x;
+    const deltaY = e.changedTouches[0].clientY - touchStartRef.current.y;
+    touchStartRef.current = null;
+
+    // Detectar direção predominante
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      // Horizontal (Stories)
+      if (Math.abs(deltaX) > 40) {
+        if (deltaX > 0) navigateStory(-1);
+        else navigateStory(1);
+      }
+    } else {
+      // Vertical (Feed)
+      if (Math.abs(deltaY) > 40) {
+        if (deltaY > 0) navigateFeed(-1);
+        else navigateFeed(1);
+      }
+    }
+  };
+
   if (!project) return null;
 
   const handleStartTour = (e: React.MouseEvent) => {
@@ -230,10 +278,16 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const isDesktop = viewportWidth > 1024;
   
   const currentMedia = storyIndex === 0 ? currentFeed?.media : currentStories[storyIndex - 1];
-  const baseHeight = (isEloBike || isAuddar) ? 540 : (currentMedia?.playerHeight || theme.playerHeight || 540);
-  const currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || 1;
+  
+  // Aspect Ratio: Prioriza o da mídia, depois o do feed, depois o padrão baseado em orientação
+  const currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || 0.8;
   const isHorizontal = currentAspectRatio > 1.2;
-  const baseWidth = isEloBike ? 432 : (isAuddar ? 540 : (currentMedia?.playerWidth || theme.playerWidth || (isHorizontal ? 960 : 540)));
+  
+  // Altura base: 540 como padrão vertical/horizontal
+  const baseHeight = isAuddar ? 540 : (currentMedia?.playerHeight || theme.playerHeight || 540);
+  
+  // Largura base: Prioriza largura específica da mídia, senão calcula pelo aspect ratio
+  const baseWidth = isAuddar ? 540 : (currentMedia?.playerWidth || (baseHeight * currentAspectRatio));
   
   const playerWidth = isDesktop ? baseWidth : Math.min(baseWidth, viewportWidth * 0.95);
   let playerHeight = playerWidth / (baseWidth / baseHeight);
@@ -276,6 +330,8 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center select-none overflow-hidden"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       <div className="absolute inset-0 z-0 bg-transparent" onClick={onClose} />
 

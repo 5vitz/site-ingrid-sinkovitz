@@ -1,4 +1,5 @@
 import React from 'react';
+import { ExternalLink, FileText, Smartphone } from 'lucide-react';
 import { MediaItem } from '../types';
 
 interface MediaRendererProps {
@@ -65,15 +66,25 @@ export const MediaRenderer: React.FC<MediaRendererProps> = ({
     const isPDF = media.type === 'pdf' || media.url?.toLowerCase().includes('.pdf');
     if (isPDF) {
       const pdfUrl = media.url || '';
+      // Usando o viewer do Google para evitar bloqueios de X-Frame-Options
       const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(pdfUrl)}&embedded=true`;
       
       return (
-        <div className="w-full h-full bg-[#0a0a0a] overflow-hidden relative">
+        <div className="w-full h-full bg-[#0a0a0a] overflow-hidden relative group">
           <iframe 
             src={viewerUrl}
             className="absolute inset-0 w-full h-full border-none pointer-events-auto"
             title={media.title || 'PDF Document'}
           />
+          {/* Instrução visual na base */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="bg-black/80 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 shadow-xl">
+              <p className="text-[10px] text-white/90 font-bold uppercase tracking-widest flex items-center gap-2">
+                <Smartphone size={12} className="text-blue-400" />
+                Interaja com o PDF ou use as setas
+              </p>
+            </div>
+          </div>
         </div>
       );
     }
@@ -134,20 +145,20 @@ export const MediaRenderer: React.FC<MediaRendererProps> = ({
     }
     if (!media.url) return <div className="w-full h-full bg-zinc-900 animate-pulse" />;
     return (
-      <div className={`w-full h-full relative ${media.allowScroll ? 'overflow-y-scroll overflow-x-hidden custom-scrollbar pr-1' : 'overflow-hidden'}`}>
-        <img 
-          src={media.url} 
-          className={`w-full ${media.allowScroll ? 'h-auto block min-h-0' : `h-full ${media.objectFit === 'contain' ? 'object-contain' : 'object-cover'}`}`}
-          style={{ 
-            transform: `scale(${media.zoom || 1}) translateX(${media.xOffset || 0}px) translateY(${media.yOffset || 0}px)`,
-            transformOrigin: media.allowScroll ? 'top center' : 'center center',
-            objectPosition: media.objectPosition || 'center center',
-            display: 'block',
-            width: '100%',
-          }}
-          alt={media.title || ''}
-          referrerPolicy="no-referrer"
-        />
+      <div className={`w-full h-full relative ${media.allowScroll ? 'overflow-y-auto scroll-auto bg-black scrollbar-visible custom-scrollbar' : 'overflow-hidden'}`}>
+        <div className={`w-full flex flex-col items-center ${media.allowScroll ? 'min-h-full' : 'h-full'}`}>
+          <img 
+            src={media.url} 
+            className={`w-full block ${media.allowScroll ? 'h-auto' : `h-full ${media.objectFit === 'contain' ? 'object-contain' : 'object-cover'}`}`}
+            style={{ 
+              transformBasis: 'auto',
+              flexShrink: 0
+            }}
+            alt={media.title || ''}
+            referrerPolicy="no-referrer"
+          />
+          {media.allowScroll && <div className="h-40 w-full shrink-0" />} 
+        </div>
       </div>
     );
   }

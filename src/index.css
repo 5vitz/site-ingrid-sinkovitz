@@ -51,25 +51,27 @@
   h3 { font-size: var(--font-size-h3); @apply leading-tight; }
   h4 { font-size: var(--font-size-h4); }
 
-  /* Reset Scrollbar - Eliminar scroll grosso branco */
+  /* Reset Scrollbar - Estilo bem evidente e branco */
   * {
     scrollbar-width: thin;
-    scrollbar-color: #222 transparent;
+    scrollbar-color: #ffffff #000000;
   }
   
   ::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
+    width: 8px !important;
+    height: 8px !important;
+    display: block !important;
   }
   ::-webkit-scrollbar-track {
-    background: transparent;
+    background: #111111 !important;
   }
   ::-webkit-scrollbar-thumb {
-    background: #333;
-    border-radius: 10px;
+    background: #ffffff !important;
+    border-radius: 4px !important;
+    border: 2px solid #000000 !important;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #444;
+    background: #e0e0e0 !important;
   }
 
   html, body {
@@ -80,24 +82,31 @@
 
 /* Custom Utilities for the "Cards" */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-  display: block;
+  width: 8px !important;
+  height: 8px !important;
+  display: block !important;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
+  background: #111111 !important;
+  border-radius: 10px !important;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
+  background: #ffffff !important;
+  border-radius: 10px !important;
+  border: 1px solid #111111 !important;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: #e0e0e0 !important;
 }
 .custom-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+  scrollbar-width: thin !important;
+  scrollbar-color: #ffffff #111111 !important;
+  overflow-y: auto !important;
+}
+
+.scrollbar-visible {
+  overflow-y: auto !important;
+  display: block !important;
 }
 
 .section-container {

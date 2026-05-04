@@ -38,7 +38,7 @@ export const AboutProjectModal: React.FC<AboutProjectModalProps> = ({ project, o
             {/* Botão Fechar (X) - Estilo Círculo para Pop-up */}
             <button
               onClick={onClose}
-              className="absolute top-6 right-6 z-[11050] w-10 h-10 bg-zinc-950/60 backdrop-blur-md border border-white/10 text-white rounded-full flex items-center justify-center hover:scale-110 transition-all shadow-xl"
+              className="absolute top-4 right-4 z-[11050] w-10 h-10 bg-zinc-950/60 backdrop-blur-md border border-white/10 text-white rounded-full flex items-center justify-center hover:scale-110 transition-all shadow-xl"
               title="Fechar"
             >
               <X size={20} strokeWidth={3} />
@@ -49,8 +49,7 @@ export const AboutProjectModal: React.FC<AboutProjectModalProps> = ({ project, o
               <div className="space-y-10 text-center">
                 <div>
                   <h2 
-                    className="text-lg md:text-xl font-black tracking-tighter leading-tight mb-2"
-                    style={{ color: theme?.accentColor || 'white' }}
+                    className="text-lg md:text-xl font-black tracking-tighter leading-tight mb-2 text-zinc-500"
                   >
                     {aboutConfig.title || project.title}
                   </h2>
