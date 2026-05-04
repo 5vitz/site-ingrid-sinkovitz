@@ -51,54 +51,37 @@
   h3 { font-size: var(--font-size-h3); @apply leading-tight; }
   h4 { font-size: var(--font-size-h4); }
 
-  /* Reset Scrollbar - Estilo bem evidente e branco */
-  * {
-    scrollbar-width: thin;
-    scrollbar-color: #ffffff #000000;
-  }
-  
-  ::-webkit-scrollbar {
-    width: 10px !important;
-    height: 10px !important;
-    display: block !important;
-  }
-  ::-webkit-scrollbar-track {
-    background: #000000 !important;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: #ffffff !important;
-    border-radius: 5px !important;
-    border: 2px solid #000000 !important;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #f0f0f0 !important;
-  }
-
+  /* Reset Scrollbar - Remove o branco global e mantém discreto */
+  /* Esconder barra de rolagem global do site para manter o design limpo */
   html, body {
     background-color: #050510;
     overflow-x: hidden;
-    scrollbar-width: thin !important;
-    scrollbar-color: #ffffff #000000 !important;
+    scrollbar-width: none !important; /* Firefox */
+    -ms-overflow-style: none !important;  /* IE and Edge */
+  }
+  
+  html::-webkit-scrollbar, body::-webkit-scrollbar {
+    display: none !important; /* Chrome, Safari, Opera */
   }
 }
 
-/* Custom Utilities for the "Cards" */
+/* Estilo Exclusivo apenas para elementos com a classe .custom-scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 10px !important;
-  height: 10px !important;
+  width: 6px !important;
+  height: 6px !important;
   display: block !important;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
   background: #000000 !important;
-  border-radius: 0px !important;
+  border-radius: 10px !important;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: #ffffff !important;
-  border-radius: 5px !important;
-  border: 2px solid #000000 !important;
+  border-radius: 10px !important;
+  border: 1px solid #111111 !important;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #f0f0f0 !important;
+  background: #e0e0e0 !important;
 }
 .custom-scrollbar {
   scrollbar-width: thin !important;
