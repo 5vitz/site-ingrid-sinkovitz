@@ -1,211 +1,96 @@
-# Documento de Arquitetura Master - Portfólio Ingrid Sinkovitz
+# Documento de Arquitetura Master - Portfólio Ingrid Sinkovitz (Versão 3.0 - Planejamento Estratégico)
 
-## 1. Visão Geral
-Este documento é a "Fonte da Verdade" do projeto. O sistema evoluiu para um modelo de portfólio de alta performance, focando em minimalismo extremo, transições de "corte seco" (sem animações de fade que causem lag visual) e personalização profunda por projeto.
+## 1. Visão Geral e OKR
+Este documento é a "Fonte da Verdade" do projeto. A evolução atual foca em transformar o site em uma plataforma **Data-Driven** e **Modular**.
 
-## 2. Identidade Visual (Mood: Minimalista, Cinematográfico e Técnico)
-*   **Filosofia de Design:** Minimalismo Fervoroso. Cada elemento deve ter um propósito.
-*   **Transições:** "Corte Seco" (Dry Cut). As mídias e modais mudam instantaneamente, sem efeitos de escala ou opacidade que distraiam ou causem percepção de travamento.
-*   **Tipografia Base:** Inter/Poppins (Sans-serif). Foco em legibilidade e espaçamento técnico.
-*   **Cores Estruturais (Base):**
-    *   Fundo principal: `bg-[#050510]` (Preto profundo azulado).
-    *   Cards e Seções: `bg-zinc-900/40` com `backdrop-blur-md`.
-    *   Bordas: `border-white/5` ou `border-white/10`.
-    *   Acento Padrão: `#00D154` (Verde Neon/Digital).
-    *   Acento Alternativo: `#FEF200` (Amarelo Vibrant - Ex: Projeto Lion Jump).
+*   **Objetivo Principal (OKR):** Dar ao usuário liberdade total de criação e facilidade extrema de uso através de uma interface humanizada.
+*   **Meta Técnica:** Zero dados "hardcoded". Cada string, imagem, cor ou configuração de layout deve residir no banco de dados (Firestore).
 
-## 3. Módulos do Sistema
+## 2. Princípios de Desenvolvimento
+*   **Modularidade Radical:** Cada seção (Sobre Mim, Projetos, etc.) é um módulo independente. Operacionalmente, deve ser simples conectar ou desconectar módulos sem afetar o funcionamento global do app.
+*   **Independência de Dados:** Separação estrita entre a **estrutura** (o que o componente pode fazer) e os **dados** (o conteúdo em si).
+*   **Interface Humanizada:** O Painel de Controle não deve apenas editar dados, mas traduzir propriedades técnicas para uma linguagem amigável e intuitiva para a usuária.
 
-### 3.1. Personalização por Projeto (Sistema de Temas v2)
-Ao contrário de um template fixo, cada projeto no portfólio pode "herdar" um universo visual próprio:
-*   **Injectable Theme:** Cada objeto `Project` possui uma propriedade `theme` opcional.
-*   **Propriedades Customizáveis:**
-    *   `playerBg`: Cor de fundo do player (Ex: `bg-black` para vídeos, `bg-white` para certas marcas).
-    *   `playerBorder`: Estilo de borda (Ex: `border-[#FEF200]/40`).
-    *   `playerShadow`: Efeito de brilho externo (Glow) personalizado.
-    *   `accentColor`: Cor dos botões de navegação e indicadores.
-    *   `navButtonBg` e `navButtonColor`: Customização total dos controles.
+## 3. Estratégia de Configuração Dinâmica (JSON Template)
+Para evitar fragmentação, utilizaremos um modelo de **Template JSON** para layouts e propriedades:
+*   **JSON no Firestore:** Armazenar estruturas de dados que definem o comportamento visual.
+*   **Mapeamento Dinâmico:** As propriedades relevantes de configuração (ex: padding, cores de acento, tipos de grade) são elencadas no JSON e automaticamente disponibilizadas no Painel de Controle.
+*   **Viabilidade de Script:** Desenvolvimento de scripts de "carga de estrutura" que gravam essas definições no banco de dados em paralelo ao desenvolvimento do site, permitindo testes sem afetar a produção.
 
-### 3.2. Controle de Acesso (ACL)
-Níveis de acesso para manter a integridade do site:
-*   **Superusuário (Ingrid):**
-    *   Gestão total do sistema.
-    *   Interface exclusiva para cadastrar/remover e-mails de **ADM** e **Suporte**.
-    *   Configurações mestres de infraestrutura.
-*   **Administrativo (Conteúdo):** Acesso ao `PainelADM` para gerir as 4 seções dinâmicas (Sobre Mim, Serviços, Projetos, Depoimentos). Não mexe em cores fixas ou estrutura de menu.
-*   **Suporte (Técnico):** Acesso ao código-fonte para manutenção de seções estáticas (Topo/Contato), criação de novos itens de menu e ajustes de infraestrutura.
+## 4. Planejamento de Demandas (Roadmap Modular)
 
-### 3.2. Configurações Globais (Editáveis pelo ADM)
-*   **Personalização de Estilo:**
-    *   **Paleta de Cores:** Entrada de Hexadecimais.
-    *   **Tipografia:** Seleção de fontes para Corpo e Títulos (Ex: Poppins, Inter, Montserrat).
+### 4.1. Módulo: Configurações Globais (Site Settings)
+*   **Demanda:** Centralizar tudo que rege o visual geral.
+*   **Propriedades:** Logo, ícone social, cores mestres, tipografia, SEO.
+*   **Integração:** O Painel de Controle deve permitir a alteração dessas constantes globais sem tocar no código.
 
-### 3.3. Seções do Site
-1.  **Topo (Estático/Hardcoded):** Menu e Identidade inicial (Navbar com efeito glass-morphism e deslocamento de precisão).
-2.  **Sobre Mim (Dinâmico - Template):** Gestão de vídeo e texto em card de vidro 3xl.
-3.  **Serviços (Dinâmico):** Grade de especialidades em formato accordion "slim".
-4.  **Projetos (Dinâmico):** Portfólio com categorias, mídias variadas e arquitetura de cards aninhados (p-6/24px de padding interno).
-5.  **Depoimentos (Dinâmico):** Prova social com fotos e textos em grade adaptativa.
-6.  **Contato (Estático):** Seção com título dedicado, informações fixas e links sociais, utilizando Poppins e menu em caixa baixa.
+### 4.2. Módulo: Seções Adaptativas (Component Builder)
+*   **Demanda:** Transformar seções estáticas em componentes que leem sua própria estrutura do Firestore.
+*   **Propriedades:** Ordem das seções, visibilidade (toggle on/off), títulos de cabeçalho.
 
----
+### 4.3. Módulo: Construtor de Fluxo Visual (Visual Flow Builder)
+*   **Demanda:** Simplificar a criação de narrativas complexas de navegação.
+*   **Conceito:** Interface estilo "Canvas" onde o usuário constrói a lógica do projeto graficamente.
+*   **Mecânica de Gestão:**
+    1.  **Criação de Nós:** Arrastar um "Card Mãe" para a direita cria uma conexão horizontal (Stories/Sub-mídia). Arrastar para baixo cria uma conexão vertical (Nova Categoria/Feed).
+    2.  **Trava de Layout:** Após definir a estrutura, o usuário "tranca" o desenho para evitar deslocamentos acidentais.
+    3.  **Abastecimento de Dados:** Arrastar fotos/vídeos do computador diretamente para dentro dos cards vazios no fluxo.
+    4.  **Automação:** O sistema gera automaticamente as relações de parentesco (ID, parentId, position) no Firestore e processa os uploads para o Storage.
 
-## 4. Detalhamento: Seção "Sobre Mim" (Fluxo Blueprint)
-Esta seção serve de modelo para todas as outras áreas editáveis.
+### 4.4. Módulo de Ajuda e Suporte ao Usuário (Tooltips)
+*   **Demanda:** Reduzir a carga cognitiva do usuário.
+*   **Implementação:** Inclusão de tooltips contextuais ("?") em cada campo do Admin.
+*   **Conteúdo:** Explicação simples do que o campo altera e sugestões de valores ideais.
 
-### Fluxo de Gestão (Baseado no BPM):
-1.  **Estado Inicial (Preview):**
-    *   Exibição do vídeo atual em miniatura.
-    *   Exibição do texto atual.
-    *   Botão "Selecionar" para entrar em modo de edição.
-2.  **Gestão de Remoção:**
-    *   Apresentar nome/detalhes do arquivo atual.
-    *   Botão "Excluir" com confirmação de exclusão para evitar erros acidentais.
-3.  **Inclusão Multinível (Input de Mídia):**
-    *   **Upload Local:** Drag & drop ou seletor de arquivos do PC.
-    *   **Integração Drive:** Campo para colar link do Google Drive (com extração automática de ID).
-    *   **Link Direto:** Caixa para inserção de URL externa.
-    *   **Feedback Visual:** Gerar thumbnail automática ao inserir link para validar a mídia.
-    *   **Confirmação:** Botão de "Confirmar Inclusão" que prepara o arquivo na fila de upload.
-4.  **Finalização/Persistência:**
-    *   Botão "Executar" (Upload Real para Firebase Storage).
-    *   Ação "Gravar no BD" (Atualização do Firestore com o novo URL e data).
+### 4.5. Sistema de Salvaguardas (Safety Guards)
+*   **Demanda:** Impedir que erros de entrada "quebrem" o layout.
+*   **Mecânica:** Validação de tipos (Schema Validation) antes da persistência no Firestore.
+*   **Locks:** Bloqueio de edição em campos estruturais críticos para usuários sem nível "Support".
 
----
+## 5. Padronização de Mídias (Aspect Ratio)
+Para garantir a harmonia da Galeria e do Player, o sistema passará a oferecer um seletor de formatos padronizados:
+*   **Widescreen (16:9):** Vídeos horizontais, YouTube.
+*   **Vertical/Stories (9:16):** Reels, TikTok.
+*   **Portrait (4:5):** Postagens de feed/carrossel Instagram.
+*   **Documento (A4 - 1:1.41):** PDFs e materiais institucionais (595px X 842px).
+*   **Quadrado (1:1):** Logos e posts clássicos.
 
-## 5. Detalhamento: Seção "Serviços"
+## 6. Sistema de Atribuição de Cores (Color Attributes)
+Substitui o conceito de "cor isolada" por uma matriz de comportamento visual.
+*   **Camada 1: Fundação (Atmosphere):** Atributos que regem o fundo, cards e recipientes (Ex: `bgMain`, `cardGlass`).
+*   **Camada 2: Interação (Action Cues):** Atributos que indicam onde clicar (Ex: `primaryAction`, `hoverState`, `activeIndicator`).
+*   **Camada 3: Identidade (Project Soul):** Atributos dinâmicos que mudam por projeto (Ex: `projectAccent`, `playerGlow`).
+*   **Humanização:** No Admin, essas propriedades não serão apenas códigos Hex, mas terão labels como "Cor de Ação dos Botões" ou "Brilho do Player".
 
-### Fluxo de Gestão (PainelADM):
-1.  **Seleção de Serviço:**
-    *   Exibir lista de títulos de serviços existentes (Ex: "Edição de Vídeo", "Produção Audiovisual").
-    *   Usuário clica em um item da lista para carregar os detalhes.
-2.  **Ações Disponíveis (Após Seleção):**
-    *   **Excluir Serviço:** Deleta a categoria inteira.
-    *   **Editar Nome:** Altera o título principal daquela especialidade.
-    *   **Gestão de Itens (Checklist):**
-        *   Lista de sub-itens específicos (Ex: "Corte seco", "Color Grading").
-        *   Opções para: **Incluir** novo item, **Excluir** item existente ou **Alterar** o texto do item.
-3.  **Inclusão de Novo Serviço:**
-    *   Botão "Adicionar Nova Categoria".
-    *   Formulário para definir: Título e primeira lista de itens.
+## 7. Jornada do Usuário Administrativo (Criação de Projeto)
+Objetivo: Transformar a complexidade de rotas e hierarquias em uma experiência visual de "arrastar e soltar".
 
----
+1.  **Entrada:** Botão "Novo Projeto" no Dashboard.
+2.  **Fase de Estrutura (Draft Layout):**
+    *   O usuário desenha o fluxo no Canvas usando o "Card Mãe" como origem.
+    *   Arraste para a direita (Eixo X) = Novas mídias no mesmo nível (Stories).
+    *   Arraste para baixo (Eixo Y) = Novas categorias/capas (Feeds).
+3.  **Trava de Segurança:** Botão "Fixar Estrutura" desabilita a criação de novos nós e habilita o modo de preenchimento.
+4.  **População de Conteúdo (Data Fill):**
+    *   Usuário arrasta mídias do PC para os cards.
+    *   **Swap Inteligente:** Permite arrastar uma mídia que já está no "Card A" para o "Card B". O sistema faz a troca instantânea das URLs e tipos entre os nós.
+5.  **Refino Estético (Atribuição de Cores):** Edição dos atributos de cor específicos para aquele projeto.
+6.  **Execução Final:** O botão "Salvar e Publicar" processa a fila de uploads e gera o documento no Firestore.
 
-## 6. Detalhamento: Seção "Projetos" (Arquitetura de Portfólio)
+## 8. Estrutura de Dados Estratégica (Blueprint Evoluído)
 
-### Formatos Padronizados (Componentes Fixos):
-A formatação é rígida para garantir a estética do portfólio. O sistema prioriza a largura perfeita de leitura e exposição:
-1.  **Largura Fixa (Desktop):** Independente do formato da mídia, a largura do player é chumbada em **540px**. Isso garante consistência visual absoluta na navegação.
-2.  **Altura Quadrada ou Vertical:** Por padrão, o player é quadrado (**540px x 540px**). Se a mídia for vertical (proporção altura > largura), a altura se ajusta até o limite técnico de **88vh** da tela. Mídias largas são exibidas em formato quadrado com recorte inteligente (`object-cover`).
-3.  **Scroll Vertical Técnico:** Se a mídia ultrapassar a altura útil da tela (88vh), o player trava no limite e habilita o scroll interno, mantendo os 540px de largura.
+### Coleção: `layout_templates`
+Define **como** as coisas aparecem.
+*   `section_id`: string
+*   `config_schema`: JSON (Define quais campos aparecem no Admin para esta seção)
+*   `ui_metadata`: JSON (Labels amigáveis, tooltips e ajuda para o usuário)
 
-### Fluxo de Criação (PainelADM):
-1.  **Seleção de Formato:** Primeira etapa obrigatória (Vertical ou Horizontal).
-2.  **Identificação:** Título do projeto (Caixa de texto).
-3.  **Foto-Link (Capa da Galeria):** Upload da imagem que representará o projeto na grade principal do site.
-4.  **Quick View (Resumo):** Upload de texto descritivo e primeira imagem (Foto-capa) que aparece após o clique em "Saiba Mais".
-5.  **Gestão de Mídia (Accordion Reordenável):**
-    *   Interface em sanfona para listar vídeos, imagens e textos.
-    *   **Ordenação:** Botões "subir/descer" ou drag-and-drop para definir a sequência real.
-    *   **Upload Inteligente:** Arraste de arquivos (PC) ou integração com Google Drive.
-    *   **Auto-Thumbnail:** Ao inserir links (Drive/Web), gerar miniatura para facilitar a identificação no painel.
-6.  **Preview do Painel:** Janela de visualização em tempo real para testar a sequência antes de publicar no BD.
+### Coleção: `site_content`
+Contém o **conteúdo** bruto.
+*   Separado por módulos: `sobre`, `projetos`, `servicos`, `depoimentos`.
 
-### Design e Arquitetura da Galeria:
-1.  **Enquadramento Arquitetônico (Simetria):** Todos os projetos residem dentro de um `section-card` mestre para manter a coerência visual com as outras seções do site.
-2.  **Cards Aninhados (Gallery Cards):** Cada projeto individual é emoldurado por seu próprio card de vidro interno.
-3.  **Padding de Exposição (Pass-partout):** Aplicação de 24px (`p-6`) de respiro interno entre a borda do mini-card e a imagem, criando um efeito de moldura de luxo.
-4.  **Ajustes Finos de Interface:**
-    *   `thumbnailFit`: Suporte para 'cover' (padrão) ou 'contain' (para logos com transparência).
-    *   `cardBg`: Capacidade de definir cores de fundo específicas por card (Ex: branco para logos escuros).
+## 9. Próximos Passos (Workflow de Tarefas)
+1.  **Delineamento de Propriedades:** Identificar exaustivamente cada variável que hoje é estática e deve migrar para o Firestore.
+2.  **Humanização do Admin:** Revisar as telas de edição para garantir que o mapeamento das propriedades seja visualmente simples (ex: seletores de cor, toggles de estado, sliders de tamanho).
+3.  **Scripts de Sincronização:** Criar ferramentas que permitam subir novos templates de estrutura sem "quebrar" os dados já existentes.
 
-### Experiência de Navegação (Mergulho e Performance):
-1.  **Ação (Clique):** Ao clicar, o sistema abre o **Player de Projetos** imediatamente.
-2.  **Navegação 2D (Feed/Stories):**
-    *   **Vertical (Eixo Y):** Navega entre "Feeds" ou categorias principais do projeto.
-    *   **Horizontal (Eixo X):** Navega entre "Stories" ou sub-mídias de um feed específico.
-3.  **Lógica de Largura Chumbada (540px):** O player não varia mais de largura baseada no aspectRatio em Desktop. Ele mantém 540px fixos, ajustando apenas a altura até o limite da viewport (88vh).
-4.  **Corte Seco Minimalista:** Transição reduzida a um `opacity` linear de 0.15s. Remoção total de efeitos de escala, bounce ou deslocamento (Y), focando em uma experiência "seca" e direta.
-5.  **Tratamento de Mídias Especiais:**
-    *   **Imagens/Vídeos:** `object-cover` ou `object-contain` configurável.
-    *   **PDFs:** Incorporação via Google Docs Viewer para contornar bloqueios de segurança de navegadores, permitindo visualizar materiais de venda e propostas diretamente no card sem sair do site.
-
-### Design Sonoro (Trilha Sonora Adaptativa):
-Para evitar o "silêncio branco" em cards estáticos, o site implementa uma experiência imersiva de áudio:
-1.  **Trilha por Projeto (OST):** Cada reel pode ter sua própria trilha de fundo em loop (Ex: percussão baiana para projetos na Bahia).
-2.  **Lógica de Auto-Duck:** 
-    *   A trilha toca em loop durante a navegação por imagens ou textos.
-    *   Ao focar em um card de **Vídeo**, o sistema reduz suavemente o volume da trilha (Fade-out) para priorizar o som original do vídeo.
-    *   Ao sair do vídeo, a trilha retorna ao volume normal (Fade-in).
-3.  **Seamless Loop:** O código deve garantir que a transição do fim para o início da trilha seja imperceptível.
-
----
-
-## 7. Detalhamento: Seção "Depoimentos" (Mural de Prova Social)
-
-### Lógica de Componente Inteligente:
-O sistema decidirá o layout automaticamente com base na densidade do conteúdo para manter o equilíbrio visual da grade (duas colunas por linha).
-1.  **Formato Vertical (Padrão):** Aplicado a textos curtos e diretos.
-2.  **Formato Horizontal (Expandido):** Ativado automaticamente quando o texto excede um limite de caracteres/linhas pré-definido.
-3.  **Grade de Exibição:** Dois depoimentos lado a lado (2 colunas), garantindo que um depoimento "Horizontal" ocupe o espaço necessário sem quebrar a harmonia.
-
-### Fluxo de Gestão (PainelADM):
-1.  **Criação/Edição:**
-    *   Upload da foto do autor (preferencialmente circular/moldura fixa).
-    *   Campos de texto: Nome, Cargo/Empresa e o Depoimento.
-    *   **Preview Automático:** O painel mostra em tempo real se o depoimento será exibido como Vertical ou Horizontal com base no texto digitado.
-2.  **Ordenação:** Controle da sequência de exibição no mural.
-
----
-
-## 8. Estrutura de Dados (Firestore)
-
-### Coleção: `settings`
-*   Documento `sobre_mim`:
-    *   `videoUrl`: string
-    *   `description`: string
-    *   `updatedAt`: timestamp
-*   Documento `global`:
-    *   `whatsappNumber`: string
-    *   `accentColor`: string (Hex)
-
-### Coleção: `projects`
-*   `id`: string (slug)
-*   `title`: string
-*   `layoutType`: enum ('vertical', 'horizontal')
-*   `audioUrl`: string (trilha sonora do projeto)
-*   `theme`: Objeto de tema (playerBg, playerBorder, playerShadow, etc.)
-*   `feed`: array de objetos:
-    *   `id`: string
-    *   `aspectRatio`: number (0.56, 0.8, 1.77, etc.)
-    *   `media`: objeto de mídia principal
-    *   `stories`: array de objetos de mídia secundários
-*   `order`: number
-
-### Coleção: `services`
-*   `id`: string (gerado automaticamente)
-*   `title`: string (Título do Serviço, ex: "Vídeo para Social Media")
-*   `items`: array de strings (Lista de características: ["Reels", "TikTok", "Shorts"])
-*   `order`: number (Para controlar a posição na grade do site)
-*   `updatedAt`: timestamp
-
-### Coleção: `testimonials`
-*   `id`: string
-*   `author`: string
-*   `role`: string (Cargo/Empresa)
-*   `text`: string
-*   `photoUrl`: string
-*   `order`: number
-*   `createdAt`: timestamp
-
-### Coleção: `users_roles` (Controle da Superusuária)
-*   `email`: string (ID do documento)
-*   `role`: enum ('admin', 'support')
-*   `assignedBy`: string (e-mail da Ingrid)
-
----
-
-## 8. Próximos Passos
-1.  Validar se este nível de detalhe no "Sobre Mim" atende à sua visão.
-2.  Replicar o detalhamento para as seções "Projetos", "Serviços" e "Depoimentos".
-3.  Definir a lista final de conteúdos para a "primeira carga" de dados.

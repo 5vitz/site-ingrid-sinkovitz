@@ -6,11 +6,23 @@ export const useCollection = <T,>(collectionName: string) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
+    
+    // Timeout de segurança: se o firebase não responder em 12s, paramos o loading
+    const safetyTimeout = setTimeout(() => {
+      setLoading(false);
+    }, 12000);
+
     const unsubscribe = subscribeToCollection<T>(collectionName, (items) => {
+      clearTimeout(safetyTimeout);
       setData(items);
       setLoading(false);
     });
-    return () => unsubscribe();
+    
+    return () => {
+      clearTimeout(safetyTimeout);
+      unsubscribe();
+    };
   }, [collectionName]);
 
   return { data, loading };

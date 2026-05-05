@@ -16,23 +16,49 @@ import { Project, Service, Testimonial, SiteSettings, AboutMe, UserRoleDoc } fro
 
 // Generic fetcher
 export const subscribeToCollection = <T,>(collectionName: string, callback: (data: T[]) => void) => {
-  const q = query(collection(db, collectionName));
-  return onSnapshot(q, (snapshot) => {
-    const items = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as T));
-    // Sort locally as fallback or define complex queries if needed
-    const sorted = [...items].sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
-    callback(sorted);
-  });
+  try {
+    const q = query(collection(db, collectionName));
+    return onSnapshot(q, (snapshot) => {
+      const items = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as T));
+      // Sort locally as fallback or define complex queries if needed
+      const sorted = [...items].sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
+      callback(sorted);
+    }, (error) => {
+      console.error(`Erro na subscrição da coleção [${collectionName}]:`, error);
+      // Em caso de erro, retornamos lista vazia para destravar o "loading"
+      callback([]);
+    });
+  } catch (error) {
+    console.error(`Falha crítica ao tentar subscrever coleção [${collectionName}]:`, error);
+    callback([]);
+    return () => {}; // No-op unsubscribe
+  }
 };
 
 // Site Settings
 export const getSettings = async () => {
-  const global = await getDoc(doc(db, 'settings', 'global'));
-  const sobre = await getDoc(doc(db, 'about', 'sobre_mim'));
-  return {
-    global: global.exists() ? global.data() as SiteSettings : null,
-    sobre: sobre.exists() ? sobre.data() as AboutMe : null
+  const fetchWithTimeout = async (docRef: any) => {
+    const fetchPromise = getDoc(docRef);
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Timeout carregando configurações')), 10000)
+    );
+    return Promise.race([fetchPromise, timeoutPromise]) as Promise<any>;
   };
+
+  try {
+    const [global, sobre] = await Promise.all([
+      fetchWithTimeout(doc(db, 'settings', 'global')),
+      fetchWithTimeout(doc(db, 'settings', 'sobre'))
+    ]);
+
+    return {
+      global: global.exists() ? global.data() as SiteSettings : null,
+      sobre: sobre.exists() ? sobre.data() as AboutMe : null
+    };
+  } catch (error) {
+    console.warn("Falha ao carregar configurações (usando padrões):", error);
+    return { global: null, sobre: null };
+  }
 };
 
 export const updateSettings = (key: 'global' | 'sobre', data: any) => {

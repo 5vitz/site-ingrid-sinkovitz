@@ -2,30 +2,53 @@ import React from 'react';
 import { Project } from '../types';
 import { useCollection } from '../hooks/useCollection';
 import { PROJECTS_LIST as STATIC_PROJECTS } from '../constants/projects';
+import { ProjectCard } from './ProjectCard';
 
 export const ProjectSection: React.FC<{ onSelectProject: (p: Project) => void }> = ({ onSelectProject }) => {
   const { data: dbProjects, loading } = useCollection<Project>('projects');
 
-  // Mesclar projetos estáticos com os do banco, RESTRITO aos IDs oficiais
+  // Mesclar projetos estáticos com os do banco, garantindo que os estáticos sejam a base
   const displayProjects = React.useMemo(() => {
-    // Usamos um Map baseado nos projetos oficiais
-    const finalMap = new Map<string, Project>();
-    
-    // 1. Inicializamos com a lista estática
-    STATIC_PROJECTS.forEach(p => finalMap.set(p.id, p));
-    
-    // 2. Mesclamos com o banco APENAS se o ID já existir no mapa oficial
-    dbProjects.forEach(dbProj => {
-      if (dbProj.id && finalMap.has(dbProj.id)) {
-        const existing = finalMap.get(dbProj.id)!;
-        finalMap.set(dbProj.id, { ...existing, ...dbProj });
+    try {
+      const finalMap = new Map<string, Project>();
+      
+      // 1. Base estática - clonamos para evitar mutações acidentais
+      if (Array.isArray(STATIC_PROJECTS)) {
+        STATIC_PROJECTS.forEach(p => {
+          if (p && p.id) {
+            finalMap.set(p.id, { ...p });
+          }
+        });
       }
-    });
+      
+      // 2. Mesclagem inteligente com dados do banco
+      if (Array.isArray(dbProjects) && dbProjects.length > 0) {
+        dbProjects.forEach(dbProj => {
+          if (!dbProj || !dbProj.id) return;
 
-    // 3. Retornamos a lista final (sempre os 6 oficiais)
-    return Array.from(finalMap.values())
-      .sort((a, b) => (a.order ?? 99) - (b.order ?? 99))
-      .slice(0, 6);
+          // Regra para Galeria Pública: 
+          const isOfficialId = dbProj.id.startsWith('projeto-');
+          if (dbProj.status === 'draft' && !isOfficialId) return;
+
+          if (finalMap.has(dbProj.id)) {
+             // Mescla dados do banco sobre o oficial estático
+             const existing = finalMap.get(dbProj.id)!;
+             finalMap.set(dbProj.id, { ...existing, ...dbProj });
+          } else {
+             // Novo projeto criado pelo usuário
+             finalMap.set(dbProj.id, dbProj);
+          }
+        });
+      }
+
+      const result = Array.from(finalMap.values())
+        .sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
+        
+      return result.length > 0 ? result : STATIC_PROJECTS;
+    } catch (error) {
+      console.error("Erro ao processar lista de projetos:", error);
+      return STATIC_PROJECTS;
+    }
   }, [dbProjects]);
 
   return (
@@ -35,62 +58,22 @@ export const ProjectSection: React.FC<{ onSelectProject: (p: Project) => void }>
             <h3 className="text-xl md:text-2xl font-bold tracking-[0.3em] uppercase opacity-40">
               Galeria de Projetos
             </h3>
-            {loading && dbProjects.length === 0 && (
-              <p className="text-[10px] uppercase tracking-widest text-accent/50 mt-4 animate-pulse">Sincronizando com nuvem...</p>
+            {loading && (
+              <p className="text-[10px] uppercase tracking-widest text-accent/50 mt-4 animate-pulse">Sincronizando Portfólio...</p>
             )}
         </div>
 
-        <div className="flex flex-col gap-10 w-full max-w-[960px] mb-12">
-          {/* Linha 1: Projetos 1 a 3 */}
-          <div className="bg-zinc-900 border border-white/10 rounded-2xl p-10">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-10">
-              {displayProjects.slice(0, 3).map((project: any) => (
-                <div
-                  key={project.id}
-                  className={`relative group ${project.isPlaceholder ? 'cursor-default' : 'cursor-pointer'}`}
-                  onClick={() => !project.isPlaceholder ? onSelectProject(project as Project) : null}
-                >
-                  <div 
-                    className="aspect-square w-full bg-zinc-900/80 border border-white/10 rounded-[8px] flex flex-col items-center justify-center transition-all duration-500 group-hover:border-accent/40 group-hover:shadow-[0_0_30px_rgba(212,175,55,0.15)] overflow-hidden relative p-8"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-950 z-0" />
-
-                    <span className="relative z-10 text-accent text-sm md:text-base tracking-tighter transition-colors duration-300 text-center leading-tight">
-                      {project.title}
-                    </span>
-                    
-                    <div className="w-0 h-[2px] bg-accent mt-3 relative z-10 group-hover:w-12 transition-all duration-500 rounded-full" />
-                    <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Linha 2: Projetos 4 a 6 */}
-          <div className="bg-zinc-900 border border-white/10 rounded-2xl p-10">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-10">
-              {displayProjects.slice(3, 6).map((project: any) => (
-                <div
-                  key={project.id}
-                  className={`relative group ${project.isPlaceholder ? 'cursor-default' : 'cursor-pointer'}`}
-                  onClick={() => !project.isPlaceholder ? onSelectProject(project as Project) : null}
-                >
-                  <div 
-                    className="aspect-square w-full bg-zinc-900/80 border border-white/10 rounded-[8px] flex flex-col items-center justify-center transition-all duration-500 group-hover:border-accent/40 group-hover:shadow-[0_0_30px_rgba(212,175,55,0.15)] overflow-hidden relative p-8"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-950 z-0" />
-
-                    <span className="relative z-10 text-accent text-sm md:text-base tracking-tighter transition-colors duration-300 text-center leading-tight">
-                      {project.title}
-                    </span>
-                    
-                    <div className="w-0 h-[2px] bg-accent mt-3 relative z-10 group-hover:w-12 transition-all duration-500 rounded-full" />
-                    <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20" />
-                  </div>
-                </div>
-              ))}
-            </div>
+        <div className="w-full max-w-[1200px] mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 justify-items-center">
+            {displayProjects.map((project: Project, idx) => (
+              <ProjectCard 
+                key={project.id || idx}
+                project={project}
+                onClick={() => onSelectProject(project)}
+                hasRight={idx < displayProjects.length - 1}
+                hasDown={idx < displayProjects.length - 3}
+              />
+            ))}
           </div>
         </div>
       </div>

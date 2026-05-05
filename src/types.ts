@@ -98,6 +98,11 @@ export interface Project {
   mediaItems: MediaItem[]; // Para compatibilidade com projetos antigos
   feed?: FeedItem[]; // Nova estrutura 2D
   order: number;
+  status?: 'published' | 'draft';
+  flowData?: {
+    nodes: any[];
+    edges: any[];
+  };
   theme?: ProjectTheme;
   aboutConfig?: AboutConfig;
 }

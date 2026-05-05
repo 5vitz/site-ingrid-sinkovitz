@@ -119,6 +119,28 @@
         "accentColor": { "type": "string" }
       },
       "required": ["whatsappNumber"]
+    },
+    "Backup": {
+      "title": "Backup",
+      "description": "Snapshot of the entire database state",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "authorEmail": { "type": "string" },
+        "data": {
+          "type": "object",
+          "properties": {
+            "projects": { "type": "array", "items": { "$ref": "#/entities/Project" } },
+            "testimonials": { "type": "array", "items": { "$ref": "#/entities/Testimonial" } },
+            "services": { "type": "array", "items": { "$ref": "#/entities/Service" } },
+            "aboutMe": { "$ref": "#/entities/AboutMe" },
+            "globalSettings": { "$ref": "#/entities/SiteSettings" }
+          }
+        }
+      },
+      "required": ["id", "name", "createdAt", "authorEmail", "data"]
     }
   },
   "firestore": {
@@ -145,6 +167,10 @@
     "about/me": {
       "schema": "AboutMe",
       "description": "About me section content"
+    },
+    "backups/{backupId}": {
+      "schema": "Backup",
+      "description": "Database snapshots"
     }
   }
 }

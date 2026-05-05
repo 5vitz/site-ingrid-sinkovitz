@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import { 
@@ -7,7 +7,7 @@ import {
   Plus, Minus, X,
   MessageCircle, Instagram, Linkedin, 
   Video, Save, FileText, Quote, User, Edit2, Trash2,
-  CheckCircle2
+  CheckCircle2, RefreshCw, History, Database, Clock, Download, Upload
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -18,7 +18,20 @@ import { MaintenanceMode } from './components/MaintenanceMode';
 import { useCollection } from './hooks/useCollection';
 import { Project, Service, Testimonial, AboutMe, SiteSettings } from './types';
 import { getSettings } from './services/dataService';
-import { seedAuddar, seedTestimonials, seedAboutMe } from './seed';
+
+import { seedAll } from './seed';
+import { 
+  createBackup, 
+  getBackups, 
+  restoreBackup, 
+  deleteBackup,
+  exportToJson,
+  validateBackupFile,
+  Backup,
+  BackupData 
+} from './services/backupService';
+import { collection, getDocs, doc, getDoc, setDoc, query, limit } from 'firebase/firestore';
+import { db } from './lib/firebase';
 
 import { ProjectManager } from './components/Admin/ProjectManager';
 import { ServiceManager } from './components/Admin/ServiceManager';
@@ -27,8 +40,6 @@ import { TestimonialManager } from './components/Admin/TestimonialManager';
 import { GlobalSettingsManager } from './components/Admin/GlobalSettingsManager';
 import { UserManagement } from './components/Admin/UserManagement';
 import { MediaLibrary } from './components/Admin/MediaLibrary';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { db } from './lib/firebase';
 
 const ingridBio = `Eu sou a Ingrid, e minha trajetória na comunicação nunca foi linear.
 Comecei na rádio, passei pela televisão, mergulhei na produção audiovisual, vivi projetos que chegaram à TV Globo e até uma turnê internacional. Mais tarde, empreendi no setor gastronômico, onde, além de gerir um negócio, também fui responsável por construir e posicionar a marca.
@@ -376,7 +387,8 @@ const AdminPanel = () => {
           {role === 'super' && <AdminNavItem active={activeTab === 'users'} onClick={() => setActiveTab('users')} icon={<ShieldCheck size={20}/>} label="ACL / Usuários" />}
         </nav>
 
-        <div className="pt-8 border-t border-white/5">
+        <div className="pt-8 border-t border-white/5 space-y-4">
+          <DatabaseControlCenter seedAll={seedAll} />
           <button onClick={logout} className="w-full py-4 bg-red-600/10 text-red-500 font-bold rounded-[8px] hover:bg-red-600 hover:text-white transition">Sair da Conta</button>
         </div>
       </aside>
@@ -634,6 +646,397 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
   );
 };
 
+const DatabaseSeeder = () => {
+  const { user, role, loading: authLoading } = useAuth();
+  const [status, setStatus] = useState<'idle' | 'syncing' | 'done' | 'error'>('idle');
+  const [progress, setProgress] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  useEffect(() => {
+    const adminEmails = ['sinkando@gmail.com', 'ingridsinkovitz@gmail.com'];
+    const isDirectAdmin = user && adminEmails.includes(user.email || '');
+
+    // Trava de Sessão: Se já sincronizou nesta aba, não roda de novo automaticamente
+    const alreadySynced = sessionStorage.getItem('db_synced') === 'true';
+
+    if (!authLoading && user && (role === 'admin' || role === 'super' || isDirectAdmin) && status === 'idle' && !alreadySynced) {
+      const runSeed = async () => {
+        try {
+          // Pequena verificação: só roda se o banco parecer vazio
+          if (!db) return;
+          
+          console.log('🔍 Checando estado do banco antes do sync...');
+          const checkEmpty = async () => {
+            const snap = await getDocs(query(collection(db, 'projects'), limit(1)));
+            return snap.empty;
+          };
+
+          // Se a checagem demorar mais que 10s, assumimos que está instável
+          let isEmpty = true;
+          try {
+            console.log('⏳ Aguardando confirmação do banco...');
+            const timeoutPromise = new Promise<boolean>((_, reject) => setTimeout(() => reject(new Error('timeout')), 10000));
+            isEmpty = await Promise.race([checkEmpty(), timeoutPromise]);
+          } catch (e) {
+            console.warn('⚠️ O banco está demorando muito para responder à checagem inicial.');
+            // Neste caso, não fazemos o seed automático para evitar conflitos
+            setStatus('idle');
+            return;
+          }
+
+          if (!isEmpty) {
+            console.log('✅ Banco já possui dados. Pulando sync automático.');
+            sessionStorage.setItem('db_synced', 'true');
+            setStatus('idle');
+            return;
+          }
+
+          setStatus('syncing');
+          console.log('🛡️ Admin detectado em banco vazio. Iniciando Pente Fino...');
+          
+          await seedAll((msg) => setProgress(msg));
+
+          console.log('✅ Banco sincronizado.');
+          sessionStorage.setItem('db_synced', 'true');
+          setStatus('done');
+        } catch (err: any) {
+          console.error('Falha crítica no Sync:', err);
+          let msg = err.message || 'Erro de conexão ou permissão no Firebase';
+          if (msg.includes('Tempo esgotado') || msg.includes('timeout') || msg.includes('Timeout')) {
+            msg = 'O servidor do Firebase está muito lento hoje. Seus projetos podem não ter sido salvos completamente. Você pode tentar novamente agora ou atualizar a página.';
+          }
+          setErrorMsg(msg);
+          setStatus('error');
+        }
+      };
+      runSeed();
+    }
+  }, [user, role, authLoading, status]);
+
+  if (status === 'syncing') {
+    return (
+      <div className="fixed bottom-4 right-4 bg-green-600 text-white p-4 rounded-xl shadow-2xl z-[9999] flex flex-col min-w-[300px]">
+        <div className="flex items-center gap-3">
+          <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+          <span className="font-medium animate-pulse uppercase">ORGANIZANDO BANCO...</span>
+        </div>
+        <div className="mt-2 text-[11px] font-mono bg-black/20 p-2 rounded">
+          Log: {progress}
+        </div>
+        <p className="mt-2 text-[10px] opacity-70">
+          Isso acontece apenas na primeira vez que um administrador acessa esta versão.
+        </p>
+      </div>
+    );
+  }
+
+  if (status === 'error') {
+    return (
+      <div className="fixed bottom-4 right-4 bg-red-600 text-white p-4 rounded-xl shadow-2xl z-[9999] flex flex-col min-w-[300px]">
+        <div className="flex items-center gap-2 mb-2 font-bold">
+          <span>⚠️</span> ERRO NO SYNC
+        </div>
+        <div className="text-[10px] font-mono break-words bg-black/20 p-2 rounded mb-3">
+          {errorMsg}
+        </div>
+        <button 
+          onClick={() => {
+            sessionStorage.removeItem('db_synced');
+            window.location.reload();
+          }}
+          className="w-full bg-white text-red-600 py-2 rounded-lg text-xs font-bold"
+        >
+          Tentar Novamente
+        </button>
+      </div>
+    );
+  }
+
+  if (status === 'done') {
+    return (
+      <div className="fixed bottom-4 right-4 bg-green-600 text-white p-4 rounded-xl shadow-2xl z-[9999] flex flex-col min-w-[300px]">
+        <div className="space-y-3">
+          <div className="flex items-center gap-3 font-bold">
+            <span className="text-lg">✅</span>
+            <span>BANCO SINCRONIZADO!</span>
+          </div>
+          <p className="text-[11px] opacity-90">
+            Todos os projetos e configurações foram salvos no seu Firestore.
+          </p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="w-full bg-white text-green-700 py-2 rounded-lg font-bold hover:bg-green-50 transition-colors"
+          >
+            Acessar Site
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+};
+
+function DatabaseControlCenter({ seedAll }: { seedAll: any }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [view, setView] = useState<'factory' | 'history' | 'local'>('factory');
+  const [backups, setBackups] = useState<Backup[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState('');
+  const [error, setError] = useState('');
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const loadBackups = async () => {
+    try {
+      const list = await getBackups();
+      setBackups(list);
+    } catch (err) {
+      console.error('Erro ao carregar backups:', err);
+    }
+  };
+
+  useEffect(() => {
+    if (isOpen) loadBackups();
+  }, [isOpen]);
+
+  const handleFactoryReset = async () => {
+    if (!window.confirm('RESTAURAR FÁBRICA?\n\nEste procedimento apagará todos os dados atuais e restaurará os 6 projetos originais.\n\nDeseja realizar um backup antes? (Cancele agora para fazer um backup primeiro)')) {
+      // Se ele cancelar, não faz o reset imediato, mas se ele confirmar...
+    }
+    
+    setLoading(true);
+    setError('');
+    try {
+      await seedAll((msg: string) => setProgress(msg));
+      sessionStorage.setItem('db_synced', 'true');
+      window.location.reload();
+    } catch (err: any) {
+      setError(err.message || 'Erro no reset');
+      setLoading(false);
+    }
+  };
+
+  const handleCreateSnapshot = async () => {
+    const name = window.prompt('Nome do Ponto de Restauração:', `Backup ${new Date().toLocaleDateString()}`);
+    if (!name) return;
+
+    setLoading(true);
+    setProgress('Criando snapshot...');
+    try {
+      await createBackup(name);
+      await loadBackups();
+      setLoading(false);
+      setProgress('');
+    } catch (err: any) {
+      setError(err.message);
+      setLoading(false);
+    }
+  };
+
+  const handleRestore = async (backup: Backup) => {
+    if (!window.confirm(`RESTAURAR PUNTO: "${backup.name}"?\n\nIsso sobrescreverá todos os dados atuais.`)) return;
+
+    setLoading(true);
+    try {
+      await restoreBackup(backup, (msg) => setProgress(msg));
+      window.location.reload();
+    } catch (err: any) {
+      setError(err.message);
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!window.confirm('Excluir este backup permanentemente?')) return;
+    try {
+      await deleteBackup(id);
+      await loadBackups();
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
+
+  const handleLocalExport = async () => {
+    setLoading(true);
+    setProgress('Preparando arquivo...');
+    try {
+      // Coletar dados reais para o arquivo
+      const projectsSnap = await getDocs(query(collection(db, 'projects')));
+      const testimonialsSnap = await getDocs(collection(db, 'testimonials'));
+      const servicesSnap = await getDocs(collection(db, 'services'));
+      const aboutMeSnap = await getDoc(doc(db, 'settings', 'sobre'));
+      const globalSnap = await getDoc(doc(db, 'settings', 'global'));
+
+      const data: BackupData = {
+        projects: projectsSnap.docs.map(d => d.data() as any),
+        testimonials: testimonialsSnap.docs.map(d => d.data() as any),
+        services: servicesSnap.docs.map(d => d.data() as any),
+        aboutMe: aboutMeSnap.exists() ? aboutMeSnap.data() as any : null,
+        globalSettings: globalSnap.exists() ? globalSnap.data() as any : null
+      };
+
+      exportToJson(data);
+      setLoading(false);
+      setProgress('');
+    } catch (err: any) {
+      setError('Falha na exportação: ' + err.message);
+      setLoading(false);
+    }
+  };
+
+  const handleLocalImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      try {
+        const json = JSON.parse(event.target?.result as string);
+        if (!validateBackupFile(json)) {
+          throw new Error('Arquivo de backup inválido ou corrompido.');
+        }
+
+        if (!window.confirm('IMPORTAR ARQUIVO LOCAL?\n\nEste procedimento substituirá todos os dados do banco pelo conteúdo do arquivo.')) return;
+
+        setLoading(true);
+        // Usamos a mesma lógica de restore do backupService, mas passando o objeto data direto
+        await restoreBackup({ data: json } as any, (msg) => setProgress(msg));
+        window.location.reload();
+      } catch (err: any) {
+        setError('Erro na importação: ' + err.message);
+        setLoading(false);
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  if (!isOpen) {
+    return (
+      <button 
+        onClick={() => setIsOpen(true)}
+        className="w-full py-3 bg-zinc-800 text-zinc-400 text-[10px] font-black uppercase tracking-widest rounded-[8px] hover:bg-zinc-700 hover:text-white transition flex items-center justify-center gap-2"
+      >
+        <Database size={14} /> Controle de Banco
+      </button>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-3 p-3 bg-zinc-900 border border-white/10 rounded-lg shadow-xl">
+      <div className="flex items-center justify-between">
+        <span className="text-[10px] font-black uppercase tracking-tighter text-zinc-500">Banco de Dados</span>
+        <button onClick={() => setIsOpen(false)} className="text-zinc-500 hover:text-white"><X size={14} /></button>
+      </div>
+
+      <div className="flex gap-1 p-1 bg-black/40 rounded-md">
+        <button 
+          onClick={() => setView('factory')}
+          className={`flex-1 py-1.5 text-[8px] font-bold uppercase rounded transition ${view === 'factory' ? 'bg-zinc-700 text-white' : 'text-zinc-500 hover:text-zinc-300'}`}
+        >
+          Fábrica
+        </button>
+        <button 
+          onClick={() => setView('history')}
+          className={`flex-1 py-1.5 text-[8px] font-bold uppercase rounded transition ${view === 'history' ? 'bg-zinc-700 text-white' : 'text-zinc-500 hover:text-zinc-300'}`}
+        >
+          Interno
+        </button>
+        <button 
+          onClick={() => setView('local')}
+          className={`flex-1 py-1.5 text-[8px] font-bold uppercase rounded transition ${view === 'local' ? 'bg-zinc-700 text-white' : 'text-zinc-500 hover:text-zinc-300'}`}
+        >
+          Arquivo
+        </button>
+      </div>
+
+      <div className="min-h-[140px]">
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-8 gap-2">
+            <RefreshCw size={20} className="animate-spin text-blue-500" />
+            <span className="text-[10px] uppercase font-black text-white">{progress || 'Processando...'}</span>
+          </div>
+        ) : view === 'factory' ? (
+          <div className="space-y-3">
+            <p className="text-[9px] text-zinc-400 leading-relaxed">Restaura os 6 projetos oficiais e configurações para o estado original definido no código.</p>
+            <button 
+              onClick={handleFactoryReset}
+              className="w-full py-2 bg-zinc-800 text-red-400 text-[10px] font-bold uppercase border border-red-900/20 rounded hover:bg-red-900/20 transition"
+            >
+              Executar Reset Agora
+            </button>
+          </div>
+        ) : view === 'history' ? (
+          <div className="space-y-2">
+            <button 
+              onClick={handleCreateSnapshot}
+              className="w-full py-2 bg-blue-600/10 text-blue-400 text-[9px] font-bold uppercase border border-blue-600/20 rounded hover:bg-blue-600 hover:text-white transition flex items-center justify-center gap-2"
+            >
+              <Save size={12} /> Criar Ponto de Restauração
+            </button>
+            
+            <div className="max-h-[150px] overflow-y-auto space-y-1 pr-1 custom-scrollbar">
+              {backups.length === 0 ? (
+                <div className="text-center py-4 text-[9px] text-zinc-600 uppercase font-bold italic">Nenhum snapshot salvo.</div>
+              ) : backups.map(b => (
+                <div key={b.id} className="group flex items-center justify-between p-2 bg-white/5 border border-white/5 rounded hover:border-white/10 transition">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-black text-zinc-300 truncate max-w-[120px]">{b.name}</span>
+                    <span className="text-[8px] text-zinc-500 flex items-center gap-1">
+                      <Clock size={8} /> {b.createdAt?.toDate ? b.createdAt.toDate().toLocaleString() : 'Recém criado'}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
+                    <button onClick={() => handleRestore(b)} className="p-1 text-green-500 hover:bg-green-500/10 rounded" title="Restaurar"><History size={12} /></button>
+                    <button onClick={() => handleDelete(b.id)} className="p-1 text-red-500 hover:bg-red-500/10 rounded" title="Excluir"><Trash2 size={12} /></button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            <p className="text-[9px] text-zinc-400 leading-relaxed italic">Segurança máxima: Baixe um arquivo JSON com todo o seu trabalho ou restaure a partir de um backup antigo.</p>
+            
+            <button 
+              onClick={handleLocalExport}
+              className="w-full py-2.5 bg-zinc-800 text-white text-[10px] font-bold uppercase border border-white/5 rounded hover:bg-zinc-700 transition flex items-center justify-center gap-2"
+            >
+              <Download size={14} className="text-zinc-400" /> Exportar para Arquivo
+            </button>
+
+            <div className="relative">
+              <input 
+                type="file" 
+                ref={fileInputRef}
+                onChange={handleLocalImport}
+                accept=".json"
+                className="hidden"
+              />
+              <button 
+                onClick={() => fileInputRef.current?.click()}
+                className="w-full py-2.5 bg-zinc-800 text-white text-[10px] font-bold uppercase border border-white/5 rounded hover:bg-zinc-700 transition flex items-center justify-center gap-2"
+              >
+                <Upload size={14} className="text-zinc-400" /> Restaurar de Arquivo
+              </button>
+            </div>
+            
+            <div className="pt-2 border-t border-white/5">
+              <span className="text-[8px] text-zinc-600 uppercase font-bold">Dica: Salve o arquivo em local seguro (Google Drive ou Pendrive).</span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {error && (
+        <div className="p-2 bg-red-600/10 border border-red-600/20 rounded text-[8px] text-red-400 font-mono break-all">
+          {error}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function App() {
   const [settings, setSettings] = useState<{ global: SiteSettings | null, sobre: AboutMe | null }>({
     global: null,
@@ -642,15 +1045,20 @@ export default function App() {
   const [loadingSettings, setLoadingSettings] = useState(true);
 
   useEffect(() => {
-    // Seed database if needed
-    seedAuddar();
-    seedTestimonials();
-    seedAboutMe();
+    // Carregamento rápido: se falhar ou demorar, usa os padrões
+    const timeout = setTimeout(() => {
+      if (loadingSettings) {
+        console.warn('Configurações demorando demais. Usando padrões temporários.');
+        setLoadingSettings(false);
+      }
+    }, 3000); // Se em 3 segundos não carregar, libera a tela
 
     getSettings().then(data => {
+      clearTimeout(timeout);
       setSettings(data || { global: null, sobre: null });
       setLoadingSettings(false);
     }).catch((err) => {
+      clearTimeout(timeout);
       console.error("Settings load error", err);
       setLoadingSettings(false);
     });

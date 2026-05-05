@@ -1,7 +1,7 @@
 rules_version = '2';
 
 service cloud.firestore {
-  match /databases/ai-studio-57a5e081-4b30-4bf4-9abf-af56b4ca8ae0/documents {
+  match /databases/{database}/documents {
     // 1. MASTER GATE & Catch-all
     match /{document=**} {
       allow read, write: if false;
@@ -17,7 +17,16 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      return isSignedIn() && request.auth.token.email in ['sinkando@gmail.com', 'ingridsinkovitz@gmail.com'];
+      // Check for presence of email and handle null safely
+      return isSignedIn() && request.auth.token.email != null && (
+        request.auth.token.email.lower() == "sinkando@gmail.com" || 
+        request.auth.token.email.lower() == "ingridsinkovitz@gmail.com"
+      );
+    }
+
+    // Diagnostics collection for testing connectivity
+    match /diagnostics/{docId} {
+      allow read, write: if isSignedIn();
     }
 
     // Projects
@@ -60,6 +69,11 @@ service cloud.firestore {
     match /users_roles/{email} {
       allow read: if isSignedIn() && (request.auth.token.email == email || isAdmin());
       allow write: if isAdmin();
+    }
+
+    // Backups
+    match /backups/{backupId} {
+      allow read, write: if isAdmin();
     }
   }
 }

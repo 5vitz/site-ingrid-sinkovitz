@@ -3,6 +3,7 @@ import { useCollection } from '../../hooks/useCollection';
 import { Project, MediaItem, LayoutType, MediaType, FeedItem } from '../../types';
 import { addProject, updateProject, deleteProject } from '../../services/dataService';
 import { 
+  Lock, Globe, LockKeyhole, Share2,
   Plus, Trash2, Edit2, MoveUp, MoveDown, 
   Video, FileText, Link as LinkIcon, Save, X, 
   LayoutGrid, ChevronRight, ChevronDown, 
@@ -11,16 +12,20 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { MediaLibrary } from './MediaLibrary';
 
+import { FlowConstructor } from './FlowConstructor';
+
 export const ProjectManager = () => {
   const { data: projects, loading } = useCollection<Project>('projects');
   const [editingProject, setEditingProject] = useState<Partial<Project> | null>(null);
   const [isAdding, setIsAdding] = useState(false);
+  const [showFlowConstructor, setShowFlowConstructor] = useState(false);
 
   // Garantir que ao editar, campos novos existam
   const startEditing = (p: Project) => {
     setEditingProject({
       ...p,
       layoutType: p.layoutType || 'vertical',
+      status: p.status || 'published',
       feed: p.feed || [],
       mediaItems: p.mediaItems || []
     });
@@ -48,10 +53,10 @@ export const ProjectManager = () => {
     }
   };
 
-  if (loading) return (
-    <div className="flex flex-col items-center justify-center p-20 gap-4">
+  if (loading && projects.length === 0) return (
+    <div className="flex flex-col items-center justify-center p-20 gap-4 min-h-[400px]">
       <div className="w-10 h-10 border-4 border-accent border-t-transparent rounded-full animate-spin" />
-      <span className="text-zinc-500 uppercase tracking-widest text-xs font-bold">Carregando Projetos...</span>
+      <span className="text-zinc-500 uppercase tracking-widest text-[10px] font-black">Sincronizando Projetos...</span>
     </div>
   );
 
@@ -63,21 +68,47 @@ export const ProjectManager = () => {
           <p className="text-zinc-500 text-sm">Gerencie o conteúdo visível na galeria e os detalhes de cada projeto.</p>
         </div>
         <button 
-          onClick={() => {
-            setIsAdding(true);
-            setEditingProject({ 
-              title: '', 
-              layoutType: '2d', 
-              feed: [], 
-              mediaItems: [],
-              theme: { accentColor: '#0066FF' } 
-            });
-          }}
+          onClick={() => setShowFlowConstructor(true)}
           className="flex items-center gap-2 px-6 py-3 bg-accent text-black font-bold rounded-[8px] hover:bg-accent/80 transition shadow-lg shadow-accent/10"
         >
           <Plus size={20} /> Novo Projeto
         </button>
       </div>
+
+      {showFlowConstructor && (
+        <FlowConstructor 
+          initialData={editingProject ? { 
+            nodes: editingProject.flowData?.nodes || [], 
+            edges: editingProject.flowData?.edges || [],
+            projectName: editingProject.title 
+          } : undefined}
+          onCancel={() => setShowFlowConstructor(false)} 
+          onSave={(flowResult) => {
+            // Conversão inteligente: Nós do Flow -> Tópicos do Feed
+            const newFeed: FeedItem[] = flowResult.nodes.map((node: any) => ({
+              id: node.id,
+              title: node.data.label || 'Sem Título',
+              type: 'story',
+              mediaUrl: node.data.thumbnail || '',
+              mediaType: node.data.type || 'image',
+              stories: []
+            }));
+
+            setEditingProject({
+              ...editingProject,
+              flowData: { nodes: flowResult.nodes, edges: flowResult.edges },
+              feed: editingProject?.feed && editingProject.feed.length > 0 ? editingProject.feed : newFeed,
+              title: flowResult.projectName || editingProject?.title || 'Novo Projeto via Flow',
+              layoutType: editingProject?.layoutType || '2d',
+              status: editingProject?.status || 'draft'
+            });
+            setShowFlowConstructor(false);
+            if (!editingProject?.id) {
+              setIsAdding(true);
+            }
+          }} 
+        />
+      )}
 
       <AnimatePresence>
         {(isAdding || editingProject) && (
@@ -118,16 +149,35 @@ export const ProjectManager = () => {
                   )}
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg leading-tight">{p.title}</h3>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-bold text-lg leading-tight">{p.title}</h3>
+                    {p.status === 'draft' && (
+                      <span className="flex items-center gap-1 text-[8px] bg-amber-500/10 text-amber-500 px-1.5 py-0.5 rounded font-black uppercase tracking-tighter border border-amber-500/20">
+                        <LockKeyhole size={10} /> Em Construção
+                      </span>
+                    )}
+                  </div>
                   <div className="flex items-center gap-3 mt-1">
                     <span className="text-[10px] uppercase font-black text-accent bg-accent/10 px-2 py-0.5 rounded-full">{p.layoutType}</span>
                     <span className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">
                       {p.feed?.length || 0} Tópicos • {p.feed?.reduce((acc, curr) => acc + (curr.stories?.length || 0), 0) || 0} Stories
                     </span>
+                    {p.flowData && (
+                      <span className="text-[9px] text-blue-500 font-bold uppercase flex items-center gap-1">
+                        <Share2 size={10} /> Tem Estrutura de Flow
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
               <div className="flex items-center gap-3">
+                <button 
+                  onClick={() => { setEditingProject(p); setShowFlowConstructor(true); }}
+                  className="p-3 bg-blue-600/10 text-blue-500 hover:bg-blue-600 hover:text-white rounded-[8px] transition-all"
+                  title="Abrir Construtor de Flow"
+                >
+                  <Share2 size={16} />
+                </button>
                 <button 
                   onClick={() => startEditing(p)} 
                   className="p-3 bg-white/5 hover:bg-accent hover:text-black rounded-[8px] transition-all flex items-center gap-2 font-bold text-xs uppercase tracking-widest"
@@ -209,6 +259,19 @@ const ProjectForm = ({ project, onSave, onCancel, onChange }: {
         <TabButton active={activeTab === 'info'} onClick={() => setActiveTab('info')} icon={<FileText size={16}/>} label="Informações" />
         <TabButton active={activeTab === 'design'} onClick={() => setActiveTab('design')} icon={<Palette size={16}/>} label="Visual & Design" />
         <TabButton active={activeTab === 'content'} onClick={() => setActiveTab('content')} icon={<Layers size={16}/>} label="Conteúdo (Feed)" />
+        <button 
+          onClick={() => {
+            // Salva antes de sair para o Flow para não perder dados do form
+            // Mas aqui apenas abrimos o flow constructor configurado acima
+            const manager = (window as any).projectManagerContext; // Fake or just use the parent state
+            // No caso já temos o sehowFlowConstructor via parent, basta fechar o form
+            onSave(); // Salva estado atual
+            // A lógica de abrir o flow já está no botão da lista
+          }}
+          className="flex items-center gap-2 px-6 py-4 text-xs font-black uppercase tracking-widest text-blue-500 hover:text-blue-400"
+        >
+          <Share2 size={16}/> Abrir Construtor de Flow
+        </button>
       </div>
 
       {/* Conteúdo das Abas */}
@@ -236,6 +299,25 @@ const ProjectForm = ({ project, onSave, onCancel, onChange }: {
                   <option value="vertical">Vertical (Estilo Reel Antigo)</option>
                   <option value="horizontal">Horizontal (Carrossel Simples)</option>
                 </select>
+              </FormField>
+
+              <FormField label="Status do Projeto" description="Selecione se o projeto já está visível para o público">
+                <div className="flex gap-2">
+                   <button 
+                    type="button"
+                    onClick={() => onChange({ ...project, status: 'published' })}
+                    className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-[8px] font-bold text-[10px] uppercase transition ${project.status !== 'draft' ? 'bg-green-600 text-white shadow-lg shadow-green-600/20' : 'bg-white/5 text-zinc-500 hover:bg-white/10'}`}
+                   >
+                     <Globe size={14} /> Público
+                   </button>
+                   <button 
+                    type="button"
+                    onClick={() => onChange({ ...project, status: 'draft' })}
+                    className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-[8px] font-bold text-[10px] uppercase transition ${project.status === 'draft' ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20' : 'bg-white/5 text-zinc-500 hover:bg-white/10'}`}
+                   >
+                     <Lock size={14} /> Em Construção
+                   </button>
+                </div>
               </FormField>
 
               <FormField label="Descrição Curta (Quick View)" description="Resumo que aparece ao abrir o projeto">
