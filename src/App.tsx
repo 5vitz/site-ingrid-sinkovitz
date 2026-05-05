@@ -7,7 +7,7 @@ import {
   Plus, Minus, X,
   MessageCircle, Instagram, Linkedin, 
   Video, Save, FileText, Quote, User, Edit2, Trash2,
-  CheckCircle2, RefreshCw, History, Database, Clock, Download, Upload
+  CheckCircle2, RefreshCw, History, Database, Clock, Download, Upload, Zap
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -637,148 +637,54 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
         onClose={closeProject}
         onVideoStateChange={handleVideoStateChange}
       />
-
-      <AboutProjectModal 
-        project={aboutProject}
-        onClose={() => setAboutProject(null)}
-        onStart={handleStartProject}
-      />
     </div>
   );
 };
 
 function DatabaseControlCenter({ seedAll }: { seedAll: any }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [view, setView] = useState<'factory' | 'history' | 'local'>('factory');
-  const [backups, setBackups] = useState<Backup[]>([]);
+  const [syncStatus, setSyncStatus] = useState<Record<string, 'idle' | 'syncing' | 'done' | 'error'>>({});
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState('');
   const [error, setError] = useState('');
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const PROJECTS = [
+    { id: 'projeto-metavix', name: 'Metavix' },
+    { id: 'projeto-elobike', name: 'EloBike' },
+    { id: 'projeto-good-storage', name: 'Good Storage' },
+    { id: 'projeto-auddar', name: 'Auddar' },
+    { id: 'projeto-lion-jump', name: 'Lion Jump' },
+    { id: 'projeto-scalla-records', name: 'Scalla Records' },
+    { id: 'config-global', name: 'Configurações Globais' }
+  ];
 
-  const loadBackups = async () => {
+  const handleSyncProject = async (projectId: string) => {
+    setSyncStatus(prev => ({ ...prev, [projectId]: 'syncing' }));
     try {
-      const list = await getBackups();
-      setBackups(list);
-    } catch (err) {
-      console.error('Erro ao carregar backups:', err);
-    }
-  };
-
-  useEffect(() => {
-    if (isOpen) loadBackups();
-  }, [isOpen]);
-
-  const handleFactoryReset = async () => {
-    if (!window.confirm('RESTAURAR FÁBRICA?\n\nEste procedimento apagará todos os dados atuais e restaurará os 6 projetos originais.\n\nDeseja realizar um backup antes? (Cancele agora para fazer um backup primeiro)')) {
-      // Se ele cancelar, não faz o reset imediato, mas se ele confirmar...
-    }
-    
-    setLoading(true);
-    setError('');
-    try {
-      await seedAll((msg: string) => setProgress(msg));
-      sessionStorage.setItem('db_synced', 'true');
-      window.location.reload();
-    } catch (err: any) {
-      setError(err.message || 'Erro no reset');
-      setLoading(false);
-    }
-  };
-
-  const handleCreateSnapshot = async () => {
-    const name = window.prompt('Nome do Ponto de Restauração:', `Backup ${new Date().toLocaleDateString()}`);
-    if (!name) return;
-
-    setLoading(true);
-    setProgress('Criando snapshot...');
-    try {
-      await createBackup(name);
-      await loadBackups();
-      setLoading(false);
-      setProgress('');
-    } catch (err: any) {
-      setError(err.message);
-      setLoading(false);
-    }
-  };
-
-  const handleRestore = async (backup: Backup) => {
-    if (!window.confirm(`RESTAURAR PUNTO: "${backup.name}"?\n\nIsso sobrescreverá todos os dados atuais.`)) return;
-
-    setLoading(true);
-    try {
-      await restoreBackup(backup, (msg) => setProgress(msg));
-      window.location.reload();
-    } catch (err: any) {
-      setError(err.message);
-      setLoading(false);
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-    if (!window.confirm('Excluir este backup permanentemente?')) return;
-    try {
-      await deleteBackup(id);
-      await loadBackups();
-    } catch (err: any) {
-      alert(err.message);
-    }
-  };
-
-  const handleLocalExport = async () => {
-    setLoading(true);
-    setProgress('Preparando arquivo...');
-    try {
-      // Coletar dados reais para o arquivo
-      const projectsSnap = await getDocs(query(collection(db, 'projects')));
-      const testimonialsSnap = await getDocs(collection(db, 'testimonials'));
-      const servicesSnap = await getDocs(collection(db, 'services'));
-      const aboutMeSnap = await getDoc(doc(db, 'settings', 'sobre'));
-      const globalSnap = await getDoc(doc(db, 'settings', 'global'));
-
-      const data: BackupData = {
-        projects: projectsSnap.docs.map(d => d.data() as any),
-        testimonials: testimonialsSnap.docs.map(d => d.data() as any),
-        services: servicesSnap.docs.map(d => d.data() as any),
-        aboutMe: aboutMeSnap.exists() ? aboutMeSnap.data() as any : null,
-        globalSettings: globalSnap.exists() ? globalSnap.data() as any : null
-      };
-
-      exportToJson(data);
-      setLoading(false);
-      setProgress('');
-    } catch (err: any) {
-      setError('Falha na exportação: ' + err.message);
-      setLoading(false);
-    }
-  };
-
-  const handleLocalImport = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      try {
-        const json = JSON.parse(event.target?.result as string);
-        if (!validateBackupFile(json)) {
-          throw new Error('Arquivo de backup inválido ou corrompido.');
-        }
-
-        if (!window.confirm('IMPORTAR ARQUIVO LOCAL?\n\nEste procedimento substituirá todos os dados do banco pelo conteúdo do arquivo.')) return;
-
-        setLoading(true);
-        // Usamos a mesma lógica de restore do backupService, mas passando o objeto data direto
-        await restoreBackup({ data: json } as any, (msg) => setProgress(msg));
-        window.location.reload();
-      } catch (err: any) {
-        setError('Erro na importação: ' + err.message);
-        setLoading(false);
+      if (projectId === 'config-global') {
+        const { getSettings, saveSettings } = await import('./services/dataService');
+        const current = await getSettings();
+        await saveSettings(current);
+      } else {
+        const { PROJECTS_LIST } = await import('./constants/projects');
+        const projectData = PROJECTS_LIST.find(p => p.id === projectId);
+        if (!projectData) throw new Error('Dados não encontrados');
+        
+        const { doc, setDoc, serverTimestamp } = await import('firebase/firestore');
+        const { db } = await import('./lib/firebase');
+        if (!db) throw new Error('Conexão Firebase falhou');
+        
+        await setDoc(doc(db, 'projects', projectId), {
+          ...projectData,
+          updatedAt: serverTimestamp()
+        });
       }
-    };
-    reader.readAsText(file);
+      setSyncStatus(prev => ({ ...prev, [projectId]: 'done' }));
+    } catch (err: any) {
+      console.error(err);
+      setSyncStatus(prev => ({ ...prev, [projectId]: 'error' }));
+      setError(err.message || 'Falha ao sincronizar');
+    }
   };
 
   if (!isOpen) {
@@ -787,119 +693,62 @@ function DatabaseControlCenter({ seedAll }: { seedAll: any }) {
         onClick={() => setIsOpen(true)}
         className="w-full py-3 bg-zinc-800 text-zinc-400 text-[10px] font-black uppercase tracking-widest rounded-[8px] hover:bg-zinc-700 hover:text-white transition flex items-center justify-center gap-2"
       >
-        <Database size={14} /> Controle de Banco
+        <Database size={14} /> CONTROLE DE BANCO
       </button>
     );
   }
 
   return (
-    <div className="flex flex-col gap-3 p-3 bg-zinc-900 border border-white/10 rounded-lg shadow-xl">
+    <div className="flex flex-col gap-3 p-4 bg-zinc-900 border border-white/10 rounded-xl shadow-2xl">
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-black uppercase tracking-tighter text-zinc-500">Banco de Dados</span>
-        <button onClick={() => setIsOpen(false)} className="text-zinc-500 hover:text-white"><X size={14} /></button>
-      </div>
-
-      <div className="flex gap-1 p-1 bg-black/40 rounded-md">
-        <button 
-          onClick={() => setView('factory')}
-          className={`flex-1 py-1.5 text-[8px] font-bold uppercase rounded transition ${view === 'factory' ? 'bg-zinc-700 text-white' : 'text-zinc-500 hover:text-zinc-300'}`}
-        >
-          Fábrica
-        </button>
-        <button 
-          onClick={() => setView('history')}
-          className={`flex-1 py-1.5 text-[8px] font-bold uppercase rounded transition ${view === 'history' ? 'bg-zinc-700 text-white' : 'text-zinc-500 hover:text-zinc-300'}`}
-        >
-          Interno
-        </button>
-        <button 
-          onClick={() => setView('local')}
-          className={`flex-1 py-1.5 text-[8px] font-bold uppercase rounded transition ${view === 'local' ? 'bg-zinc-700 text-white' : 'text-zinc-500 hover:text-zinc-300'}`}
-        >
-          Arquivo
+        <span className="text-[10px] font-black uppercase tracking-widest text-white">Sincronizar Firestore</span>
+        <button onClick={() => setIsOpen(false)} className="text-zinc-500 hover:text-white transition-colors">
+          <X size={16} />
         </button>
       </div>
 
-      <div className="min-h-[140px]">
-        {loading ? (
-          <div className="flex flex-col items-center justify-center py-8 gap-2">
-            <RefreshCw size={20} className="animate-spin text-blue-500" />
-            <span className="text-[10px] uppercase font-black text-white">{progress || 'Processando...'}</span>
-          </div>
-        ) : view === 'factory' ? (
-          <div className="space-y-3">
-            <p className="text-[9px] text-zinc-400 leading-relaxed">Restaura os 6 projetos oficiais e configurações para o estado original definido no código.</p>
+      <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+        {PROJECTS.map(proj => (
+          <div key={proj.id} className="flex items-center justify-between p-2 bg-black/40 rounded border border-white/5">
+            <span className="text-[10px] font-bold text-zinc-300 truncate max-w-[120px]">{proj.name}</span>
             <button 
-              onClick={handleFactoryReset}
-              className="w-full py-2 bg-zinc-800 text-red-400 text-[10px] font-bold uppercase border border-red-900/20 rounded hover:bg-red-900/20 transition"
+              disabled={syncStatus[proj.id] === 'syncing'}
+              onClick={() => handleSyncProject(proj.id)}
+              className={`px-3 py-1.5 rounded text-[8px] font-black uppercase transition-all ${
+                syncStatus[proj.id] === 'done' 
+                ? 'bg-green-500/20 text-green-500' 
+                : syncStatus[proj.id] === 'syncing'
+                ? 'bg-accent/20 text-accent animate-pulse'
+                : 'bg-white text-black hover:bg-accent hover:text-white'
+              }`}
             >
-              Executar Reset Agora
+              {syncStatus[proj.id] === 'done' ? 'GRAVADO' : syncStatus[proj.id] === 'syncing' ? '...' : 'GRAVAR'}
             </button>
           </div>
-        ) : view === 'history' ? (
-          <div className="space-y-2">
-            <button 
-              onClick={handleCreateSnapshot}
-              className="w-full py-2 bg-blue-600/10 text-blue-400 text-[9px] font-bold uppercase border border-blue-600/20 rounded hover:bg-blue-600 hover:text-white transition flex items-center justify-center gap-2"
-            >
-              <Save size={12} /> Criar Ponto de Restauração
-            </button>
-            
-            <div className="max-h-[150px] overflow-y-auto space-y-1 pr-1 custom-scrollbar">
-              {backups.length === 0 ? (
-                <div className="text-center py-4 text-[9px] text-zinc-600 uppercase font-bold italic">Nenhum snapshot salvo.</div>
-              ) : backups.map(b => (
-                <div key={b.id} className="group flex items-center justify-between p-2 bg-white/5 border border-white/5 rounded hover:border-white/10 transition">
-                  <div className="flex flex-col">
-                    <span className="text-[10px] font-black text-zinc-300 truncate max-w-[120px]">{b.name}</span>
-                    <span className="text-[8px] text-zinc-500 flex items-center gap-1">
-                      <Clock size={8} /> {b.createdAt?.toDate ? b.createdAt.toDate().toLocaleString() : 'Recém criado'}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
-                    <button onClick={() => handleRestore(b)} className="p-1 text-green-500 hover:bg-green-500/10 rounded" title="Restaurar"><History size={12} /></button>
-                    <button onClick={() => handleDelete(b.id)} className="p-1 text-red-500 hover:bg-red-500/10 rounded" title="Excluir"><Trash2 size={12} /></button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            <p className="text-[9px] text-zinc-400 leading-relaxed italic">Segurança máxima: Baixe um arquivo JSON com todo o seu trabalho ou restaure a partir de um backup antigo.</p>
-            
-            <button 
-              onClick={handleLocalExport}
-              className="w-full py-2.5 bg-zinc-800 text-white text-[10px] font-bold uppercase border border-white/5 rounded hover:bg-zinc-700 transition flex items-center justify-center gap-2"
-            >
-              <Download size={14} className="text-zinc-400" /> Exportar para Arquivo
-            </button>
-
-            <div className="relative">
-              <input 
-                type="file" 
-                ref={fileInputRef}
-                onChange={handleLocalImport}
-                accept=".json"
-                className="hidden"
-              />
-              <button 
-                onClick={() => fileInputRef.current?.click()}
-                className="w-full py-2.5 bg-zinc-800 text-white text-[10px] font-bold uppercase border border-white/5 rounded hover:bg-zinc-700 transition flex items-center justify-center gap-2"
-              >
-                <Upload size={14} className="text-zinc-400" /> Restaurar de Arquivo
-              </button>
-            </div>
-            
-            <div className="pt-2 border-t border-white/5">
-              <span className="text-[8px] text-zinc-600 uppercase font-bold">Dica: Salve o arquivo em local seguro (Google Drive ou Pendrive).</span>
-            </div>
-          </div>
-        )}
+        ))}
       </div>
+
+      <button 
+        onClick={async () => {
+          if(!confirm('Sincronizar TODOS de uma vez?')) return;
+          setLoading(true);
+          try {
+            await seedAll((msg: string) => setProgress(msg));
+            alert('Sucesso completo!');
+            window.location.reload();
+          } catch(e: any) {
+            setError(e.message);
+            setLoading(false);
+          }
+        }}
+        className="w-full py-2 bg-accent text-white text-[10px] font-black uppercase rounded mt-2 hover:brightness-110 flex items-center justify-center gap-2"
+      >
+        {loading ? <RefreshCw size={12} className="animate-spin" /> : <Zap size={12} />}
+        {loading ? progress || 'Sincronizando...' : 'GERAL (6 PROJETOS)'}
+      </button>
 
       {error && (
-        <div className="p-2 bg-red-600/10 border border-red-600/20 rounded text-[8px] text-red-400 font-mono break-all">
+        <div className="p-2 bg-red-600/10 border border-red-600/20 rounded text-[9px] text-red-500 font-mono italic leading-tight">
           {error}
         </div>
       )}
