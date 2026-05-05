@@ -23,7 +23,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, hasR
 
   return (
     <motion.div 
-      whileHover={{ y: isDraft ? 0 : -4, scale: 1.01 }}
+      whileHover={{ y: isDraft ? 0 : -8, scale: 1.01 }}
       onClick={() => {
         if (!isDraft) {
           onClick();
@@ -36,10 +36,10 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, hasR
       
       <div className="relative flex flex-col items-center justify-center p-6 text-center z-10 pointer-events-none">
         <div className="space-y-3">
-          <h3 className="text-[10px] md:text-[11px] font-light text-accent tracking-[0.3em] transition-all duration-300 group-hover:brightness-125 uppercase">
+          <h3 className="text-[13px] md:text-[14px] font-light text-accent tracking-[0.3em] transition-all duration-500 group-hover:brightness-125 uppercase">
             {displayTitle}
           </h3>
-          <div className="w-3 group-hover:w-6 h-[1px] bg-accent/10 mx-auto transition-all duration-500" />
+          <div className="w-0 group-hover:w-20 h-[1px] bg-accent/40 mx-auto transition-all duration-700 ease-out" />
         </div>
       </div>
 

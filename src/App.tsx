@@ -152,17 +152,18 @@ const TestimonialCard = ({ t, isWide }: { t: any, isWide: boolean, key?: any }) 
   );
 };
 
-const Home = ({ onSelectProject, settings: initialSettings }: { onSelectProject: (project: Project) => void, settings: { global: SiteSettings | null, sobre: AboutMe | null } }) => {
+const Home = ({ onSelectProject, settings }: { onSelectProject: (project: Project) => void, settings: { global: SiteSettings | null, sobre: AboutMe | null } }) => {
   const { data: services, loading: servicesLoading } = useCollection<Service>('services');
   const { data: testimonials, loading: testimonialsLoading } = useCollection<Testimonial>('testimonials');
   
   const [activeTab, setActiveTab] = useState<'all' | 'branding' | 'arquitetura'>('all');
-  const [settings, setSettings] = useState(initialSettings);
   const [isBioExpanded, setIsBioExpanded] = useState(false);
 
   const finalVideoUrl = settings.sobre?.videoUrl || 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/SobreMim%2FSobreMim.mp4?alt=media&token=ff5c966d-15e2-489f-bedf-f47a1426a7fd';
   const isDirectVideo = finalVideoUrl.includes('firebasestorage.googleapis.com') || finalVideoUrl.endsWith('.mp4');
   const finalEmbedUrl = !isDirectVideo ? getYouTubeEmbedUrl(finalVideoUrl) : '';
+  
+  const bioText = settings.sobre?.description || ingridBio;
 
   useEffect(() => {
     if (settings.global) {
@@ -230,10 +231,10 @@ const Home = ({ onSelectProject, settings: initialSettings }: { onSelectProject:
                   <p className={`whitespace-pre-line text-justify first-letter:text-5xl first-letter:font-black first-letter:text-accent first-letter:mr-4 first-letter:float-left transition-all duration-700 ${!isBioExpanded ? 'max-h-[320px] md:max-h-[220px] overflow-hidden' : 'max-h-[2000px]'}`}>
                     {!isBioExpanded ? (
                       <>
-                        {(settings.sobre?.description || '').split('na operação, na estratégia.')[0]}
-                        {settings.sobre?.description?.includes('na operação, na estratégia.') ? 'na operação, na estratégia...' : ''}
+                        {bioText.split('na operação, na estratégia.')[0]}
+                        {bioText.includes('na operação, na estratégia.') ? 'na operação, na estratégia...' : ''}
                       </>
-                    ) : settings.sobre?.description}
+                    ) : bioText}
                   </p>
                   
                   {!isBioExpanded && (

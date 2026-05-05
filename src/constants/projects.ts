@@ -178,7 +178,7 @@ export const GOOD_STORAGE_PROJECT: Project = {
 
 export const ELOBIKE_PROJECT: Project = {
   id: 'projeto-elobike',
-  title: 'EloBike',
+  title: 'ELO Bike e Trips',
   description: 'EloBike: Cicloturismo, histórias e paisagens em uma jornada de conexão.',
   layoutType: 'vertical',
   galleryThumbnail: '',
