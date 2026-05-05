@@ -650,6 +650,14 @@ function DatabaseControlCenter({ seedAll }: { seedAll: any }) {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState('');
   const [error, setError] = useState('');
+  const [dbIdDisplay, setDbIdDisplay] = useState('...');
+
+  useEffect(() => {
+    // Pegar o ID do banco da config ou meta
+    import('../firebase-applet-config.json').then(config => {
+      setDbIdDisplay(config.default?.firestoreDatabaseId || '(default)');
+    });
+  }, []);
 
   const PROJECTS = [
     { id: 'projeto-metavix', name: 'Metavix' },
@@ -736,15 +744,30 @@ function DatabaseControlCenter({ seedAll }: { seedAll: any }) {
     <div className="flex flex-col gap-3 p-4 bg-zinc-900 border border-white/10 rounded-xl shadow-2xl">
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
-          <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Sync Firestore v2.4</span>
-          <div className="flex items-center gap-1 mt-0.5">
-            <div className={`w-1.5 h-1.5 rounded-full ${connStatus === 'online' ? 'bg-green-500' : connStatus === 'checking' ? 'bg-amber-500 animate-pulse' : 'bg-red-500'}`} />
-            <span className="text-[7px] font-bold uppercase text-zinc-600">{connStatus === 'online' ? 'Servidor Conectado' : 'Sem Conexão'}</span>
+          <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Sync Firestore v2.5</span>
+          <div className="flex flex-col gap-0.5 mt-0.5">
+            <div className="flex items-center gap-1">
+              <div className={`w-1.5 h-1.5 rounded-full ${connStatus === 'online' ? 'bg-green-500' : connStatus === 'checking' ? 'bg-amber-500 animate-pulse' : 'bg-red-500'}`} />
+              <span className="text-[7px] font-bold uppercase text-zinc-600">{connStatus === 'online' ? 'Servidor Conectado' : 'Sem Conexão'}</span>
+            </div>
+            <span className="text-[6px] font-mono text-zinc-700 uppercase">DB: {dbIdDisplay}</span>
           </div>
         </div>
-        <button onClick={() => setIsOpen(false)} className="text-zinc-500 hover:text-white transition-colors">
-          <X size={16} />
-        </button>
+        <div className="flex items-center gap-2">
+          <button 
+            onClick={() => {
+              setSyncStatus({});
+              setError('');
+            }}
+            className="p-1 px-2 text-[8px] font-black uppercase text-zinc-600 border border-white/5 rounded hover:bg-white/5 hover:text-zinc-400"
+            title="Resetar Status"
+          >
+            Limpar
+          </button>
+          <button onClick={() => setIsOpen(false)} className="text-zinc-500 hover:text-white transition-colors">
+            <X size={16} />
+          </button>
+        </div>
       </div>
 
       <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
