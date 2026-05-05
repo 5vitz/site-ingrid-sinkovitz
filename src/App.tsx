@@ -18,6 +18,7 @@ import { PROJECTS_LIST } from './constants/projects';
 import { ProjectSection } from './components/ProjectSection';
 import { ProjectModal } from './components/ProjectModal';
 import { AboutProjectModal } from './components/AboutProjectModal';
+import { ProjectPasswordModal } from './components/ProjectPasswordModal';
 import { MaintenanceMode } from './components/MaintenanceMode';
 import { useCollection } from './hooks/useCollection';
 import { Project, Service, Testimonial, AboutMe, SiteSettings } from './types';
@@ -457,9 +458,17 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [aboutProject, setAboutProject] = useState<Project | null>(null);
+  const [lockedProject, setLockedProject] = useState<Project | null>(null);
 
   const handleSelectProject = (project: Project) => {
-    if (project.aboutConfig) {
+    // 1. Verificar se está trancado
+    if (project.isLocked) {
+      setLockedProject(project);
+      return;
+    }
+
+    // 2. Fluxo Normal
+    if (project.aboutConfig || project.status === 'draft') {
       setAboutProject(project);
     } else {
       setSelectedProject(project);
@@ -470,7 +479,22 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
     if (aboutProject) {
       const p = aboutProject;
       setAboutProject(null);
-      setSelectedProject(p);
+      
+      // Se ao iniciar o tour o projeto estiver trancado
+      if (p.isLocked) {
+        setLockedProject(p);
+      } else {
+        setSelectedProject(p);
+      }
+    }
+  };
+
+  const handlePasswordSuccess = (project: Project) => {
+    setLockedProject(null);
+    if (project.aboutConfig) {
+      setAboutProject(project);
+    } else {
+      setSelectedProject(project);
     }
   };
 
@@ -646,6 +670,12 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
         project={aboutProject}
         onClose={() => setAboutProject(null)}
         onStart={handleStartProject}
+      />
+
+      <ProjectPasswordModal
+        project={lockedProject}
+        onClose={() => setLockedProject(null)}
+        onSuccess={handlePasswordSuccess}
       />
     </div>
   );

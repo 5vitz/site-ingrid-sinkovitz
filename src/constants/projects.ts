@@ -636,7 +636,8 @@ Tradução de soluções técnicas em comunicação acessível e orientada à co
 export const SCALLA_RECORDS_PROJECT: Project = {
   id: 'projeto-scalla-records',
   title: 'Scalla Records',
-  description: 'Placeholder para futura expansão da galeria.',
+  description: 'Projeto em construção.',
+  status: 'draft',
   layoutType: 'vertical',
   galleryThumbnail: '',
   coverImage: '',

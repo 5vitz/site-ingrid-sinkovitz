@@ -156,6 +156,11 @@ export const ProjectManager = () => {
                         <LockKeyhole size={10} /> Em Construção
                       </span>
                     )}
+                    {p.isLocked && (
+                      <span className="flex items-center gap-1 text-[8px] bg-red-500/10 text-red-500 px-1.5 py-0.5 rounded font-black uppercase tracking-tighter border border-red-500/20">
+                        <Lock size={10} /> Trancado
+                      </span>
+                    )}
                   </div>
                   <div className="flex items-center gap-3 mt-1">
                     <span className="text-[10px] uppercase font-black text-accent bg-accent/10 px-2 py-0.5 rounded-full">{p.layoutType}</span>
@@ -317,6 +322,35 @@ const ProjectForm = ({ project, onSave, onCancel, onChange }: {
                    >
                      <Lock size={14} /> Em Construção
                    </button>
+                </div>
+              </FormField>
+
+              <FormField label="Acesso Restrito (Senha)" description="Proteja este projeto com uma senha individual">
+                <div className="space-y-4 pt-2">
+                  <div className="flex gap-2">
+                    <button 
+                      type="button"
+                      onClick={() => onChange({ ...project, isLocked: false })}
+                      className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-[8px] font-bold text-[10px] uppercase transition ${!project.isLocked ? 'bg-zinc-700 text-white shadow-lg' : 'bg-white/5 text-zinc-500 hover:bg-white/10'}`}
+                    >
+                      Aberto
+                    </button>
+                    <button 
+                      type="button"
+                      onClick={() => onChange({ ...project, isLocked: true })}
+                      className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-[8px] font-bold text-[10px] uppercase transition ${project.isLocked ? 'bg-red-600 text-white shadow-lg shadow-red-600/20' : 'bg-white/5 text-zinc-500 hover:bg-white/10'}`}
+                    >
+                      Trancado
+                    </button>
+                  </div>
+                  {project.isLocked && (
+                    <input 
+                      className="admin-input"
+                      value={project.password || ''}
+                      onChange={e => onChange({ ...project, password: e.target.value })}
+                      placeholder="Defina a senha do projeto..."
+                    />
+                  )}
                 </div>
               </FormField>
 

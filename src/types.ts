@@ -99,6 +99,8 @@ export interface Project {
   feed?: FeedItem[]; // Nova estrutura 2D
   order: number;
   status?: 'published' | 'draft';
+  isLocked?: boolean;
+  password?: string;
   flowData?: {
     nodes: any[];
     edges: any[];

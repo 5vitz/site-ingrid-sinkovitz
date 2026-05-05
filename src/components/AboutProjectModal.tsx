@@ -10,9 +10,14 @@ interface AboutProjectModalProps {
 }
 
 export const AboutProjectModal: React.FC<AboutProjectModalProps> = ({ project, onClose, onStart }) => {
-  if (!project || !project.aboutConfig) return null;
+  if (!project) return null;
 
-  const { aboutConfig, theme } = project;
+  const aboutConfig = project.aboutConfig || {
+    title: project.title,
+    description: project.description || 'Este projeto está sendo preparado e em breve estará disponível para visualização completa.',
+    width: 'max-w-md'
+  };
+  const { theme } = project;
 
   return (
     <AnimatePresence>
@@ -47,6 +52,11 @@ export const AboutProjectModal: React.FC<AboutProjectModalProps> = ({ project, o
             {/* Conteúdo com Scroll */}
             <div className="p-8 pt-12 overflow-y-auto custom-scrollbar flex-1">
               <div className="space-y-10 text-center">
+                {project.status === 'draft' && (
+                  <div className="mx-auto w-fit px-3 py-1 bg-accent/20 border border-accent/30 rounded-full mb-6">
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-accent">Projeto em Construção</span>
+                  </div>
+                )}
                 <div>
                   <h2 
                     className="text-lg md:text-xl font-black tracking-tighter leading-tight mb-2 text-zinc-500"
@@ -67,19 +77,21 @@ export const AboutProjectModal: React.FC<AboutProjectModalProps> = ({ project, o
             </div>
 
             {/* Footer com CTA */}
-            <div className="p-8 pt-4 bg-zinc-900/50 border-t border-white/5">
-              <button
-                onClick={onStart}
-                className="w-full py-4 px-6 rounded-[8px] font-bold uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-3 transition-all hover:scale-[1.02] active:scale-[0.98] group"
-                style={{ 
-                  backgroundColor: aboutConfig.ctaColor || theme?.accentColor || 'white',
-                  color: aboutConfig.ctaTextColor || 'black'
-                }}
-              >
-                <Play size={16} fill="currentColor" className="group-hover:translate-x-1 transition-transform" />
-                {aboutConfig.ctaText || 'Iniciar Tour'}
-              </button>
-            </div>
+            {project.status !== 'draft' && (
+              <div className="p-8 pt-4 bg-zinc-900/50 border-t border-white/5">
+                <button
+                  onClick={onStart}
+                  className="w-full py-4 px-6 rounded-[8px] font-bold uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-3 transition-all hover:scale-[1.02] active:scale-[0.98] group"
+                  style={{ 
+                    backgroundColor: aboutConfig.ctaColor || theme?.accentColor || 'white',
+                    color: aboutConfig.ctaTextColor || 'black'
+                  }}
+                >
+                  <Play size={16} fill="currentColor" className="group-hover:translate-x-1 transition-transform" />
+                  {aboutConfig.ctaText || 'Iniciar Tour'}
+                </button>
+              </div>
+            )}
           </motion.div>
         </div>
       )}
