@@ -428,39 +428,65 @@ const AdminLogin = ({ onClose }: { onClose?: () => void }) => {
   const { login, user, role, loading } = useAuth();
   
   useEffect(() => {
+    // Se o usuário já está logado, fecha o modal de login sem "flicker"
     if (user && role && onClose) {
-      onClose();
+      const timer = setTimeout(() => {
+        onClose();
+      }, 500);
+      return () => clearTimeout(timer);
     }
   }, [user, role, onClose]);
 
   if (user && role && !onClose) return <Navigate to="/admin" />;
   
   return (
-    <div className={`flex items-center justify-center p-4 ${onClose ? 'fixed inset-0 z-[15000] bg-black/95 backdrop-blur-xl' : 'h-screen bg-zinc-950'}`}>
-      <div className="glass-morphism p-12 rounded-[8px] max-w-md w-full text-center space-y-8 relative">
+    <div className={`flex items-center justify-center p-4 ${onClose ? 'fixed inset-0 z-[15000] bg-black/98 backdrop-blur-2xl' : 'h-screen bg-zinc-950'}`}>
+      <div className="glass-morphism p-12 rounded-[8px] max-w-md w-full text-center space-y-8 relative overflow-hidden">
         {onClose && (
-          <button onClick={onClose} className="absolute top-6 right-6 text-zinc-500 hover:text-white transition">
+          <button 
+            onClick={onClose} 
+            className="absolute top-6 right-6 text-zinc-500 hover:text-white transition-all hover:rotate-90"
+          >
             <X size={24} />
           </button>
         )}
-        <div className="w-20 h-20 bg-accent/20 text-accent mx-auto rounded-full flex items-center justify-center">
-          <ShieldCheck size={40} />
-        </div>
-        <div>
-          <h2 className="text-3xl font-bold mb-2">Painel Restrito</h2>
-          <p className="text-zinc-500 text-sm">Acesse sua conta para visualizar projetos em rascunho e protegidos.</p>
-        </div>
-        <button 
-          onClick={login}
-          disabled={loading}
-          className="w-full py-4 bg-white text-black font-semibold rounded-[8px] flex items-center justify-center gap-4 hover:bg-zinc-200 transition disabled:opacity-50"
-        >
-          {loading ? (
-            <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
+
+        {/* Background Glow */}
+        <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-accent/5 blur-[120px] rounded-full pointer-events-none" />
+
+        <div className="relative z-10 space-y-8">
+          <div className="w-20 h-20 bg-accent/20 text-accent mx-auto rounded-full flex items-center justify-center shadow-[0_0_40px_-10px_rgba(var(--accent-rgb),0.3)]">
+            <ShieldCheck size={40} />
+          </div>
+
+          <div className="space-y-2">
+            <h2 className="text-3xl font-black uppercase tracking-tighter">Painel Restrito</h2>
+            <p className="text-zinc-500 text-sm font-medium">Acesso restrito para administradores e suporte técnico.</p>
+          </div>
+
+          {user ? (
+            <div className="py-4 px-6 bg-accent/10 border border-accent/20 rounded-[8px] flex items-center justify-center gap-3">
+              <div className="w-2 h-2 bg-accent rounded-full animate-pulse" />
+              <span className="text-accent font-black uppercase tracking-widest text-[10px]">Autenticado: {user.email}</span>
+            </div>
           ) : (
-            <><LogIn size={20} /> Entrar com Google</>
+            <button 
+              onClick={login}
+              disabled={loading}
+              className="w-full py-5 bg-white text-black font-black uppercase tracking-[0.2em] text-[11px] rounded-[8px] flex items-center justify-center gap-4 hover:bg-zinc-200 transition-all active:scale-95 disabled:opacity-50 shadow-xl"
+            >
+              {loading ? (
+                <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <><LogIn size={20} /> Entrar com Google</>
+              )}
+            </button>
           )}
-        </button>
+
+          <p className="text-[9px] text-zinc-600 uppercase font-bold tracking-[0.3em]">
+            Ambiente Seguro Scalla Records
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -479,6 +505,15 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
     window.addEventListener('open-admin-login', handleOpenLogin);
     return () => window.removeEventListener('open-admin-login', handleOpenLogin);
   }, []);
+
+  // Transição automática se o usuário logar enquanto vê um rascunho
+  useEffect(() => {
+    if (user && aboutProject && aboutProject.status === 'draft') {
+      const p = aboutProject;
+      setAboutProject(null);
+      setSelectedProject(p);
+    }
+  }, [user, aboutProject]);
 
   const handleSelectProject = (project: Project) => {
     const isAdmin = !!user; // Se houver usuário logado no contexto de auth, é admin

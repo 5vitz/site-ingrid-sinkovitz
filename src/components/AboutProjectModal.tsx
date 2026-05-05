@@ -51,9 +51,9 @@ export const AboutProjectModal: React.FC<AboutProjectModalProps> = ({ project, o
 
             {/* Conteúdo com Scroll */}
             <div className="p-8 overflow-y-auto custom-scrollbar flex-1 flex flex-col justify-center">
-              <div className="text-center">
+              <div className="text-center flex flex-col items-center justify-center">
                 {project.status === 'draft' ? (
-                  <div className="flex flex-col items-center">
+                  <div className="w-full flex flex-col items-center">
                     <motion.div 
                       initial={{ scale: 0.5, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
@@ -62,22 +62,24 @@ export const AboutProjectModal: React.FC<AboutProjectModalProps> = ({ project, o
                     >
                       <Lock size={80} className="text-accent" />
                     </motion.div>
-                    <span className="text-[12px] font-black uppercase tracking-[0.5em] text-zinc-500 mb-2">Status do Projeto</span>
-                    <h2 className="text-4xl font-black text-white uppercase tracking-tighter">Em Construção</h2>
+                    
+                    <h2 className="text-4xl font-black text-white uppercase tracking-tighter mb-12">Em Construção</h2>
                     
                     {/* Atalho administrativo */}
-                    <div className="mt-12 pt-8 border-t border-white/5 w-full max-w-[200px] mx-auto">
+                    <div className="pt-8 border-t border-white/5 w-full max-w-[200px]">
                       <button 
                         onClick={() => {
                           onClose();
-                          setTimeout(() => window.dispatchEvent(new CustomEvent('open-admin-login')), 100);
+                          setTimeout(() => {
+                            window.dispatchEvent(new CustomEvent('open-admin-login'));
+                          }, 300);
                         }}
-                        className="group flex flex-col items-center gap-3 transition-opacity hover:opacity-100 opacity-20 w-full"
+                        className="group flex flex-col items-center gap-3 transition-opacity hover:opacity-100 opacity-20 w-full mx-auto"
                       >
-                        <div className="p-3 rounded-full bg-zinc-800 border border-white/5 group-hover:border-accent/30 group-hover:text-accent transition-all mx-auto">
+                        <div className="p-3 rounded-full bg-zinc-800 border border-white/5 group-hover:border-accent/30 group-hover:text-accent transition-all">
                           <Lock size={18} />
                         </div>
-                        <span className="text-[8px] font-black uppercase tracking-[0.2em] text-zinc-600 group-hover:text-accent transition-colors">Acesso Administrativo</span>
+                        <span className="text-[8px] font-black uppercase tracking-[0.2em] text-zinc-600 group-hover:text-accent transition-colors text-center w-full">Acesso Administrativo</span>
                       </button>
                     </div>
                   </div>
