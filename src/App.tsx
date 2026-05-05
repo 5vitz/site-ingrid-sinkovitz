@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { doc, setDoc, serverTimestamp, collection, getDocs, query, limit } from 'firebase/firestore';
-import { db } from './lib/firebase';
+import { auth, db } from './lib/firebase';
 import { PROJECTS_LIST } from './constants/projects';
 
 import { ProjectSection } from './components/ProjectSection';
@@ -467,6 +467,7 @@ const AdminLogin = ({ onClose }: { onClose?: () => void }) => {
 };
 
 const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: AboutMe | null } }) => {
+  const { user } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [aboutProject, setAboutProject] = useState<Project | null>(null);
@@ -480,7 +481,7 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
   }, []);
 
   const handleSelectProject = (project: Project) => {
-    const isAdmin = !!auth.currentUser; // Simplificado: se houver usuário logado no Firebase, é admin
+    const isAdmin = !!user; // Se houver usuário logado no contexto de auth, é admin
 
     // 1. Verificar se está trancado (Admins ignoram senha)
     if (project.isLocked && !isAdmin) {
