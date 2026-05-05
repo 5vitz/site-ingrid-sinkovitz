@@ -30,6 +30,14 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, hasR
       {/* Fundo Simples com Degradê */}
       <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-950 z-0" />
       
+      {isDraft && (
+        <div className="absolute top-4 right-4 z-20">
+          <div className="bg-black/40 backdrop-blur-sm p-1.5 rounded-full border border-white/5 opacity-40">
+            <Lock size={10} className="text-zinc-500" />
+          </div>
+        </div>
+      )}
+      
       <div className="relative flex flex-col items-center justify-center p-6 text-center z-10 pointer-events-none">
         <div className="space-y-3">
           <h3 className="text-[13px] md:text-[14px] font-light text-accent tracking-[0.3em] transition-all duration-500 group-hover:brightness-125 uppercase">

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Play } from 'lucide-react';
+import { X, Play, Lock } from 'lucide-react';
 import { Project } from '../types';
 
 interface AboutProjectModalProps {
@@ -52,27 +52,43 @@ export const AboutProjectModal: React.FC<AboutProjectModalProps> = ({ project, o
             {/* Conteúdo com Scroll */}
             <div className="p-8 pt-12 overflow-y-auto custom-scrollbar flex-1">
               <div className="space-y-10 text-center">
-                {project.status === 'draft' && (
-                  <div className="mx-auto w-fit px-3 py-1 bg-accent/20 border border-accent/30 rounded-full mb-6">
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-accent">Projeto em Construção</span>
-                  </div>
-                )}
-                <div>
-                  <h2 
-                    className="text-lg md:text-xl font-black tracking-tighter leading-tight mb-2 text-zinc-500"
-                  >
-                    {aboutConfig.title || project.title}
-                  </h2>
-                  {aboutConfig.subtitle && (
-                    <p className="text-zinc-500 text-xs md:text-sm font-bold tracking-tight mb-10">
-                      {aboutConfig.subtitle}
+                {project.status === 'draft' ? (
+                  <div className="py-10 flex flex-col items-center">
+                    <motion.div 
+                      initial={{ scale: 0.5, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ type: "spring", damping: 12 }}
+                      className="bg-accent/10 p-8 rounded-full mb-8 border border-accent/20 shadow-[0_0_50px_-12px_rgba(var(--accent-rgb),0.2)]"
+                    >
+                      <Lock size={64} className="text-accent" />
+                    </motion.div>
+                    <span className="text-[12px] font-black uppercase tracking-[0.5em] text-zinc-500 mb-2">Status do Projeto</span>
+                    <h2 className="text-4xl font-black text-white uppercase tracking-tighter mb-4">Em Construção</h2>
+                    <div className="w-12 h-[1px] bg-white/10 mx-auto mb-6" />
+                    <p className="text-zinc-400 text-base leading-relaxed max-w-xs mx-auto">
+                      {aboutConfig.description}
                     </p>
-                  )}
-                </div>
+                  </div>
+                ) : (
+                  <>
+                    <div>
+                      <h2 
+                        className="text-lg md:text-xl font-black tracking-tighter leading-tight mb-2 text-zinc-500"
+                      >
+                        {aboutConfig.title || project.title}
+                      </h2>
+                      {aboutConfig.subtitle && (
+                        <p className="text-zinc-500 text-xs md:text-sm font-bold tracking-tight mb-10">
+                          {aboutConfig.subtitle}
+                        </p>
+                      )}
+                    </div>
 
-                <div className="text-zinc-300 text-sm md:text-base leading-relaxed font-light whitespace-pre-line text-justify">
-                  {aboutConfig.description}
-                </div>
+                    <div className="text-zinc-300 text-sm md:text-base leading-relaxed font-light whitespace-pre-line text-justify">
+                      {aboutConfig.description}
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
