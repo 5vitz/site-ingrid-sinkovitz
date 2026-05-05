@@ -7,9 +7,13 @@ import {
   Plus, Minus, X,
   MessageCircle, Instagram, Linkedin, 
   Video, Save, FileText, Quote, User, Edit2, Trash2,
-  CheckCircle2, RefreshCw, History, Database, Clock, Download, Upload, Zap
+  CheckCircle2, RefreshCw, History, Database, Clock, Download, Upload, Zap,
+  ChevronRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { doc, setDoc, serverTimestamp, collection, getDocs, query, limit } from 'firebase/firestore';
+import { db } from './lib/firebase';
+import { PROJECTS_LIST } from './constants/projects';
 
 import { ProjectSection } from './components/ProjectSection';
 import { ProjectModal } from './components/ProjectModal';
@@ -30,8 +34,7 @@ import {
   Backup,
   BackupData 
 } from './services/backupService';
-import { collection, getDocs, doc, getDoc, setDoc, query, limit } from 'firebase/firestore';
-import { db } from './lib/firebase';
+
 
 import { ProjectManager } from './components/Admin/ProjectManager';
 import { ServiceManager } from './components/Admin/ServiceManager';
@@ -658,32 +661,63 @@ function DatabaseControlCenter({ seedAll }: { seedAll: any }) {
     { id: 'config-global', name: 'Configurações Globais' }
   ];
 
+  const [connStatus, setConnStatus] = useState<'checking' | 'online' | 'offline'>('checking');
+
+  useEffect(() => {
+    const checkConn = async () => {
+      if (!db) {
+        setConnStatus('offline');
+        return;
+      }
+      try {
+        const { getDocFromServer, doc } = await import('firebase/firestore');
+        await getDocFromServer(doc(db, 'diagnostics', 'ping'));
+        setConnStatus('online');
+      } catch (e: any) {
+        if (e.code === 'permission-denied' || e.code === 'unauthenticated') setConnStatus('online'); // Resposta recebida!
+        else setConnStatus('offline');
+      }
+    };
+    if (db) checkConn();
+    else setConnStatus('offline');
+  }, []);
+
   const handleSyncProject = async (projectId: string) => {
     setSyncStatus(prev => ({ ...prev, [projectId]: 'syncing' }));
+    setError('');
+
+    // Helper timeout
+    async function withTimeout<T>(promise: Promise<T>, ms: number) {
+      const timeout = new Promise<never>((_, reject) => 
+        setTimeout(() => reject(new Error('Tempo esgotado (Time-out)')), ms)
+      );
+      return Promise.race([promise, timeout]);
+    }
+
     try {
       if (projectId === 'config-global') {
-        const { getSettings, saveSettings } = await import('./services/dataService');
-        const current = await getSettings();
-        await saveSettings(current);
+        const { seedGlobalSettings } = await import('./seed');
+        await withTimeout(seedGlobalSettings(), 15000);
       } else {
-        const { PROJECTS_LIST } = await import('./constants/projects');
         const projectData = PROJECTS_LIST.find(p => p.id === projectId);
-        if (!projectData) throw new Error('Dados não encontrados');
+        if (!projectData) throw new Error('Dados não encontrados no código');
         
-        const { doc, setDoc, serverTimestamp } = await import('firebase/firestore');
-        const { db } = await import('./lib/firebase');
-        if (!db) throw new Error('Conexão Firebase falhou');
+        if (!db) throw new Error('Conexão Firebase não iniciada');
         
-        await setDoc(doc(db, 'projects', projectId), {
+        console.log(`[SYNC] Iniciando gravação de ${projectId}...`);
+        
+        await withTimeout(setDoc(doc(db, 'projects', projectId), {
           ...projectData,
           updatedAt: serverTimestamp()
-        });
+        }, { merge: true }), 20000);
+        
+        console.log(`[SYNC] ${projectId} gravado com sucesso.`);
       }
       setSyncStatus(prev => ({ ...prev, [projectId]: 'done' }));
     } catch (err: any) {
-      console.error(err);
+      console.error('[SYNC_ERROR]', err);
       setSyncStatus(prev => ({ ...prev, [projectId]: 'error' }));
-      setError(err.message || 'Falha ao sincronizar');
+      setError(`${projectId}: ${err.message || 'Erro desconhecido'}`);
     }
   };
 
@@ -701,7 +735,13 @@ function DatabaseControlCenter({ seedAll }: { seedAll: any }) {
   return (
     <div className="flex flex-col gap-3 p-4 bg-zinc-900 border border-white/10 rounded-xl shadow-2xl">
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Sync Firestore v2.1</span>
+        <div className="flex flex-col">
+          <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Sync Firestore v2.4</span>
+          <div className="flex items-center gap-1 mt-0.5">
+            <div className={`w-1.5 h-1.5 rounded-full ${connStatus === 'online' ? 'bg-green-500' : connStatus === 'checking' ? 'bg-amber-500 animate-pulse' : 'bg-red-500'}`} />
+            <span className="text-[7px] font-bold uppercase text-zinc-600">{connStatus === 'online' ? 'Servidor Conectado' : 'Sem Conexão'}</span>
+          </div>
+        </div>
         <button onClick={() => setIsOpen(false)} className="text-zinc-500 hover:text-white transition-colors">
           <X size={16} />
         </button>
