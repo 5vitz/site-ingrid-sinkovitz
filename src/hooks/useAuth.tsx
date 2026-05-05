@@ -24,7 +24,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Safety timeout to prevent infinite loading if Firebase hangs
     const safetyTimeout = setTimeout(() => {
       setLoading(false);
-    }, 5000);
+    }, 2000);
 
     if (!auth) {
       setLoading(false);

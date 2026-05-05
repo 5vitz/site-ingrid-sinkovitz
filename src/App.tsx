@@ -186,7 +186,7 @@ const Home = ({ onSelectProject, settings: initialSettings }: { onSelectProject:
     <div className="bg-zinc-950">
       {/* 1. SEÇÃO VÍDEO (HERO) */}
       <section id="sobre" className="section-container !pt-[85px] scroll-mt-20">
-        <div className="section-card bg-zinc-900/40 backdrop-blur-3xl border border-white/5 ring-0 relative overflow-hidden aspect-video md:aspect-auto md:h-[calc(85vh+16px)] rounded-[8px]">
+        <div className="section-card bg-zinc-900/40 backdrop-blur-lg border border-white/5 ring-0 relative overflow-hidden aspect-video md:aspect-auto md:h-[calc(85vh+16px)] rounded-[8px]">
           <div className="absolute inset-0 z-0 text-center flex items-center justify-center text-zinc-800 font-black">
             CARREGANDO VÍDEO...
           </div>
@@ -198,6 +198,7 @@ const Home = ({ onSelectProject, settings: initialSettings }: { onSelectProject:
                 muted
                 loop
                 playsInline
+                preload="metadata"
                 className="w-full h-full object-cover md:object-cover"
               />
             ) : (
@@ -217,7 +218,7 @@ const Home = ({ onSelectProject, settings: initialSettings }: { onSelectProject:
 
       {/* 2. SEÇÃO TEXTO (BIO) */}
       <section id="bio" className="section-container scroll-mt-20">
-        <div className="section-card flex items-center justify-center p-8 md:p-16 bg-zinc-900/40 backdrop-blur-3xl relative overflow-hidden">
+        <div className="section-card flex items-center justify-center p-8 md:p-16 bg-zinc-900/40 backdrop-blur-lg relative overflow-hidden">
           <Quote className="absolute -top-10 -left-10 text-accent/5 w-40 h-40 md:w-60 md:h-60 -z-10" />
           <div className="max-w-4xl w-full">
             <div>
@@ -646,137 +647,6 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
   );
 };
 
-const DatabaseSeeder = () => {
-  const { user, role, loading: authLoading } = useAuth();
-  const [status, setStatus] = useState<'idle' | 'syncing' | 'done' | 'error'>('idle');
-  const [progress, setProgress] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
-
-  useEffect(() => {
-    const adminEmails = ['sinkando@gmail.com', 'ingridsinkovitz@gmail.com'];
-    const isDirectAdmin = user && adminEmails.includes(user.email || '');
-
-    // Trava de Sessão: Se já sincronizou nesta aba, não roda de novo automaticamente
-    const alreadySynced = sessionStorage.getItem('db_synced') === 'true';
-
-    if (!authLoading && user && (role === 'admin' || role === 'super' || isDirectAdmin) && status === 'idle' && !alreadySynced) {
-      const runSeed = async () => {
-        try {
-          // Pequena verificação: só roda se o banco parecer vazio
-          if (!db) return;
-          
-          console.log('🔍 Checando estado do banco antes do sync...');
-          const checkEmpty = async () => {
-            const snap = await getDocs(query(collection(db, 'projects'), limit(1)));
-            return snap.empty;
-          };
-
-          // Se a checagem demorar mais que 10s, assumimos que está instável
-          let isEmpty = true;
-          try {
-            console.log('⏳ Aguardando confirmação do banco...');
-            const timeoutPromise = new Promise<boolean>((_, reject) => setTimeout(() => reject(new Error('timeout')), 10000));
-            isEmpty = await Promise.race([checkEmpty(), timeoutPromise]);
-          } catch (e) {
-            console.warn('⚠️ O banco está demorando muito para responder à checagem inicial.');
-            // Neste caso, não fazemos o seed automático para evitar conflitos
-            setStatus('idle');
-            return;
-          }
-
-          if (!isEmpty) {
-            console.log('✅ Banco já possui dados. Pulando sync automático.');
-            sessionStorage.setItem('db_synced', 'true');
-            setStatus('idle');
-            return;
-          }
-
-          setStatus('syncing');
-          console.log('🛡️ Admin detectado em banco vazio. Iniciando Pente Fino...');
-          
-          await seedAll((msg) => setProgress(msg));
-
-          console.log('✅ Banco sincronizado.');
-          sessionStorage.setItem('db_synced', 'true');
-          setStatus('done');
-        } catch (err: any) {
-          console.error('Falha crítica no Sync:', err);
-          let msg = err.message || 'Erro de conexão ou permissão no Firebase';
-          if (msg.includes('Tempo esgotado') || msg.includes('timeout') || msg.includes('Timeout')) {
-            msg = 'O servidor do Firebase está muito lento hoje. Seus projetos podem não ter sido salvos completamente. Você pode tentar novamente agora ou atualizar a página.';
-          }
-          setErrorMsg(msg);
-          setStatus('error');
-        }
-      };
-      runSeed();
-    }
-  }, [user, role, authLoading, status]);
-
-  if (status === 'syncing') {
-    return (
-      <div className="fixed bottom-4 right-4 bg-green-600 text-white p-4 rounded-xl shadow-2xl z-[9999] flex flex-col min-w-[300px]">
-        <div className="flex items-center gap-3">
-          <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
-          <span className="font-medium animate-pulse uppercase">ORGANIZANDO BANCO...</span>
-        </div>
-        <div className="mt-2 text-[11px] font-mono bg-black/20 p-2 rounded">
-          Log: {progress}
-        </div>
-        <p className="mt-2 text-[10px] opacity-70">
-          Isso acontece apenas na primeira vez que um administrador acessa esta versão.
-        </p>
-      </div>
-    );
-  }
-
-  if (status === 'error') {
-    return (
-      <div className="fixed bottom-4 right-4 bg-red-600 text-white p-4 rounded-xl shadow-2xl z-[9999] flex flex-col min-w-[300px]">
-        <div className="flex items-center gap-2 mb-2 font-bold">
-          <span>⚠️</span> ERRO NO SYNC
-        </div>
-        <div className="text-[10px] font-mono break-words bg-black/20 p-2 rounded mb-3">
-          {errorMsg}
-        </div>
-        <button 
-          onClick={() => {
-            sessionStorage.removeItem('db_synced');
-            window.location.reload();
-          }}
-          className="w-full bg-white text-red-600 py-2 rounded-lg text-xs font-bold"
-        >
-          Tentar Novamente
-        </button>
-      </div>
-    );
-  }
-
-  if (status === 'done') {
-    return (
-      <div className="fixed bottom-4 right-4 bg-green-600 text-white p-4 rounded-xl shadow-2xl z-[9999] flex flex-col min-w-[300px]">
-        <div className="space-y-3">
-          <div className="flex items-center gap-3 font-bold">
-            <span className="text-lg">✅</span>
-            <span>BANCO SINCRONIZADO!</span>
-          </div>
-          <p className="text-[11px] opacity-90">
-            Todos os projetos e configurações foram salvos no seu Firestore.
-          </p>
-          <button 
-            onClick={() => window.location.reload()}
-            className="w-full bg-white text-green-700 py-2 rounded-lg font-bold hover:bg-green-50 transition-colors"
-          >
-            Acessar Site
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  return null;
-};
-
 function DatabaseControlCenter({ seedAll }: { seedAll: any }) {
   const [isOpen, setIsOpen] = useState(false);
   const [view, setView] = useState<'factory' | 'history' | 'local'>('factory');
@@ -1045,13 +915,13 @@ export default function App() {
   const [loadingSettings, setLoadingSettings] = useState(true);
 
   useEffect(() => {
-    // Carregamento rápido: se falhar ou demorar, usa os padrões
+    // Carregamento ultra-rápido: se o banco demorar 1.5s, libera a tela
     const timeout = setTimeout(() => {
       if (loadingSettings) {
-        console.warn('Configurações demorando demais. Usando padrões temporários.');
+        console.warn('Configurações offline ou lentas. Usando padrões.');
         setLoadingSettings(false);
       }
-    }, 3000); // Se em 3 segundos não carregar, libera a tela
+    }, 1500); 
 
     getSettings().then(data => {
       clearTimeout(timeout);
@@ -1066,28 +936,21 @@ export default function App() {
 
   return (
     <AuthProvider>
-      {loadingSettings ? (
-        <div className="h-screen bg-black flex flex-col items-center justify-center gap-6">
-          <div className="w-16 h-16 border-4 border-accent border-t-transparent rounded-full animate-spin" />
-          <h2 className="text-white font-black uppercase tracking-[0.3em] text-sm animate-pulse">INGRID SINKOVITZ</h2>
-        </div>
-      ) : (
-        <Router>
-          <Routes>
-            <Route path="/" element={
-              <MaintenanceGuard settings={settings?.global}>
-                <Layout settings={settings} />
-              </MaintenanceGuard>
-            } />
-            <Route path="/admin" element={
-              <ProtectedRoute requiredRole="admin">
-                <AdminPanel />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/login" element={<AdminLogin />} />
-          </Routes>
-        </Router>
-      )}
+      <Router>
+        <Routes>
+          <Route path="/" element={
+            <MaintenanceGuard settings={settings?.global}>
+              <Layout settings={settings} />
+            </MaintenanceGuard>
+          } />
+          <Route path="/admin" element={
+            <ProtectedRoute requiredRole="admin">
+              <AdminPanel />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/login" element={<AdminLogin />} />
+        </Routes>
+      </Router>
     </AuthProvider>
   );
 }

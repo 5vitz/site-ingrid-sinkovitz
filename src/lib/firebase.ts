@@ -41,16 +41,3 @@ try {
 }
 
 export { auth, db, storage, googleProvider };
-
-// Test connection silently
-import { doc, getDocFromServer } from 'firebase/firestore';
-async function testConnection() {
-  if (!db) return;
-  try {
-    await getDocFromServer(doc(db, 'test', 'connection'));
-  } catch (error) {
-    // Fail silently in UI, but log for devs
-    console.warn("Firebase connectivity test failed. This is expected if rules aren't set yet.");
-  }
-}
-testConnection();

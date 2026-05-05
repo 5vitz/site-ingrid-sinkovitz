@@ -40,7 +40,7 @@ export const getSettings = async () => {
   const fetchWithTimeout = async (docRef: any) => {
     const fetchPromise = getDoc(docRef);
     const timeoutPromise = new Promise((_, reject) => 
-      setTimeout(() => reject(new Error('Timeout carregando configurações')), 10000)
+      setTimeout(() => reject(new Error('Timeout carregando configurações')), 3000)
     );
     return Promise.race([fetchPromise, timeoutPromise]) as Promise<any>;
   };

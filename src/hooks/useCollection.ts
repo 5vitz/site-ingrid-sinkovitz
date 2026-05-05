@@ -8,10 +8,10 @@ export const useCollection = <T,>(collectionName: string) => {
   useEffect(() => {
     setLoading(true);
     
-    // Timeout de segurança: se o firebase não responder em 12s, paramos o loading
+    // Timeout de segurança ultra-rápido: se o firebase não responder em 2s, paramos o loading
     const safetyTimeout = setTimeout(() => {
       setLoading(false);
-    }, 12000);
+    }, 2000);
 
     const unsubscribe = subscribeToCollection<T>(collectionName, (items) => {
       clearTimeout(safetyTimeout);
