@@ -2,7 +2,7 @@ import { Project } from '../types';
 
 export const METAVIX_PROJECT: Project = {
   id: 'projeto-metavix',
-  title: 'Projeto Metavix',
+  title: 'Metavix',
   description: 'Apresentação arquitetônica completa dividida em Reels (Feed vertical) e Capítulos de Carrossel (Stories horizontais).',
   layoutType: '2d',
   galleryThumbnail: '',
@@ -309,7 +309,7 @@ Construção de uma comunicação autêntica e consistente, conectando experiên
 
 export const LION_JUMP_PROJECT: Project = {
   id: 'projeto-lion-jump',
-  title: 'Projeto Lion Jump',
+  title: 'Lion Jump',
   description: 'Lion Jump: Campanha de Lançamento e Divulgação Artística.',
   layoutType: 'vertical',
   galleryThumbnail: '',

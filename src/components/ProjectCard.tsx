@@ -19,19 +19,22 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, hasR
   // Fallback para thumbnail se estiver faltando
   const thumbnail = project.galleryThumbnail || (project.coverImage && (project.coverImage.match(/\.(jpg|jpeg|png|webp|gif|avif)/i) ? project.coverImage : ''));
 
+  // Limpar título
+  const displayTitle = (project.title || '').replace(/^(Projeto|projeto)\s+/i, '');
+
   return (
     <motion.div 
       whileHover={{ y: isDraft ? 0 : -5 }}
       onClick={() => !isDraft && onClick()}
-      className={`${cardClass} ${isDraft ? 'cursor-not-allowed opacity-80' : 'cursor-pointer group'} rounded-[8px] snap-center bg-zinc-900/40 backdrop-blur-sm shadow-2xl overflow-hidden relative flex items-center justify-center border border-white/5`}
+      className={`${cardClass} ${isDraft ? 'cursor-not-allowed opacity-80' : 'cursor-pointer group'} rounded-[8px] snap-center bg-zinc-900 shadow-2xl overflow-hidden relative flex items-center justify-center border border-white/5`}
     >
-      <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
+      {/* Background Gradient Layer */}
+      <div className="absolute inset-0 bg-gradient-to-br from-zinc-800/50 via-transparent to-zinc-900/80 z-0" />
+      
+      <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center z-10">
         <div className="space-y-1">
-          <span className="text-[9px] font-bold uppercase tracking-[0.4em] text-zinc-600 block opacity-50 group-hover:opacity-100 transition-opacity">
-            Projeto
-          </span>
-          <h3 className="text-xl md:text-2xl font-light text-accent tracking-tighter transition-all duration-300 group-hover:scale-105 group-hover:brightness-110">
-            {project.title}
+          <h3 className="text-2xl md:text-3xl font-light text-accent tracking-tighter transition-all duration-300 group-hover:scale-105 group-hover:brightness-110">
+            {displayTitle}
           </h3>
         </div>
       </div>
