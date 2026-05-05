@@ -640,6 +640,12 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
         onClose={closeProject}
         onVideoStateChange={handleVideoStateChange}
       />
+
+      <AboutProjectModal 
+        project={aboutProject}
+        onClose={() => setAboutProject(null)}
+        onStart={handleStartProject}
+      />
     </div>
   );
 };
