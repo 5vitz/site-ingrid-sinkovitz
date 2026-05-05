@@ -50,27 +50,23 @@ export const AboutProjectModal: React.FC<AboutProjectModalProps> = ({ project, o
             </button>
 
             {/* Conteúdo com Scroll */}
-            <div className="p-8 pt-12 overflow-y-auto custom-scrollbar flex-1">
-              <div className="space-y-10 text-center">
+            <div className="p-8 overflow-y-auto custom-scrollbar flex-1 flex flex-col justify-center">
+              <div className="text-center">
                 {project.status === 'draft' ? (
-                  <div className="py-10 flex flex-col items-center">
+                  <div className="flex flex-col items-center">
                     <motion.div 
                       initial={{ scale: 0.5, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       transition={{ type: "spring", damping: 12 }}
-                      className="bg-accent/10 p-8 rounded-full mb-8 border border-accent/20 shadow-[0_0_50px_-12px_rgba(var(--accent-rgb),0.2)]"
+                      className="bg-accent/10 p-10 rounded-full mb-8 border border-accent/20 shadow-[0_0_50px_-12px_rgba(var(--accent-rgb),0.3)]"
                     >
-                      <Lock size={64} className="text-accent" />
+                      <Lock size={80} className="text-accent" />
                     </motion.div>
                     <span className="text-[12px] font-black uppercase tracking-[0.5em] text-zinc-500 mb-2">Status do Projeto</span>
-                    <h2 className="text-4xl font-black text-white uppercase tracking-tighter mb-4">Em Construção</h2>
-                    <div className="w-12 h-[1px] bg-white/10 mx-auto mb-6" />
-                    <p className="text-zinc-400 text-base leading-relaxed max-w-xs mx-auto">
-                      {aboutConfig.description}
-                    </p>
+                    <h2 className="text-4xl font-black text-white uppercase tracking-tighter">Em Construção</h2>
                   </div>
                 ) : (
-                  <>
+                  <div className="space-y-10">
                     <div>
                       <h2 
                         className="text-lg md:text-xl font-black tracking-tighter leading-tight mb-2 text-zinc-500"
@@ -87,7 +83,7 @@ export const AboutProjectModal: React.FC<AboutProjectModalProps> = ({ project, o
                     <div className="text-zinc-300 text-sm md:text-base leading-relaxed font-light whitespace-pre-line text-justify">
                       {aboutConfig.description}
                     </div>
-                  </>
+                  </div>
                 )}
               </div>
             </div>
