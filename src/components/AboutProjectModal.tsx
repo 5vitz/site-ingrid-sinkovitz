@@ -50,10 +50,10 @@ export const AboutProjectModal: React.FC<AboutProjectModalProps> = ({ project, o
             </button>
 
             {/* Conteúdo com Scroll */}
-            <div className="p-8 overflow-y-auto custom-scrollbar flex-1 flex flex-col justify-center">
-              <div className="text-center flex flex-col items-center justify-center">
+            <div className="overflow-y-auto custom-scrollbar flex-1">
+              <div className="min-h-full p-8 flex flex-col items-center justify-center text-center">
                 {project.status === 'draft' ? (
-                  <div className="w-full flex flex-col items-center">
+                  <div className="w-full flex flex-col items-center py-10">
                     <motion.div 
                       initial={{ scale: 0.5, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
@@ -84,7 +84,7 @@ export const AboutProjectModal: React.FC<AboutProjectModalProps> = ({ project, o
                     </div>
                   </div>
                 ) : (
-                  <div className="space-y-10">
+                  <div className="space-y-10 w-full py-10">
                     <div>
                       <h2 
                         className="text-lg md:text-xl font-black tracking-tighter leading-tight mb-2 text-zinc-500"
