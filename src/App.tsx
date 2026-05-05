@@ -424,19 +424,31 @@ const AdminNavItem = ({ active, onClick, icon, label }: { active: boolean, onCli
   </button>
 );
 
-const AdminLogin = () => {
+const AdminLogin = ({ onClose }: { onClose?: () => void }) => {
   const { login, user, role, loading } = useAuth();
-  if (user && role) return <Navigate to="/admin" />;
+  
+  useEffect(() => {
+    if (user && role && onClose) {
+      onClose();
+    }
+  }, [user, role, onClose]);
+
+  if (user && role && !onClose) return <Navigate to="/admin" />;
   
   return (
-    <div className="h-screen flex items-center justify-center bg-zinc-950 p-4">
-      <div className="glass-morphism p-12 rounded-[8px] max-w-md w-full text-center space-y-8">
+    <div className={`flex items-center justify-center p-4 ${onClose ? 'fixed inset-0 z-[15000] bg-black/95 backdrop-blur-xl' : 'h-screen bg-zinc-950'}`}>
+      <div className="glass-morphism p-12 rounded-[8px] max-w-md w-full text-center space-y-8 relative">
+        {onClose && (
+          <button onClick={onClose} className="absolute top-6 right-6 text-zinc-500 hover:text-white transition">
+            <X size={24} />
+          </button>
+        )}
         <div className="w-20 h-20 bg-accent/20 text-accent mx-auto rounded-full flex items-center justify-center">
           <ShieldCheck size={40} />
         </div>
         <div>
           <h2 className="text-3xl font-bold mb-2">Painel Restrito</h2>
-          <p className="text-zinc-500">Acesse para gerenciar os conteúdos do seu portfólio.</p>
+          <p className="text-zinc-500 text-sm">Acesse sua conta para visualizar projetos em rascunho e protegidos.</p>
         </div>
         <button 
           onClick={login}
@@ -459,16 +471,25 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [aboutProject, setAboutProject] = useState<Project | null>(null);
   const [lockedProject, setLockedProject] = useState<Project | null>(null);
+  const [isAdminLoginOpen, setIsAdminLoginOpen] = useState(false);
+
+  useEffect(() => {
+    const handleOpenLogin = () => setIsAdminLoginOpen(true);
+    window.addEventListener('open-admin-login', handleOpenLogin);
+    return () => window.removeEventListener('open-admin-login', handleOpenLogin);
+  }, []);
 
   const handleSelectProject = (project: Project) => {
-    // 1. Verificar se está trancado
-    if (project.isLocked) {
+    const isAdmin = !!auth.currentUser; // Simplificado: se houver usuário logado no Firebase, é admin
+
+    // 1. Verificar se está trancado (Admins ignoram senha)
+    if (project.isLocked && !isAdmin) {
       setLockedProject(project);
       return;
     }
 
     // 2. Fluxo Normal
-    if (project.aboutConfig || project.status === 'draft') {
+    if (project.aboutConfig || (project.status === 'draft' && !isAdmin)) {
       setAboutProject(project);
     } else {
       setSelectedProject(project);
@@ -677,6 +698,12 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
         onClose={() => setLockedProject(null)}
         onSuccess={handlePasswordSuccess}
       />
+
+      <AnimatePresence>
+        {isAdminLoginOpen && (
+          <AdminLogin onClose={() => setIsAdminLoginOpen(false)} />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

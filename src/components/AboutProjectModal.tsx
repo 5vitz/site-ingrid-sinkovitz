@@ -64,6 +64,22 @@ export const AboutProjectModal: React.FC<AboutProjectModalProps> = ({ project, o
                     </motion.div>
                     <span className="text-[12px] font-black uppercase tracking-[0.5em] text-zinc-500 mb-2">Status do Projeto</span>
                     <h2 className="text-4xl font-black text-white uppercase tracking-tighter">Em Construção</h2>
+                    
+                    {/* Atalho administrativo */}
+                    <div className="mt-12 pt-8 border-t border-white/5 w-full max-w-[200px]">
+                      <button 
+                        onClick={() => {
+                          onClose();
+                          window.dispatchEvent(new CustomEvent('open-admin-login'));
+                        }}
+                        className="group flex flex-col items-center gap-3 transition-opacity hover:opacity-100 opacity-20"
+                      >
+                        <div className="p-3 rounded-full bg-zinc-800 border border-white/5 group-hover:border-accent/30 group-hover:text-accent transition-all">
+                          <Lock size={18} />
+                        </div>
+                        <span className="text-[8px] font-black uppercase tracking-[0.2em] text-zinc-600 group-hover:text-accent transition-colors">Acesso Administrativo</span>
+                      </button>
+                    </div>
                   </div>
                 ) : (
                   <div className="space-y-10">
