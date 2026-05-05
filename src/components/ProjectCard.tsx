@@ -38,26 +38,14 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, hasR
           <div className="w-0 group-hover:w-20 h-[1px] bg-accent/40 mx-auto transition-all duration-700 ease-out" />
         </div>
       </div>
-
-      {isDraft && (
-        <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center p-6 text-center z-50">
-          <div className="bg-amber-500/20 p-4 rounded-full mb-4 border border-amber-500/30">
-            <Lock size={32} className="text-amber-500" />
-          </div>
-          <span className="text-[10px] uppercase font-black tracking-[0.3em] text-amber-500 mb-1">Status</span>
-          <h3 className="text-xl font-black text-white uppercase tracking-tighter leading-none mb-1">Em Construção</h3>
-        </div>
-      )}
       
       {/* Botão sutil de explorar no hover */}
-      {!isDraft && (
-        <div className="absolute bottom-6 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-4 group-hover:translate-y-0">
-          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-500">
-            <span>Explorar</span>
-            <ArrowUpRight size={14} className="text-accent" />
-          </div>
+      <div className="absolute bottom-6 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-4 group-hover:translate-y-0">
+        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+          <span>Explorar</span>
+          <ArrowUpRight size={14} className="text-accent" />
         </div>
-      )}
+      </div>
     </motion.div>
   );
 };
