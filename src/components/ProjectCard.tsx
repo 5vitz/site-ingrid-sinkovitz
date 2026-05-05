@@ -19,23 +19,40 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, hasR
   // Fallback para thumbnail se estiver faltando
   const thumbnail = project.galleryThumbnail || (project.coverImage && (project.coverImage.match(/\.(jpg|jpeg|png|webp|gif|avif)/i) ? project.coverImage : ''));
 
-  // Limpar título
-  const displayTitle = (project.title || '').replace(/^(Projeto|projeto)\s+/i, '');
+  // Limpar título de forma mais agressiva e padronizar
+  const displayTitle = (project.title || '')
+    .replace(/^(Projeto|projeto)\s+/i, '')
+    .trim();
 
   return (
     <motion.div 
-      whileHover={{ y: isDraft ? 0 : -5 }}
-      onClick={() => !isDraft && onClick()}
-      className={`${cardClass} ${isDraft ? 'cursor-not-allowed opacity-80' : 'cursor-pointer group'} rounded-[8px] snap-center bg-zinc-900 shadow-2xl overflow-hidden relative flex items-center justify-center border border-white/5`}
+      whileHover={{ y: isDraft ? 0 : -8, scale: 1.01 }}
+      onClick={() => !isDraft && onClick && onClick()}
+      className={`${cardClass} ${isDraft ? 'cursor-not-allowed opacity-80' : 'cursor-pointer group'} rounded-[12px] snap-center bg-zinc-950 shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden relative flex items-center justify-center border border-white/5 transition-all duration-500`}
     >
-      {/* Background Gradient Layer */}
-      <div className="absolute inset-0 bg-gradient-to-br from-zinc-800/50 via-transparent to-zinc-900/80 z-0" />
+      {/* Camada de Imagem de Fundo (Sutil) */}
+      {thumbnail && (
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <img 
+            src={thumbnail} 
+            alt=""
+            className="w-full h-full object-cover opacity-15 grayscale group-hover:grayscale-0 group-hover:scale-110 group-hover:opacity-25 transition-all duration-1000"
+            referrerPolicy="no-referrer"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent" />
+        </div>
+      )}
+
+      {/* Camada de Degradê e Efeito Visual */}
+      <div className="absolute inset-0 bg-gradient-to-br from-zinc-900/40 via-transparent to-black z-[1] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(212,175,55,0.05),transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-[1] pointer-events-none" />
       
-      <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center z-10">
-        <div className="space-y-1">
-          <h3 className="text-2xl md:text-3xl font-light text-accent tracking-tighter transition-all duration-300 group-hover:scale-105 group-hover:brightness-110">
+      <div className="relative flex flex-col items-center justify-center p-8 text-center z-10 pointer-events-none">
+        <div className="space-y-2">
+          <h3 className="text-sm md:text-base font-light text-accent tracking-[0.2em] transition-all duration-500 group-hover:scale-105 group-hover:brightness-125 uppercase">
             {displayTitle}
           </h3>
+          <div className="w-8 group-hover:w-16 h-[1px] bg-accent/40 mx-auto transition-all duration-700" />
         </div>
       </div>
 
