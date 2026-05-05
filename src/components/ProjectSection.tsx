@@ -33,7 +33,9 @@ export const ProjectSection: React.FC<{ onSelectProject: (p: Project) => void }>
           if (finalMap.has(dbProj.id)) {
              // Mescla dados do banco sobre o oficial estático
              const existing = finalMap.get(dbProj.id)!;
-             finalMap.set(dbProj.id, { ...existing, ...dbProj });
+             // Priorizar título das constantes se for o projeto elobike para evitar override do DB
+             const finalTitle = dbProj.id === 'projeto-elobike' ? existing.title : (dbProj.title || existing.title);
+             finalMap.set(dbProj.id, { ...existing, ...dbProj, title: finalTitle });
           } else {
              // Novo projeto criado pelo usuário
              finalMap.set(dbProj.id, dbProj);
