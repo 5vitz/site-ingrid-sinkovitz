@@ -36,10 +36,10 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, hasR
       
       <div className="relative flex flex-col items-center justify-center p-6 text-center z-10 pointer-events-none">
         <div className="space-y-3">
-          <h3 className="text-[11px] md:text-xs font-medium text-accent tracking-[0.25em] transition-all duration-300 group-hover:brightness-125 uppercase">
+          <h3 className="text-[10px] md:text-[11px] font-light text-accent tracking-[0.3em] transition-all duration-300 group-hover:brightness-125 uppercase">
             {displayTitle}
           </h3>
-          <div className="w-4 group-hover:w-8 h-[1px] bg-accent/20 mx-auto transition-all duration-500" />
+          <div className="w-3 group-hover:w-6 h-[1px] bg-accent/10 mx-auto transition-all duration-500" />
         </div>
       </div>
 

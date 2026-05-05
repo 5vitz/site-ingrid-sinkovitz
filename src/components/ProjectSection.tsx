@@ -63,18 +63,32 @@ export const ProjectSection: React.FC<{ onSelectProject: (p: Project) => void }>
             )}
         </div>
 
-        <div className="w-full max-w-[1200px] mb-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 justify-items-center">
-            {displayProjects.map((project: Project, idx) => (
-              <ProjectCard 
-                key={project.id || idx}
-                project={project}
-                onClick={() => onSelectProject(project)}
-                hasRight={idx < displayProjects.length - 1}
-                hasDown={idx < displayProjects.length - 3}
-              />
-            ))}
-          </div>
+        <div className="w-full max-w-[1200px] mb-12 space-y-10">
+          {(() => {
+            const chunks = [];
+            for (let i = 0; i < displayProjects.length; i += 3) {
+              chunks.push(displayProjects.slice(i, i + 3));
+            }
+            return chunks.map((group, groupIdx) => (
+              <div 
+                key={groupIdx} 
+                className="w-full p-6 md:p-10 bg-zinc-900/20 backdrop-blur-sm rounded-[16px] border border-white/5 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-10"
+              >
+                {group.map((project: Project, idxInGroup) => {
+                  const absoluteIdx = groupIdx * 3 + idxInGroup;
+                  return (
+                    <ProjectCard 
+                      key={project.id || absoluteIdx}
+                      project={project}
+                      onClick={() => onSelectProject(project)}
+                      hasRight={absoluteIdx < displayProjects.length - 1}
+                      hasDown={absoluteIdx < displayProjects.length - 3}
+                    />
+                  );
+                })}
+              </div>
+            ));
+          })()}
         </div>
       </div>
     </section>
