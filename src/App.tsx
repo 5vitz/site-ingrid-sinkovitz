@@ -691,9 +691,9 @@ function DatabaseControlCenter({ seedAll }: { seedAll: any }) {
     return (
       <button 
         onClick={() => setIsOpen(true)}
-        className="w-full py-3 bg-zinc-800 text-zinc-400 text-[10px] font-black uppercase tracking-widest rounded-[8px] hover:bg-zinc-700 hover:text-white transition flex items-center justify-center gap-2"
+        className="w-full py-3 bg-zinc-800 text-accent text-[10px] font-black uppercase tracking-widest rounded-[8px] hover:bg-accent hover:text-white transition flex items-center justify-center gap-2 shadow-xl"
       >
-        <Database size={14} /> CONTROLE DE BANCO
+        <Database size={14} /> Sincronizar Firestore
       </button>
     );
   }
@@ -701,7 +701,7 @@ function DatabaseControlCenter({ seedAll }: { seedAll: any }) {
   return (
     <div className="flex flex-col gap-3 p-4 bg-zinc-900 border border-white/10 rounded-xl shadow-2xl">
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-black uppercase tracking-widest text-white">Sincronizar Firestore</span>
+        <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Sync Firestore v2.1</span>
         <button onClick={() => setIsOpen(false)} className="text-zinc-500 hover:text-white transition-colors">
           <X size={16} />
         </button>
@@ -722,7 +722,7 @@ function DatabaseControlCenter({ seedAll }: { seedAll: any }) {
                 : 'bg-white text-black hover:bg-accent hover:text-white'
               }`}
             >
-              {syncStatus[proj.id] === 'done' ? 'GRAVADO' : syncStatus[proj.id] === 'syncing' ? '...' : 'GRAVAR'}
+              {syncStatus[proj.id] === 'done' ? 'SYNC OK' : syncStatus[proj.id] === 'syncing' ? '...' : 'SINCRONIZAR'}
             </button>
           </div>
         ))}
