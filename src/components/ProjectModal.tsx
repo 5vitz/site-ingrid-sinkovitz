@@ -56,7 +56,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     }
   }, [feedIndex, project?.feed]);
 
-  const navigateStory = useCallback((direction: 1 | -1) => {
+  const navigateStory = useCallback((direction: number) => {
     if (isScrollingRef.current) return;
     const next = storyIndex + direction;
     if (next >= 0 && next < totalStoriesForNav) {

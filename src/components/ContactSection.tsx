@@ -14,36 +14,20 @@ export const ContactSection: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch relative z-10 w-full mb-12">
           {/* Card 1: Identidade */}
-          <div className="bg-white/[0.03] backdrop-blur-sm p-10 rounded-[8px] border border-white/5 flex flex-col items-center md:items-start text-center md:text-left justify-start space-y-8">
+          <div className="bg-white/[0.03] backdrop-blur-sm p-10 rounded-[8px] border border-white/5 flex flex-col items-center text-center justify-start space-y-8">
             <Link to="/" className="text-xl font-bold tracking-tighter uppercase not-italic">
               INGRID <span className="text-accent">SINKOVITZ</span>
             </Link>
-            <p className="text-[11px] tracking-[0.4em] opacity-30 font-bold">
-              Estratégia Planejamento Gestão
-            </p>
-            <div className="flex gap-6">
-              <a href="https://www.instagram.com/ingridsinkovitz/" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-accent transition-colors"><Instagram size={20} /></a>
-              <a href="https://www.linkedin.com/in/ingridsinkovitz/" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-accent transition-colors"><Linkedin size={20} /></a>
-              <a href="mailto:ingridsinkovitz@gmail.com" className="text-zinc-500 hover:text-accent transition-colors"><Mail size={20} /></a>
+            <div className="text-[11px] tracking-[0.4em] text-white/60 font-bold flex flex-col gap-3 uppercase">
+              <span>Estratégia</span>
+              <span>Planejamento</span>
+              <span>Gestão</span>
             </div>
           </div>
 
-          {/* Card 2: Links */}
-          <div className="bg-white/[0.03] backdrop-blur-sm p-10 rounded-[8px] border border-white/5 flex flex-col justify-between">
-            <div className="space-y-6">
-              <span className="text-[10px] font-black tracking-[0.3em] uppercase text-zinc-500 block mb-8">Navegação</span>
-              <nav className="flex flex-col gap-4 text-sm font-medium tracking-widest uppercase">
-                <a href="#sobre" className="hover:text-accent transition-colors">Sobre</a>
-                <a href="#servicos" className="hover:text-accent transition-colors">Serviços</a>
-                <a href="#projetos" className="hover:text-accent transition-colors">Projetos</a>
-                <a href="#depoimentos" className="hover:text-accent transition-colors">Depoimentos</a>
-              </nav>
-            </div>
-          </div>
-
-          {/* Card 3: Conecte-se */}
+          {/* Card 2: Conecte-se */}
           <div className="bg-white/[0.03] backdrop-blur-sm p-10 rounded-[8px] border border-white/5 flex flex-col items-center md:items-start justify-start space-y-8">
-            <span className="text-white/20 font-sans tracking-widest text-xs font-bold">Conecte-se</span>
+            <span className="text-white/20 font-sans tracking-widest text-xs font-bold uppercase">Conecte-se</span>
             <div className="flex flex-col gap-5 items-center md:items-start">
               {[
                 { icon: <MessageCircle size={20} />, label: "WhatsApp", link: "https://wa.me/5527999193525" },
@@ -62,11 +46,24 @@ export const ContactSection: React.FC = () => {
                       {social.icon}
                     </span>
                   )}
-                  <span className={`tracking-widest text-xs transition-colors duration-300 ${!social.icon ? 'lowercase text-zinc-500 mt-1 group-hover:text-accent' : 'font-bold'}`}>
+                  <span className={`tracking-widest text-xs transition-colors duration-300 ${!social.icon ? 'lowercase text-zinc-300 mt-1 group-hover:text-accent break-all text-center md:text-left' : 'font-bold'}`}>
                     {social.label}
                   </span>
                 </a>
               ))}
+            </div>
+          </div>
+
+          {/* Card 3: Links */}
+          <div className="bg-white/[0.03] backdrop-blur-sm p-10 rounded-[8px] border border-white/5 flex flex-col justify-between">
+            <div className="space-y-6">
+              <span className="text-[10px] font-black tracking-[0.3em] uppercase text-zinc-500 block mb-8">Navegação</span>
+              <nav className="flex flex-col gap-4 text-sm font-medium tracking-widest">
+                <a href="#sobre" className="hover:text-accent transition-colors">Sobre</a>
+                <a href="#servicos" className="hover:text-accent transition-colors">Serviços</a>
+                <a href="#projetos" className="hover:text-accent transition-colors">Projetos</a>
+                <a href="#depoimentos" className="hover:text-accent transition-colors">Depoimentos</a>
+              </nav>
             </div>
           </div>
         </div>

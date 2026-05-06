@@ -113,6 +113,24 @@ export const VerticalLayout: React.FC<LayoutProps> = ({
             </button>
           </div>
         )}
+
+        {/* Pagination Dots (Carousel Indicator) - Visível em mobile e desktop */}
+        {totalStories > 1 && (
+          <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 flex gap-1.5 z-[10020] px-2 py-1.5 rounded-full bg-black/20 backdrop-blur-sm">
+            {Array.from({ length: totalStories }).map((_, idx) => (
+              <button
+                key={`dot-${idx}`}
+                onClick={(e) => { e.stopPropagation(); navigateStory(idx - storyIndex); }}
+                className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                  idx === storyIndex 
+                    ? 'bg-white w-3 shadow-[0_0_8px_rgba(255,255,255,0.5)]' 
+                    : 'bg-white/30'
+                }`}
+                aria-label={`Ir para slide ${idx + 1}`}
+              />
+            ))}
+          </div>
+        )}
       </motion.div>
     </div>
   );

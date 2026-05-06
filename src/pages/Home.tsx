@@ -38,8 +38,8 @@ export const Home: React.FC<HomeProps> = ({ onSelectProject, settings }) => {
   return (
     <div className="bg-zinc-950">
       <AboutMeSection settings={settings} />
-      <ProjectSection onSelectProject={onSelectProject} />
       <ServicesSection />
+      <ProjectSection onSelectProject={onSelectProject} />
       <TestimonialsSection />
     </div>
   );

@@ -75,9 +75,20 @@ export const HorizontalLayout: React.FC<LayoutProps> = ({
         <div className="md:block">
           {totalStories > 1 && (
             <>
-              {/* Story Counter */}
-              <div className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1 bg-black/50 backdrop-blur-md rounded-full text-[10px] text-white/50 font-bold tracking-widest uppercase z-[10020]">
-                {storyIndex + 1} / {totalStories}
+              {/* Pagination Dots (Carousel Indicator) */}
+              <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 flex gap-1.5 z-[10020] px-2 py-1.5 rounded-full bg-black/20 backdrop-blur-sm">
+                {Array.from({ length: totalStories }).map((_, idx) => (
+                  <button
+                    key={`dot-${idx}`}
+                    onClick={(e) => { e.stopPropagation(); navigateStory(idx - storyIndex); }}
+                    className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                      idx === storyIndex 
+                        ? 'bg-white w-3 shadow-[0_0_8px_rgba(255,255,255,0.5)]' 
+                        : 'bg-white/30'
+                    }`}
+                    aria-label={`Ir para slide ${idx + 1}`}
+                  />
+                ))}
               </div>
 
               <button 

@@ -2,6 +2,8 @@ import React from 'react';
 import { ExternalLink, FileText, Smartphone } from 'lucide-react';
 import { MediaItem } from '../types';
 
+import { PDFViewer } from './PDFViewer';
+
 interface MediaRendererProps {
   media?: MediaItem;
   isActive: boolean;
@@ -70,28 +72,11 @@ export const MediaRenderer: React.FC<MediaRendererProps> = ({
   if (media.type === 'image' || media.type === 'pdf') {
     const isPDF = media.type === 'pdf' || media.url?.toLowerCase().includes('.pdf');
     if (isPDF) {
-      const pdfUrl = media.url || '';
-      // Usando o viewer do Google para evitar bloqueios de X-Frame-Options
-      const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(pdfUrl)}&embedded=true`;
-      
       return (
-        <div className="w-full h-full bg-[#0a0a0a] overflow-hidden relative group">
-          <iframe 
-            src={viewerUrl}
-            className="absolute inset-0 w-full h-full border-none pointer-events-auto"
-            title={media.title || 'PDF Document'}
-            scrolling="yes"
-          />
-          {/* Instrução visual na base */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            <div className="bg-black/80 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 shadow-xl">
-              <p className="text-[10px] text-white/90 font-bold uppercase tracking-widest flex items-center gap-2">
-                <Smartphone size={12} className="text-blue-400" />
-                Interaja com o PDF ou use as setas
-              </p>
-            </div>
-          </div>
-        </div>
+        <PDFViewer 
+          url={media.url || ''} 
+          title={media.title} 
+        />
       );
     }
 

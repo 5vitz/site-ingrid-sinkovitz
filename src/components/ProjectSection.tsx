@@ -30,14 +30,6 @@ export const ProjectSection: React.FC<{ onSelectProject: (p: Project) => void }>
     }
   }, [dbProjects]);
 
-  const projectRows = React.useMemo(() => {
-    const rows: Project[][] = [];
-    for (let i = 0; i < displayProjects.length; i += 3) {
-      rows.push(displayProjects.slice(i, i + 3));
-    }
-    return rows;
-  }, [displayProjects]);
-
   return (
     <section id="projetos" className="section-container scroll-mt-20 !pt-0">
       <div className="section-card p-5 md:p-10 flex flex-col items-center">
@@ -47,20 +39,18 @@ export const ProjectSection: React.FC<{ onSelectProject: (p: Project) => void }>
             </h2>
         </div>
 
-        <div className="w-full max-w-[1000px] flex flex-col gap-8 mb-12">
-          {projectRows.map((row, rowIdx) => (
-            <div key={`row-${rowIdx}`} className="bg-white/[0.02] border border-white/5 p-6 md:p-8 rounded-[8px] shadow-2xl">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {row.map((project, idx) => (
-                  <ProjectCard 
-                    key={project.id || `proj-${rowIdx}-${idx}`}
-                    project={project}
-                    onClick={() => onSelectProject(project)}
-                  />
-                ))}
-              </div>
+        <div className="w-full max-w-[1000px] mb-12">
+          <div className="bg-white/[0.02] border border-white/5 p-6 md:p-10 rounded-[8px] shadow-2xl">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-10">
+              {displayProjects.map((project, idx) => (
+                <ProjectCard 
+                  key={project.id || `proj-${idx}`}
+                  project={project}
+                  onClick={() => onSelectProject(project)}
+                />
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </section>
