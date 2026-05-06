@@ -27,8 +27,22 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, hasR
       onClick={onClick}
       className={`${cardClass} cursor-pointer group rounded-[8px] snap-center bg-zinc-900 shadow-xl overflow-hidden relative flex items-center justify-center border border-white/5 transition-all duration-300`}
     >
-      {/* Fundo Simples com Degradê */}
-      <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-950 z-0" />
+      {/* Background with Image and Overlay */}
+      <div className="absolute inset-0 z-0">
+        {project.coverImage ? (
+          <>
+            <img 
+              src={project.coverImage} 
+              alt={project.title}
+              className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-500"
+              referrerPolicy="no-referrer"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 z-10" />
+          </>
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-950 z-0" />
+        )}
+      </div>
       
       {isDraft && (
         <div className="absolute top-4 right-4 z-20">

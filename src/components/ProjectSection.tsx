@@ -8,51 +8,56 @@ export const ProjectSection: React.FC<{ onSelectProject: (p: Project) => void }>
   const { data: dbProjects } = useCollection<Project>('projects');
 
   const displayProjects = React.useMemo(() => {
+    // 1. Garantir que temos a base estática corretamente
     const base = Array.isArray(STATIC_PROJECTS) ? [...STATIC_PROJECTS] : [];
     
-    // Se o hook ainda não carregou ou o DB está vazio, retorna a base estática imediatamente
+    // Se o banco ainda não respondeu, retorna a base estática para não ficar vazio
     if (!dbProjects || dbProjects.length === 0) {
       return base;
     }
 
     try {
-      // Mapear projetos do banco para acesso rápido
       const dbMap = new Map();
       dbProjects.forEach(p => {
         if (p && p.id) dbMap.set(p.id, p);
       });
 
-      // 1. Atualizar projetos estáticos com dados do banco (se houver)
+      // Mesclar dados do banco sobre os estáticos (mantém ordem e IDs da base se existirem)
       const merged = base.map(sp => {
-        const dbProject = dbMap.get(sp.id);
-        if (!dbProject) return sp;
-        return { ...sp, ...dbProject };
+        const dbP = dbMap.get(sp.id);
+        if (!dbP) return sp;
+        return { ...sp, ...dbP };
       });
 
-      // 2. Identificar novos projetos que só existem no banco
+      // Adicionar projetos que existem apenas no banco
       const staticIds = new Set(base.map(p => p.id));
       const extras = dbProjects.filter(p => p && p.id && !staticIds.has(p.id));
 
-      // 3. Unir e ordenar. Rascunhos são exibidos (a lógica de acesso é tratada no clique)
-      const result = [...merged, ...extras].sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
+      const final = [...merged, ...extras].sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
       
-      return result.length > 0 ? result : base;
-    } catch (error) {
-      console.error("Erro na mesclagem de projetos:", error);
+      // Fallback final: se por algum milagre der vazio, retorna a base original
+      return final.length > 0 ? final : base;
+    } catch (e) {
+      console.error("Erro ao processar projetos:", e);
       return base;
     }
   }, [dbProjects]);
 
+  // Se mesmo assim não houver projetos, algo está errado com o import ou base
+  if (!displayProjects || displayProjects.length === 0) {
+    return null; // Ou uma mensagem de erro discreta
+  }
+
   return (
     <section id="projetos" className="section-container scroll-mt-20 !pt-0">
       <div className="section-card p-5 md:p-10 flex flex-col items-center">
-        <div className="mt-4 mb-16 text-center">
+        <div className="mt-8 mb-16 text-center">
             <h2 className="text-xl md:text-2xl font-bold tracking-tight opacity-40">
               Projetos selecionados
             </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-[1100px] mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 w-full max-w-[1000px] mb-12">
           {displayProjects.map((project, idx) => (
             <ProjectCard 
               key={project.id || `proj-${idx}`}

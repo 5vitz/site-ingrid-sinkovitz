@@ -86,11 +86,11 @@ export const AboutProjectModal: React.FC<AboutProjectModalProps> = ({ project, o
             ) : (
               <div className="space-y-12 w-full max-w-lg py-8">
                 <div>
-                  <h2 className="text-3xl md:text-5xl font-black tracking-tighter leading-tight mb-4 text-white">
+                  <h2 className="text-2xl md:text-4xl font-bold tracking-tight leading-tight mb-4 text-white not-italic">
                     {aboutConfig.title || project.title}
                   </h2>
                   {aboutConfig.subtitle && (
-                    <p className="text-zinc-500 text-sm md:text-base font-bold tracking-tight">
+                    <p className="text-zinc-500 text-sm md:text-base font-medium tracking-tight">
                       {aboutConfig.subtitle}
                     </p>
                   )}
