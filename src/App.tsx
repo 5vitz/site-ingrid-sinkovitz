@@ -425,18 +425,9 @@ const AdminNavItem = ({ active, onClick, icon, label }: { active: boolean, onCli
 );
 
 const AdminLogin = ({ onClose }: { onClose?: () => void }) => {
-  const { login, user, role, loading } = useAuth();
+  const { login, user, role, loading, logout } = useAuth();
   
-  useEffect(() => {
-    // Se o usuário já está logado, fecha o modal de login sem "flicker"
-    if (user && role && onClose) {
-      const timer = setTimeout(() => {
-        onClose();
-      }, 500);
-      return () => clearTimeout(timer);
-    }
-  }, [user, role, onClose]);
-
+  // Se já estiver logado e for o login "tela cheia" (sem onClose), redireciona
   if (user && role && !onClose) return <Navigate to="/admin" />;
   
   return (
@@ -464,10 +455,30 @@ const AdminLogin = ({ onClose }: { onClose?: () => void }) => {
             <p className="text-zinc-500 text-sm font-medium">Acesso restrito para administradores e suporte técnico.</p>
           </div>
 
-          {user ? (
-            <div className="py-4 px-6 bg-accent/10 border border-accent/20 rounded-[8px] flex items-center justify-center gap-3">
-              <div className="w-2 h-2 bg-accent rounded-full animate-pulse" />
-              <span className="text-accent font-black uppercase tracking-widest text-[10px]">Autenticado: {user.email}</span>
+          {user && role ? (
+            <div className="space-y-6">
+              <div className="py-4 px-6 bg-accent/10 border border-accent/20 rounded-[8px] flex flex-col items-center gap-2">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-accent rounded-full animate-pulse" />
+                  <span className="text-accent font-black uppercase tracking-widest text-[10px]">Portal de Acesso Livre</span>
+                </div>
+                <span className="text-white/60 text-[11px] font-medium truncate w-full">{user.email}</span>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <Link 
+                  to="/admin" 
+                  className="py-4 bg-accent text-black font-black uppercase tracking-widest text-[9px] rounded-[8px] hover:bg-white transition-all text-center"
+                >
+                  Painel Admin
+                </Link>
+                <button 
+                  onClick={logout}
+                  className="py-4 bg-zinc-800 text-white font-black uppercase tracking-widest text-[9px] rounded-[8px] hover:bg-zinc-700 transition-all"
+                >
+                  Sair da Conta
+                </button>
+              </div>
             </div>
           ) : (
             <button 
@@ -493,7 +504,7 @@ const AdminLogin = ({ onClose }: { onClose?: () => void }) => {
 };
 
 const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: AboutMe | null } }) => {
-  const { user } = useAuth();
+  const { user, role } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [aboutProject, setAboutProject] = useState<Project | null>(null);
@@ -506,17 +517,38 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
     return () => window.removeEventListener('open-admin-login', handleOpenLogin);
   }, []);
 
-  const handleSelectProject = (project: Project) => {
-    const isAdmin = !!user; // Se houver usuário logado no contexto de auth, é admin
+  // Se o usuário logar (se tornar admin) enquanto vê um "Sobre Projeto", fecha o informativo e abre o projeto real
+  useEffect(() => {
+    if (user && role && aboutProject) {
+      // Pequeno delay para que o usuário veja o feedback de login antes de ser "teleportado"
+      const timer = setTimeout(() => {
+        const p = aboutProject;
+        setAboutProject(null);
+        setSelectedProject(p);
+        setIsAdminLoginOpen(false);
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+  }, [user, role, aboutProject]);
 
-    // 1. Verificar se está trancado (Admins ignoram senha)
-    if (project.isLocked && !isAdmin) {
+  const handleSelectProject = (project: Project) => {
+    // Definimos que é admin se houver um usuário com papel atribuído
+    const isAdmin = !!user && !!role;
+
+    // 1. Se for admin, pula qualquer barreira (senha ou rascunho)
+    if (isAdmin) {
+      setSelectedProject(project);
+      return;
+    }
+
+    // 2. Verificar se está trancado
+    if (project.isLocked) {
       setLockedProject(project);
       return;
     }
 
-    // 2. Fluxo Normal
-    if (project.aboutConfig || (project.status === 'draft' && !isAdmin)) {
+    // 3. Verificar se tem pop-up de informações ou se é rascunho
+    if (project.aboutConfig || project.status === 'draft') {
       setAboutProject(project);
     } else {
       setSelectedProject(project);
