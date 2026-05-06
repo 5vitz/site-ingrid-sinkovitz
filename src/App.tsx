@@ -506,15 +506,6 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
     return () => window.removeEventListener('open-admin-login', handleOpenLogin);
   }, []);
 
-  // Transição automática se o usuário logar enquanto vê um rascunho
-  useEffect(() => {
-    if (user && aboutProject && aboutProject.status === 'draft') {
-      const p = aboutProject;
-      setAboutProject(null);
-      setSelectedProject(p);
-    }
-  }, [user, aboutProject]);
-
   const handleSelectProject = (project: Project) => {
     const isAdmin = !!user; // Se houver usuário logado no contexto de auth, é admin
 

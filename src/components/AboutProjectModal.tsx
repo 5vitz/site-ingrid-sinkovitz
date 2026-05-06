@@ -25,7 +25,7 @@ export const AboutProjectModal: React.FC<AboutProjectModalProps> = ({ project, o
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
-        className="absolute inset-0 bg-black/98 backdrop-blur-2xl"
+        className="absolute inset-0 bg-black/90 backdrop-blur-xl z-0"
       />
 
       {/* Modal Card */}
@@ -33,13 +33,13 @@ export const AboutProjectModal: React.FC<AboutProjectModalProps> = ({ project, o
         initial={{ opacity: 0, scale: 0.95, y: 30 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.9, y: 20 }}
-        className={`relative w-full ${aboutConfig.width || 'max-w-md'} bg-zinc-900 border border-white/10 rounded-[12px] shadow-2xl flex flex-col overflow-hidden z-20`}
-        style={{ maxHeight: aboutConfig.height || '85vh' }}
+        className={`relative w-full ${aboutConfig.width || 'max-w-md'} bg-zinc-900 border border-white/10 rounded-[12px] shadow-2xl flex flex-col overflow-hidden z-10`}
+        style={{ maxHeight: '85vh' }}
       >
         {/* Botão Fechar (X) */}
         <button
           onClick={onClose}
-          className="absolute top-6 right-6 z-[11050] w-12 h-12 bg-zinc-800/80 backdrop-blur-md border border-white/10 text-white rounded-full flex items-center justify-center hover:scale-110 transition-all shadow-xl active:scale-95 cursor-pointer"
+          className="absolute top-6 right-6 z-[100] w-12 h-12 bg-zinc-800/80 backdrop-blur-md border border-white/10 text-white rounded-full flex items-center justify-center hover:scale-110 transition-all shadow-xl active:scale-95 cursor-pointer"
           title="Fechar"
         >
           <X size={24} strokeWidth={2.5} />
@@ -54,9 +54,9 @@ export const AboutProjectModal: React.FC<AboutProjectModalProps> = ({ project, o
                   initial={{ scale: 0.5, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ type: "spring", damping: 15, delay: 0.1 }}
-                  className="bg-accent/10 p-10 rounded-full mb-10 border border-accent/20 shadow-lg"
+                  className="bg-white/5 p-10 rounded-full mb-10 border border-white/10 shadow-lg"
                 >
-                  <Lock size={80} className="text-accent" />
+                  <Lock size={80} className="text-white" />
                 </motion.div>
                 
                 <h2 className="text-4xl font-black text-white uppercase tracking-tighter mb-16">Em Construção</h2>
@@ -72,10 +72,10 @@ export const AboutProjectModal: React.FC<AboutProjectModalProps> = ({ project, o
                     }}
                     className="group flex flex-col items-center gap-4 transition-all opacity-40 hover:opacity-100 w-full"
                   >
-                    <div className="p-4 rounded-full bg-zinc-800 border border-white/5 group-hover:border-accent/30 group-hover:text-accent transition-all group-hover:scale-110">
+                    <div className="p-4 rounded-full bg-zinc-800 border border-white/5 group-hover:border-white/20 group-hover:text-white transition-all group-hover:scale-110">
                       <Lock size={20} />
                     </div>
-                    <span className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500 group-hover:text-accent transition-colors">Acesso Administrativo</span>
+                    <span className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500 group-hover:text-white transition-colors">Acesso Administrativo</span>
                   </button>
                 </div>
               </div>
