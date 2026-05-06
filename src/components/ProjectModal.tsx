@@ -251,12 +251,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
 
   if (!project) return null;
 
-  // Se o projeto for um rascunho sem feed, não deve abrir o ProjectModal principal
-  // Mas como garantia, se chegar aqui e não houver feed, mostramos uma mensagem ou fechamos
-  if ((!project.feed || project.feed.length === 0) && project.status === 'draft') {
-    return null; 
-  }
-
   const handleStartTour = (e: React.MouseEvent) => {
     e.stopPropagation();
     setShowPlayer(true);

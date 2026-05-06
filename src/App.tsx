@@ -504,7 +504,7 @@ const AdminLogin = ({ onClose }: { onClose?: () => void }) => {
 };
 
 const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: AboutMe | null } }) => {
-  const { user, role } = useAuth();
+  const { user } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [aboutProject, setAboutProject] = useState<Project | null>(null);
@@ -517,25 +517,10 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
     return () => window.removeEventListener('open-admin-login', handleOpenLogin);
   }, []);
 
-  // Se o usuário logar (se tornar admin) enquanto vê um "Sobre Projeto", fecha o informativo e abre o projeto real
-  useEffect(() => {
-    if (user && role && aboutProject) {
-      // Pequeno delay para que o usuário veja o feedback de login antes de ser "teleportado"
-      const timer = setTimeout(() => {
-        const p = aboutProject;
-        setAboutProject(null);
-        setSelectedProject(p);
-        setIsAdminLoginOpen(false);
-      }, 800);
-      return () => clearTimeout(timer);
-    }
-  }, [user, role, aboutProject]);
-
   const handleSelectProject = (project: Project) => {
-    // Definimos que é admin se houver um usuário com papel atribuído
-    const isAdmin = !!user && !!role;
+    const isAdmin = !!user;
 
-    // 1. Se for admin, pula qualquer barreira (senha ou rascunho)
+    // 1. Se for admin, pula tudo e abre o projeto
     if (isAdmin) {
       setSelectedProject(project);
       return;
