@@ -116,7 +116,7 @@ const TestimonialCard = ({ t, isWide }: { t: any, isWide: boolean, key?: any }) 
       className={`bg-zinc-900/40 backdrop-blur-md p-8 md:p-10 rounded-[8px] border border-white/5 flex flex-col ${isWide ? 'md:col-span-2 md:flex-row md:items-center gap-10' : 'justify-between'}`}
     >
       <div className={isWide ? 'flex-1' : ''}>
-        <p className={`text-base text-zinc-400 italic font-light leading-relaxed text-justify transition-all duration-300 ${!isExpanded ? 'line-clamp-6 overflow-hidden' : ''}`}>
+        <p className={`text-base text-zinc-400 font-light leading-relaxed text-justify transition-all duration-300 ${!isExpanded ? 'line-clamp-6 overflow-hidden' : ''}`}>
           "{t.text}"
         </p>
         
@@ -124,7 +124,7 @@ const TestimonialCard = ({ t, isWide }: { t: any, isWide: boolean, key?: any }) 
         {t.text.length > 250 && (
           <button 
             onClick={() => setIsExpanded(!isExpanded)}
-            className="mt-4 mb-6 flex items-center gap-2 text-accent font-bold uppercase tracking-widest text-[10px] hover:text-white transition-colors group"
+            className="mt-4 mb-6 flex items-center gap-2 text-accent font-bold tracking-widest text-[10px] hover:text-white transition-colors group"
           >
             <span className="border-b border-accent/20 group-hover:border-white transition-colors pb-0.5">
               {isExpanded ? "Ver menos" : "Saiba mais"}
@@ -146,7 +146,7 @@ const TestimonialCard = ({ t, isWide }: { t: any, isWide: boolean, key?: any }) 
         </div>
         <div>
           <h4 className="font-medium text-white">{t.author}</h4>
-          <span className="text-[10px] text-accent uppercase font-bold tracking-widest">{t.role}</span>
+          <span className="text-[10px] text-accent font-bold tracking-widest">{t.role}</span>
         </div>
       </div>
     </div>
@@ -245,7 +245,7 @@ const Home = ({ onSelectProject, settings }: { onSelectProject: (project: Projec
 
                 <button
                   onClick={() => setIsBioExpanded(!isBioExpanded)}
-                  className="mt-4 flex items-center gap-2 text-accent font-bold uppercase tracking-widest text-[10px] hover:text-white transition-colors group w-fit"
+                  className="mt-4 flex items-center gap-2 text-accent font-bold tracking-widest text-[10px] hover:text-white transition-colors group w-fit"
                 >
                   <span className="border-b border-accent/20 group-hover:border-white transition-colors pb-0.5">
                     {isBioExpanded ? "Ver menos" : "Saiba mais"}
@@ -262,7 +262,7 @@ const Home = ({ onSelectProject, settings }: { onSelectProject: (project: Projec
       <section id="servicos" className="section-container scroll-mt-20 !pt-0">
         <div className="section-card p-5 flex flex-col items-center">
           <div className="mt-8 mb-12 text-center">
-            <h3 className="text-xl md:text-2xl font-bold tracking-tight opacity-40">
+            <h3 className="text-xl md:text-2xl font-bold tracking-[0.3em] uppercase opacity-40 not-italic">
               Serviços
             </h3>
           </div>
@@ -324,7 +324,7 @@ const Home = ({ onSelectProject, settings }: { onSelectProject: (project: Projec
       <section id="depoimentos" className="section-container !pt-0">
         <div className="section-card p-5 md:p-10 flex flex-col items-center">
             <div className="mt-4 mb-12 text-center">
-               <h3 className="text-xl md:text-2xl font-bold tracking-tight opacity-40">Depoimentos</h3>
+               <h3 className="text-xl md:text-2xl font-bold tracking-[0.3em] uppercase opacity-40 not-italic">Depoimentos</h3>
             </div>
             
             <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6 pb-12">
@@ -379,8 +379,8 @@ const AdminPanel = () => {
       {/* Sidebar */}
       <aside className="w-full md:w-80 bg-zinc-900 border-r border-white/5 p-8 flex flex-col gap-12 shrink-0">
         <div>
-          <Link to="/" className="text-2xl font-bold tracking-tighter">INGRID <span className="text-accent">SINKOVITZ</span></Link>
-          <div className="text-[10px] uppercase tracking-widest text-zinc-500 mt-1 font-bold">Admin Dashboard</div>
+          <Link to="/" className="text-2xl font-bold tracking-tighter">Ingrid <span className="text-accent">Sinkovitz</span></Link>
+          <div className="text-[10px] tracking-widest text-zinc-500 mt-1 font-bold">Admin Dashboard</div>
         </div>
 
         <nav className="flex-1 space-y-2">
@@ -451,7 +451,7 @@ const AdminLogin = ({ onClose }: { onClose?: () => void }) => {
           </div>
 
           <div className="space-y-2">
-            <h2 className="text-3xl font-black tracking-tighter">Painel Restrito</h2>
+            <h2 className="text-xl md:text-2xl font-bold uppercase tracking-tighter">Painel Restrito</h2>
             <p className="text-zinc-500 text-sm font-medium">Acesso restrito para administradores e suporte técnico.</p>
           </div>
 
@@ -468,13 +468,13 @@ const AdminLogin = ({ onClose }: { onClose?: () => void }) => {
               <div className="grid grid-cols-2 gap-4">
                 <Link 
                   to="/admin" 
-                  className="py-4 bg-accent text-black font-black uppercase tracking-widest text-[9px] rounded-[8px] hover:bg-white transition-all text-center"
+                  className="py-4 bg-accent text-black font-black tracking-widest text-[9px] rounded-[8px] hover:bg-white transition-all text-center"
                 >
                   Painel Admin
                 </Link>
                 <button 
                   onClick={logout}
-                  className="py-4 bg-zinc-800 text-white font-black uppercase tracking-widest text-[9px] rounded-[8px] hover:bg-zinc-700 transition-all"
+                  className="py-4 bg-zinc-800 text-white font-black tracking-widest text-[9px] rounded-[8px] hover:bg-zinc-700 transition-all"
                 >
                   Sair da Conta
                 </button>
@@ -484,7 +484,7 @@ const AdminLogin = ({ onClose }: { onClose?: () => void }) => {
             <button 
               onClick={login}
               disabled={loading}
-              className="w-full py-5 bg-white text-black font-black uppercase tracking-[0.2em] text-[11px] rounded-[8px] flex items-center justify-center gap-4 hover:bg-zinc-200 transition-all active:scale-95 disabled:opacity-50 shadow-xl"
+              className="w-full py-5 bg-white text-black font-black tracking-[0.2em] text-[11px] rounded-[8px] flex items-center justify-center gap-4 hover:bg-zinc-200 transition-all active:scale-95 disabled:opacity-50 shadow-xl"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
@@ -518,21 +518,13 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
   }, []);
 
   const handleSelectProject = (project: Project) => {
-    const isAdmin = !!user;
-
-    // 1. Se for admin, pula tudo e abre o projeto
-    if (isAdmin) {
-      setSelectedProject(project);
-      return;
-    }
-
-    // 2. Verificar se está trancado
-    if (project.isLocked) {
+    // 1. Verificar se está trancado
+    if (project.isLocked && !user) {
       setLockedProject(project);
       return;
     }
 
-    // 3. Verificar se tem pop-up de informações ou se é rascunho
+    // 2. Sempre verificar se tem pop-up de informações ou se é rascunho
     if (project.aboutConfig || project.status === 'draft') {
       setAboutProject(project);
     } else {
@@ -586,10 +578,10 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
     <div className="min-h-screen">
       <nav className="fixed top-0 w-full z-[300] glass-morphism border-b-0 pointer-events-auto">
         <div className="max-w-[1008px] mx-auto px-6 md:px-0 h-20 flex justify-between items-center">
-          <Link to="/" className="text-2xl font-bold tracking-tighter pl-[5px]">Ingrid <span className="text-accent">Sinkovitz</span></Link>
+          <Link to="/" className="text-2xl font-bold tracking-tighter pl-[5px] not-italic">INGRID <span className="text-accent">SINKOVITZ</span></Link>
           
           {/* Desktop Menu */}
-          <div className="hidden md:flex gap-12 font-medium text-sm tracking-widest uppercase">
+          <div className="hidden md:flex gap-12 font-medium text-sm tracking-widest uppercase not-italic">
             <a href="#sobre" onClick={() => closeModalsDirectly()} className="hover:text-accent transition">Sobre</a>
             <a href="#servicos" onClick={() => closeModalsDirectly()} className="hover:text-accent transition">Serviços</a>
             <a href="#projetos" onClick={() => closeModalsDirectly()} className="hover:text-accent transition">Projetos</a>
@@ -644,7 +636,7 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
                   <a href="#depoimentos" onClick={() => closeModalsDirectly()} className="w-full py-4 border-b border-white/5 hover:text-accent transition text-left">Depoimentos</a>
                   <a href="#contato" onClick={() => closeModalsDirectly()} className="w-full py-4 border-b border-white/5 hover:text-accent transition text-left">Contato</a>
                   
-                  <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-2 text-zinc-500 mt-6 hover:text-white transition-colors text-[10px] uppercase font-bold tracking-widest">
+          <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-2 text-zinc-500 mt-6 hover:text-white transition-colors text-[10px] font-bold tracking-widest">
                     <ShieldCheck size={14} /> Admin
                   </Link>
                 </div>
@@ -657,24 +649,24 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
       <footer id="contato" className="section-container scroll-mt-20 !pt-0">
         <div className="section-card p-5 md:p-10 flex flex-col items-center">
           <div className="mt-4 mb-12 text-center">
-            <h3 className="text-xl md:text-2xl font-bold tracking-tight opacity-40">
+            <h3 className="text-xl md:text-2xl font-bold tracking-[0.3em] uppercase opacity-40 not-italic">
               Contato
             </h3>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch relative z-10 w-full mb-12">
             {/* Card 1: Identidade */}
             <div className="bg-white/[0.03] backdrop-blur-sm p-10 rounded-[8px] border border-white/5 flex flex-col items-center md:items-start text-center md:text-left justify-start space-y-8">
-              <Link to="/" className="text-xl font-bold tracking-tighter uppercase">
+              <Link to="/" className="text-xl font-bold tracking-tighter uppercase not-italic">
                 INGRID <span className="text-accent">SINKOVITZ</span>
               </Link>
-              <p className="text-[11px] uppercase tracking-[0.4em] opacity-30 font-bold">
+              <p className="text-[11px] tracking-[0.4em] opacity-30 font-bold">
                 Estratégia Planejamento Gestão
               </p>
             </div>
 
             {/* Card 2: Navegação */}
             <div className="bg-white/[0.03] backdrop-blur-sm p-10 rounded-[8px] border border-white/5 flex flex-col items-center md:items-start justify-start space-y-8 text-sm font-medium text-zinc-500">
-              <span className="text-white/20 font-sans uppercase tracking-widest text-xs font-bold">Navegação</span>
+              <span className="text-white/20 font-sans tracking-widest text-xs font-bold">Navegação</span>
               <div className="flex flex-col gap-4 items-center md:items-start">
                 <a href="#sobre" onClick={() => closeModalsDirectly()} className="hover:text-accent transition capitalize">Sobre</a>
                 <a href="#servicos" onClick={() => closeModalsDirectly()} className="hover:text-accent transition capitalize">Serviços</a>
@@ -686,7 +678,7 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
 
             {/* Card 3: Conecte-se */}
             <div className="bg-white/[0.03] backdrop-blur-sm p-10 rounded-[8px] border border-white/5 flex flex-col items-center md:items-start justify-start space-y-8">
-              <span className="text-white/20 font-sans uppercase tracking-widest text-xs font-bold">Conecte-se</span>
+              <span className="text-white/20 font-sans tracking-widest text-xs font-bold">Conecte-se</span>
               <div className="flex flex-col gap-5 items-center md:items-start">
                 {[
                   { icon: <MessageCircle size={20} />, label: "WhatsApp", link: "https://wa.me/5527999193525" },
@@ -705,7 +697,7 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
                         {social.icon}
                       </span>
                     )}
-                    <span className={`tracking-widest text-xs transition-colors duration-300 ${!social.icon ? 'lowercase text-zinc-500 mt-1 group-hover:text-accent' : 'uppercase font-bold'}`}>
+                    <span className={`tracking-widest text-xs transition-colors duration-300 ${!social.icon ? 'lowercase text-zinc-500 mt-1 group-hover:text-accent' : 'font-bold'}`}>
                       {social.label}
                     </span>
                   </a>
@@ -720,7 +712,7 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
       </footer>
 
       <div className="max-w-[1008px] mx-auto px-6 mb-12 text-center opacity-30">
-        <p className="text-[10px] text-zinc-600 uppercase tracking-[0.3em] font-bold">
+        <p className="text-[10px] text-zinc-600 tracking-[0.3em] font-bold">
           © 2026 Ingrid Sinkovitz. Todos os direitos reservados.
         </p>
       </div>

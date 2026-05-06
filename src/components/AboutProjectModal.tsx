@@ -59,7 +59,7 @@ export const AboutProjectModal: React.FC<AboutProjectModalProps> = ({ project, o
                   <Lock size={64} className="text-white" />
                 </motion.div>
                 
-                <h2 className="text-3xl md:text-4xl font-black text-white tracking-tighter mb-12">
+                <h2 className="text-xl md:text-2xl font-bold text-white tracking-tighter mb-12 not-italic">
                   Em Construção
                 </h2>
                 
@@ -77,7 +77,7 @@ export const AboutProjectModal: React.FC<AboutProjectModalProps> = ({ project, o
                     <div className="p-4 rounded-full bg-zinc-800 border border-white/5 group-hover:border-white/20 group-hover:text-white transition-all group-hover:scale-110">
                       <Lock size={18} />
                     </div>
-                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500 group-hover:text-white transition-colors">
+                    <span className="text-[10px] font-black tracking-[0.3em] text-zinc-500 group-hover:text-white transition-colors">
                       Acesso Administrativo
                     </span>
                   </button>
@@ -86,11 +86,11 @@ export const AboutProjectModal: React.FC<AboutProjectModalProps> = ({ project, o
             ) : (
               <div className="space-y-12 w-full max-w-lg py-8">
                 <div>
-                  <h2 className="text-2xl md:text-4xl font-bold tracking-tight leading-tight mb-4 text-white not-italic">
+                  <h2 className="text-xl md:text-2xl font-bold tracking-[0.3em] uppercase leading-tight mb-4 text-white not-italic">
                     {aboutConfig.title || project.title}
                   </h2>
                   {aboutConfig.subtitle && (
-                    <p className="text-zinc-500 text-sm md:text-base font-medium tracking-tight">
+                    <p className="text-zinc-500 text-[10px] md:text-xs font-bold tracking-[0.3em] uppercase">
                       {aboutConfig.subtitle}
                     </p>
                   )}
@@ -109,7 +109,7 @@ export const AboutProjectModal: React.FC<AboutProjectModalProps> = ({ project, o
           <div className="p-8 pt-4 bg-zinc-950/40 border-t border-white/5">
             <button
               onClick={onStart}
-              className="w-full py-5 px-8 rounded-[8px] font-black uppercase tracking-[0.3em] text-[11px] flex items-center justify-center gap-4 transition-all hover:scale-[1.01] active:scale-[0.98] group shadow-xl"
+              className="w-full py-5 px-8 rounded-[8px] font-black tracking-[0.3em] text-[11px] flex items-center justify-center gap-4 transition-all hover:scale-[1.01] active:scale-[0.98] group shadow-xl"
               style={{ 
                 backgroundColor: aboutConfig.ctaColor || theme?.accentColor || 'white',
                 color: aboutConfig.ctaTextColor || 'black'

@@ -27,22 +27,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, hasR
       onClick={onClick}
       className={`${cardClass} cursor-pointer group rounded-[8px] snap-center bg-zinc-900 shadow-xl overflow-hidden relative flex items-center justify-center border border-white/5 transition-all duration-300`}
     >
-      {/* Background with Image and Overlay */}
-      <div className="absolute inset-0 z-0">
-        {project.coverImage ? (
-          <>
-            <img 
-              src={project.coverImage} 
-              alt={project.title}
-              className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-500"
-              referrerPolicy="no-referrer"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 z-10" />
-          </>
-        ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-950 z-0" />
-        )}
-      </div>
+      {/* Fundo Simples com Degradê */}
+      <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-950 z-0" />
       
       {isDraft && (
         <div className="absolute top-4 right-4 z-20">
@@ -54,7 +40,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, hasR
       
       <div className="relative flex flex-col items-center justify-center p-6 text-center z-10 pointer-events-none">
         <div className="space-y-3">
-          <h3 className="text-[13px] md:text-[14px] font-medium text-accent tracking-tight transition-all duration-500 group-hover:brightness-125 not-italic">
+          <h3 className="text-[13px] md:text-[14px] font-medium text-accent tracking-[0.2em] uppercase transition-all duration-500 group-hover:brightness-125 not-italic">
             {displayTitle}
           </h3>
           <div className="w-0 group-hover:w-20 h-[1px] bg-accent/40 mx-auto transition-all duration-700 ease-out" />
