@@ -723,11 +723,15 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
         onVideoStateChange={handleVideoStateChange}
       />
 
-      <AboutProjectModal 
-        project={aboutProject}
-        onClose={() => setAboutProject(null)}
-        onStart={handleStartProject}
-      />
+      <AnimatePresence>
+        {aboutProject && (
+          <AboutProjectModal 
+            project={aboutProject}
+            onClose={() => setAboutProject(null)}
+            onStart={handleStartProject}
+          />
+        )}
+      </AnimatePresence>
 
       <ProjectPasswordModal
         project={lockedProject}
