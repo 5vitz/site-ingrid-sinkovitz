@@ -40,7 +40,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, hasR
       
       <div className="relative flex flex-col items-center justify-center p-6 text-center z-10 pointer-events-none">
         <div className="space-y-3">
-          <h3 className="text-[13px] md:text-[14px] font-medium text-accent tracking-[0.05em] transition-all duration-500 group-hover:brightness-125">
+          <h3 className="text-[13px] md:text-[14px] font-medium text-accent tracking-tight transition-all duration-500 group-hover:brightness-125 not-italic">
             {displayTitle}
           </h3>
           <div className="w-0 group-hover:w-20 h-[1px] bg-accent/40 mx-auto transition-all duration-700 ease-out" />

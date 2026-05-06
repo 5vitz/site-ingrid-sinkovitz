@@ -262,7 +262,7 @@ const Home = ({ onSelectProject, settings }: { onSelectProject: (project: Projec
       <section id="servicos" className="section-container scroll-mt-20 !pt-0">
         <div className="section-card p-5 flex flex-col items-center">
           <div className="mt-8 mb-12 text-center">
-            <h3 className="text-xl md:text-2xl font-bold tracking-[0.3em] uppercase opacity-40">
+            <h3 className="text-xl md:text-2xl font-bold tracking-tight opacity-40">
               Serviços
             </h3>
           </div>
@@ -324,7 +324,7 @@ const Home = ({ onSelectProject, settings }: { onSelectProject: (project: Projec
       <section id="depoimentos" className="section-container !pt-0">
         <div className="section-card p-5 md:p-10 flex flex-col items-center">
             <div className="mt-4 mb-12 text-center">
-               <h3 className="text-xl md:text-2xl font-bold tracking-[0.3em] uppercase opacity-40">Depoimentos</h3>
+               <h3 className="text-xl md:text-2xl font-bold tracking-tight opacity-40">Depoimentos</h3>
             </div>
             
             <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6 pb-12">
@@ -451,7 +451,7 @@ const AdminLogin = ({ onClose }: { onClose?: () => void }) => {
           </div>
 
           <div className="space-y-2">
-            <h2 className="text-3xl font-black uppercase tracking-tighter">Painel Restrito</h2>
+            <h2 className="text-3xl font-black tracking-tighter">Painel Restrito</h2>
             <p className="text-zinc-500 text-sm font-medium">Acesso restrito para administradores e suporte técnico.</p>
           </div>
 
@@ -657,7 +657,7 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
       <footer id="contato" className="section-container scroll-mt-20 !pt-0">
         <div className="section-card p-5 md:p-10 flex flex-col items-center">
           <div className="mt-4 mb-12 text-center">
-            <h3 className="text-xl md:text-2xl font-bold tracking-[0.3em] uppercase opacity-40">
+            <h3 className="text-xl md:text-2xl font-bold tracking-tight opacity-40">
               Contato
             </h3>
           </div>
