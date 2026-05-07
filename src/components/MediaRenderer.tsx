@@ -113,20 +113,22 @@ export const MediaRenderer: React.FC<MediaRendererProps> = ({
   if (renderType === 'image') {
     if (media.images && media.images.length > 0) {
       return (
-        <div className="w-full h-full bg-zinc-950 overflow-y-auto custom-scrollbar flex flex-col">
-          <div className="relative w-full">
+        <div className={`w-full h-full ${theme.playerBg || 'bg-zinc-950'} overflow-y-auto custom-scrollbar flex flex-col m-0 p-0`}>
+          <div className="relative w-full flex flex-col m-0 p-0">
             {media.images.map((url, i) => {
               if (!url) return null;
               return (
                 <img 
                   key={i}
                   src={url} 
-                  className="w-full h-auto block"
+                  className="w-full h-auto block m-0 p-0"
                   style={{ 
                     transform: media.zoom ? `scale(${media.zoom})` : 'scale(1)',
-                    transformOrigin: 'top center'
+                    transformOrigin: 'top center',
+                    display: 'block'
                   }}
                   alt=""
+                  referrerPolicy="no-referrer"
                 />
               );
             })}
@@ -175,12 +177,12 @@ export const MediaRenderer: React.FC<MediaRendererProps> = ({
     const loadingStrategy = isAuddarProject || isFirstThreeCards ? "eager" : "lazy";
 
     return (
-      <div className={`w-full h-full relative ${allowScroll ? 'overflow-y-scroll bg-zinc-950 custom-scrollbar' : 'overflow-hidden'}`}>
-        <div className={`${allowScroll ? 'w-full block relative' : 'w-full h-full flex items-center justify-center bg-zinc-950'}`}>
+      <div className={`w-full h-full relative ${allowScroll ? 'overflow-y-scroll bg-zinc-950 custom-scrollbar m-0 p-0' : 'overflow-hidden m-0 p-0'}`}>
+        <div className={`${allowScroll ? 'w-full block relative m-0 p-0' : 'w-full h-full flex items-center justify-center bg-zinc-950 m-0 p-0'}`}>
           <img 
             key={renderUrl}
             src={renderUrl} 
-            className={`w-full block object-top ${allowScroll ? 'h-auto min-h-full' : `h-full ${objectFitClass}`}`}
+            className={`w-full block object-top m-0 p-0 ${allowScroll ? 'h-auto min-h-full' : `h-full ${objectFitClass}`}`}
             style={{ 
               transformBasis: 'auto',
               flexShrink: 0,

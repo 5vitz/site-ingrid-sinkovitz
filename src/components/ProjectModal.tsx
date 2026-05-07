@@ -307,17 +307,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   // Aspect Ratio: Prioriza o da mídia, depois o do feed, depois o padrão baseado em orientação
   let currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || 0.8;
   
-  // Customização para projeto Auddar: 
-  // Card 1, 2, 3 (feedIndex 0, 1, 2) -> 764:540 (~1.41)
-  // Card 4+ (feedIndex >= 3) -> 1:1
-  if (project?.id === 'projeto-auddar') {
-    if (feedIndex <= 2) {
-      currentAspectRatio = 764 / 540; 
-    } else {
-      currentAspectRatio = 1.0;
-    }
-  }
-  
   const baseHeight = currentMedia?.playerHeight || theme.playerHeight || 540;
   const baseWidth = currentMedia?.playerWidth || (baseHeight * currentAspectRatio);
   const playerAspectRatio = baseWidth / baseHeight;
@@ -329,13 +318,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   if (playerHeight > maxAllowedHeight) {
     playerHeight = maxAllowedHeight;
     playerWidth = playerHeight * playerAspectRatio;
-  }
-
-  if (project?.id === 'projeto-auddar') {
-    if (playerHeight > 540) {
-      playerHeight = 540;
-      playerWidth = playerHeight * currentAspectRatio;
-    }
   }
 
   const handleToggleMute = (e: React.MouseEvent) => {
