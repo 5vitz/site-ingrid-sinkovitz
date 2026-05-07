@@ -17,7 +17,18 @@ export const ProjectSection: React.FC<{ onSelectProject: (p: Project) => void }>
 
       const merged = base.map(sp => {
         const dbP = dbMap.get(sp.id);
-        return dbP ? { ...sp, ...dbP } : sp;
+        if (!dbP) return sp;
+        
+        // Prioriza a estrutura e conteúdo (feed, aboutConfig, audioUrl) do CÓDIGO
+        // Mas mantém metadados de controle do DB
+        return { 
+          ...dbP, 
+          title: sp.title,
+          feed: sp.feed, 
+          aboutConfig: sp.aboutConfig,
+          audioUrl: sp.audioUrl,
+          theme: { ...sp.theme, ...dbP.theme }
+        };
       });
 
       const staticIds = new Set(base.map(p => p.id));

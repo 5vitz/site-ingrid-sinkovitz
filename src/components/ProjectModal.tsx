@@ -25,7 +25,14 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const [isPlaying, setIsPlaying] = useState(true);
   const [showPlayStateIcon, setShowPlayStateIcon] = useState<boolean | null>(null);
   const [isMuted, setIsMuted] = useState(false);
-  const [audioVolume, setAudioVolume] = useState(0.8);
+  const [audioVolume, setAudioVolume] = useState(() => {
+    try {
+      const saved = localStorage.getItem('portfolio_audio_volume');
+      return saved ? parseFloat(saved) : 0.8;
+    } catch (e) {
+      return 0.8;
+    }
+  });
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [shouldDuck, setShouldDuck] = useState(false);
   const [windowSize, setWindowSize] = useState({ 
@@ -67,6 +74,21 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   }, [storyIndex, totalStoriesForNav]);
 
   useEffect(() => {
+    try {
+      localStorage.setItem('portfolio_audio_volume', audioVolume.toString());
+    } catch (e) {
+      // Silently fail if localStorage is blocked
+    }
+  }, [audioVolume]);
+
+  const currentMedia = storyIndex === 0 ? currentFeed?.media : currentStories[storyIndex - 1];
+  
+  useEffect(() => {
+    const isVideo = currentMedia?.type === 'video';
+    setShouldDuck(isVideo && isPlaying && !isMuted);
+  }, [currentMedia?.type, isPlaying, isMuted]);
+
+  useEffect(() => {
     if (project) {
       setFeedIndex(0);
       setStoryIndex(0);
@@ -74,7 +96,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       setIsPlaying(true);
       setShowPlayStateIcon(null);
       setIsMuted(false);
-      setShouldDuck(false);
 
       if (audioRef.current) {
         audioRef.current.pause();
@@ -90,15 +111,12 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       return;
     }
     
-    // Always update src when audioUrl of the specific project changes
     audio.src = project.audioUrl;
     audio.load();
     audio.muted = isMuted;
     audio.volume = shouldDuck ? audioVolume * 0.2 : audioVolume;
 
     const attemptPlay = () => {
-      // Browsers often block autoplay without interaction. 
-      // Since clicking the project is an interaction, this should work.
       if (!isMuted && showPlayer) {
         audio.play().catch(err => {
           console.warn("Autoplay blocked/failed.", err);
@@ -107,14 +125,13 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     };
 
     audio.addEventListener('canplaythrough', attemptPlay);
-    // Try to play immediately if cached or already ready
     attemptPlay();
 
     return () => {
       audio.removeEventListener('canplaythrough', attemptPlay);
       audio.pause();
     };
-  }, [project?.audioUrl]); // Removing project.id to avoid unnecessary resets if URL is same
+  }, [project?.audioUrl]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -132,11 +149,19 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     }
   }, [isMuted, shouldDuck, showPlayer, audioVolume, isPlaying]);
 
+  const togglePlay = useCallback(() => {
+    const nextState = !isPlaying;
+    setIsPlaying(nextState);
+    setShowPlayStateIcon(nextState);
+    
+    setTimeout(() => {
+      setShowPlayStateIcon(null);
+    }, 800);
+  }, [isPlaying]);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!showPlayer) return;
-      
-      const isHorizontalLayout = project?.layoutType === 'horizontal';
       
       switch (e.key) {
         case 'ArrowRight':
@@ -151,7 +176,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
         case 'ArrowDown':
           navigateFeed(1);
           break;
-        case ' ': // Espaço para Pausar/Play
+        case ' ':
           e.preventDefault();
           togglePlay();
           break;
@@ -163,13 +188,12 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [showPlayer, navigateStory, navigateFeed, onClose, project?.layoutType, storyIndex, totalStoriesForNav]);
+  }, [showPlayer, navigateStory, navigateFeed, onClose, togglePlay]);
 
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       if (!showPlayer || isScrollingRef.current) return;
       
-      // Sensibilidade do scroll restaurada para navegação fluida
       if (Math.abs(e.deltaY) > 20) {
         if (e.deltaY > 0) {
           navigateFeed(1);
@@ -183,7 +207,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     return () => window.removeEventListener('wheel', handleWheel);
   }, [showPlayer, navigateFeed]);
 
-  // Bloqueio de scroll do body
   useEffect(() => {
     if (project) {
       document.body.style.overflow = 'hidden';
@@ -208,17 +231,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const togglePlay = useCallback(() => {
-    const nextState = !isPlaying;
-    setIsPlaying(nextState);
-    setShowPlayStateIcon(nextState);
-    
-    // Esconder o ícone após 800ms
-    setTimeout(() => {
-      setShowPlayStateIcon(null);
-    }, 800);
-  }, [isPlaying]);
-
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartRef.current = {
       x: e.touches[0].clientX,
@@ -233,15 +245,12 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     const deltaY = e.changedTouches[0].clientY - touchStartRef.current.y;
     touchStartRef.current = null;
 
-    // Detectar direção predominante
     if (Math.abs(deltaX) > Math.abs(deltaY)) {
-      // Horizontal (Stories)
       if (Math.abs(deltaX) > 40) {
         if (deltaX > 0) navigateStory(-1);
         else navigateStory(1);
       }
     } else {
-      // Vertical (Feed)
       if (Math.abs(deltaY) > 40) {
         if (deltaY > 0) navigateFeed(-1);
         else navigateFeed(1);
@@ -250,20 +259,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   };
 
   if (!project) return null;
-
-  const handleStartTour = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setShowPlayer(true);
-    setIsMuted(false); 
-    if (audioRef.current) {
-      audioRef.current.muted = false;
-      audioRef.current.play().catch(() => {});
-    }
-  };
-
-  const isLionJump = project?.id === 'projeto-lion-jump';
-  const isEloBike = project?.id === 'projeto-elobike';
-  const isAuddar = project?.id === 'projeto-auddar';
 
   const theme = project?.theme || {
     playerBg: 'bg-black',
@@ -277,8 +272,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const viewportWidth = windowSize.width;
   const isDesktop = viewportWidth > 1024;
   
-  const currentMedia = storyIndex === 0 ? currentFeed?.media : currentStories[storyIndex - 1];
-  
   // Aspect Ratio: Prioriza o da mídia, depois o do feed, depois o padrão baseado em orientação
   let currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || 0.8;
   
@@ -287,23 +280,18 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   // Card 4+ (feedIndex >= 3) -> 1:1
   if (project?.id === 'projeto-auddar') {
     if (feedIndex <= 2) {
-      currentAspectRatio = 764 / 540; // Horizontalizado conforme solicitado (764x540)
+      currentAspectRatio = 764 / 540; 
     } else {
-      currentAspectRatio = 1.0; // Quadrado
+      currentAspectRatio = 1.0;
     }
   }
   
-  // Altura base: 540 como padrão vertical/horizontal
   const baseHeight = currentMedia?.playerHeight || theme.playerHeight || 540;
-  
-  // Largura base: Prioriza largura específica da mídia, senão calcula pelo aspect ratio
   const baseWidth = currentMedia?.playerWidth || (baseHeight * currentAspectRatio);
-  
   const playerAspectRatio = baseWidth / baseHeight;
   
   let playerWidth = isDesktop ? baseWidth : Math.min(baseWidth, viewportWidth * 0.92);
   let playerHeight = playerWidth / playerAspectRatio;
-  
   const maxAllowedHeight = viewportHeight * 0.88;
 
   if (playerHeight > maxAllowedHeight) {
@@ -311,7 +299,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     playerWidth = playerHeight * playerAspectRatio;
   }
 
-  // Garantia final para Auddar: Altura máxima 540px
   if (project?.id === 'projeto-auddar') {
     if (playerHeight > 540) {
       playerHeight = 540;
@@ -324,7 +311,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     setIsMuted(!isMuted);
   };
 
-  // Renderização do Layout Baseado no Tipo
   const renderLayout = () => {
     const layoutProps = {
       project,
@@ -343,7 +329,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       return <HorizontalLayout {...layoutProps} />;
     }
 
-    // Default ou Vertical (Lion Jump usa este agora)
     return <VerticalLayout {...layoutProps} />;
   };
 
@@ -362,7 +347,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
         onClick={e => e.stopPropagation()}
       >
         <div className="flex items-center justify-center w-full h-full relative">
-          {/* Contêiner do Player com clique para Play/Pause */}
           <div 
             className="relative flex items-center justify-center cursor-pointer group"
             style={{ width: playerWidth, height: playerHeight }}
@@ -370,7 +354,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
           >
             {renderLayout()}
 
-            {/* Overlay de Feedback de Play/Pause */}
             {!isPlaying && (
               <div className="absolute inset-0 flex items-center justify-center z-[10030] pointer-events-none">
                 <div className="bg-black/40 backdrop-blur-md p-6 rounded-full">
@@ -379,7 +362,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
               </div>
             )}
 
-            {/* Botão Fechar (X) - Colado no Card */}
             <button 
               onClick={(e) => { 
                 e.stopPropagation(); 

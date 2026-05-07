@@ -177,7 +177,7 @@ export const MediaRenderer: React.FC<MediaRendererProps> = ({
           <img 
             key={renderUrl}
             src={renderUrl} 
-            className={`w-full block object-top ${allowScroll ? 'h-auto !min-h-[101%]' : `h-full ${objectFitClass}`}`}
+            className={`w-full block object-top ${allowScroll ? 'h-auto min-h-full' : `h-full ${objectFitClass}`}`}
             style={{ 
               transformBasis: 'auto',
               flexShrink: 0,
@@ -187,7 +187,6 @@ export const MediaRenderer: React.FC<MediaRendererProps> = ({
             referrerPolicy="no-referrer"
             loading={isFirstThreeCards ? "eager" : "lazy"}
           />
-          {allowScroll && <div className="h-64 w-full" />} 
         </div>
       </div>
     );
