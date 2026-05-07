@@ -49,8 +49,40 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const touchStartRef = useRef<{ x: number, y: number } | null>(null);
   const isScrollingRef = useRef(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const preloadedUrls = useRef<Set<string>>(new Set());
 
   // 2. Callbacks e Efeitos
+  
+  // Efeito de Preloading Inteligente
+  useEffect(() => {
+    if (!project || !project.feed) return;
+
+    const urlsToPreload: string[] = [];
+
+    // 1. Preload das próximas 2 imagens do feed
+    for (let i = 1; i <= 2; i++) {
+      const nextFeed = project.feed[feedIndex + i];
+      if (nextFeed?.media?.url) urlsToPreload.push(nextFeed.media.url);
+    }
+
+    // 2. Preload das próximas 2 imagens de stories do feed atual
+    if (currentStories.length > 0) {
+      for (let i = storyIndex; i < storyIndex + 2; i++) {
+        const nextStory = currentStories[i];
+        if (nextStory?.url) urlsToPreload.push(nextStory.url);
+      }
+    }
+
+    // Executar o preload
+    urlsToPreload.forEach(url => {
+      if (url && !preloadedUrls.current.has(url)) {
+        const img = new Image();
+        img.src = url;
+        preloadedUrls.current.add(url);
+      }
+    });
+
+  }, [project, feedIndex, storyIndex, currentStories]);
   
   const navigateFeed = useCallback((direction: 1 | -1) => {
     if (isScrollingRef.current) return;

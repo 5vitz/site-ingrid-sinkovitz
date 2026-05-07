@@ -21,9 +21,26 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, hasR
     .replace(/^(Projeto|projeto)\s+/i, '')
     .trim();
 
+  const handleMouseEnter = () => {
+    // Prefetch da imagem de capa, áudio e primeira mídia no hover
+    if (project.coverImage) {
+      const img = new Image();
+      img.src = project.coverImage;
+    }
+    if (project.audioUrl) {
+      const audio = new Audio();
+      audio.src = project.audioUrl;
+    }
+    if (project.feed?.[0]?.media?.url) {
+      const img = new Image();
+      img.src = project.feed[0].media.url;
+    }
+  };
+
   return (
     <motion.div 
       whileHover={{ y: -8, scale: 1.01 }}
+      onMouseEnter={handleMouseEnter}
       onClick={onClick}
       className={`${cardClass} cursor-pointer group rounded-[8px] snap-center bg-zinc-900 shadow-xl overflow-hidden relative flex items-center justify-center border border-white/5 transition-all duration-300`}
     >

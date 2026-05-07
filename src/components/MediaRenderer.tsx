@@ -171,6 +171,9 @@ export const MediaRenderer: React.FC<MediaRendererProps> = ({
     // For Auddar project, if not scrolling, use object-contain to avoid cutting images that aren't perfectly square
     const objectFitClass = isAuddarProject && !allowScroll ? 'object-contain' : (media.objectFit === 'contain' ? 'object-contain' : 'object-cover');
 
+    // Prioridade máxima para o projeto Auddar
+    const loadingStrategy = isAuddarProject || isFirstThreeCards ? "eager" : "lazy";
+
     return (
       <div className={`w-full h-full relative ${allowScroll ? 'overflow-y-scroll bg-zinc-950 custom-scrollbar' : 'overflow-hidden'}`}>
         <div className={`${allowScroll ? 'w-full block relative' : 'w-full h-full flex items-center justify-center bg-zinc-950'}`}>
@@ -185,7 +188,8 @@ export const MediaRenderer: React.FC<MediaRendererProps> = ({
             }}
             alt={media.title || ''}
             referrerPolicy="no-referrer"
-            loading={isFirstThreeCards ? "eager" : "lazy"}
+            loading={loadingStrategy}
+            fetchPriority={isAuddarProject ? "high" : "auto"}
           />
         </div>
       </div>
