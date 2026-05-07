@@ -77,7 +77,7 @@ export const HorizontalLayout: React.FC<LayoutProps> = ({
           {totalStories > 1 && (
             <>
               {/* Pagination Dots (Carousel Indicator) */}
-              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-[10020] px-3 py-2 rounded-full bg-black/30 backdrop-blur-md border border-white/5 shadow-2xl transition-all hover:bg-black/40">
+              <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-[10020] px-3 py-2 rounded-full bg-black/30 backdrop-blur-md border border-white/5 shadow-2xl transition-all hover:bg-black/40">
                 {Array.from({ length: totalStories }).map((_, idx) => (
                   <button
                     key={`dot-${idx}`}
