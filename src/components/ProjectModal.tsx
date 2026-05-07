@@ -169,8 +169,8 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     const handleWheel = (e: WheelEvent) => {
       if (!showPlayer || isScrollingRef.current) return;
       
-      // Sensibilidade do scroll diminuída para evitar disparos acidentais
-      if (Math.abs(e.deltaY) > 50) {
+      // Sensibilidade do scroll restaurada para navegação fluida
+      if (Math.abs(e.deltaY) > 20) {
         if (e.deltaY > 0) {
           navigateFeed(1);
         } else {
@@ -280,21 +280,43 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const currentMedia = storyIndex === 0 ? currentFeed?.media : currentStories[storyIndex - 1];
   
   // Aspect Ratio: Prioriza o da mídia, depois o do feed, depois o padrão baseado em orientação
-  const currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || 0.8;
-  const isHorizontal = currentAspectRatio > 1.2;
+  let currentAspectRatio = currentMedia?.aspectRatio || currentFeed?.aspectRatio || 0.8;
+  
+  // Customização para projeto Auddar: 
+  // Card 1, 2, 3 (feedIndex 0, 1, 2) -> 764:540 (~1.41)
+  // Card 4+ (feedIndex >= 3) -> 1:1
+  if (project?.id === 'projeto-auddar') {
+    if (feedIndex <= 2) {
+      currentAspectRatio = 764 / 540; // Horizontalizado conforme solicitado (764x540)
+    } else {
+      currentAspectRatio = 1.0; // Quadrado
+    }
+  }
   
   // Altura base: 540 como padrão vertical/horizontal
-  const baseHeight = isAuddar ? 540 : (currentMedia?.playerHeight || theme.playerHeight || 540);
+  const baseHeight = currentMedia?.playerHeight || theme.playerHeight || 540;
   
   // Largura base: Prioriza largura específica da mídia, senão calcula pelo aspect ratio
-  const baseWidth = isAuddar ? 540 : (currentMedia?.playerWidth || (baseHeight * currentAspectRatio));
+  const baseWidth = currentMedia?.playerWidth || (baseHeight * currentAspectRatio);
   
-  const playerWidth = isDesktop ? baseWidth : Math.min(baseWidth, viewportWidth * 0.95);
-  let playerHeight = playerWidth / (baseWidth / baseHeight);
+  const playerAspectRatio = baseWidth / baseHeight;
+  
+  let playerWidth = isDesktop ? baseWidth : Math.min(baseWidth, viewportWidth * 0.92);
+  let playerHeight = playerWidth / playerAspectRatio;
+  
   const maxAllowedHeight = viewportHeight * 0.88;
 
   if (playerHeight > maxAllowedHeight) {
     playerHeight = maxAllowedHeight;
+    playerWidth = playerHeight * playerAspectRatio;
+  }
+
+  // Garantia final para Auddar: Altura máxima 540px
+  if (project?.id === 'projeto-auddar') {
+    if (playerHeight > 540) {
+      playerHeight = 540;
+      playerWidth = playerHeight * currentAspectRatio;
+    }
   }
 
   const handleToggleMute = (e: React.MouseEvent) => {
@@ -329,7 +351,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center select-none overflow-hidden"
+      className="fixed inset-0 z-[9999] bg-[#000000] flex items-center justify-center select-none overflow-hidden"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >

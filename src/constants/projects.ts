@@ -399,28 +399,6 @@ Construção de visibilidade e posicionamento artístico por meio de comunicaç�
         allowScroll: true
       }
     },
-    // Seção 03: SuperStar
-    {
-      id: 'lj-feed-03',
-      title: 'SuperStar',
-      aspectRatio: 1.77777777778,
-      media: { 
-        type: 'image', 
-        order: 6, 
-        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F03-SuperStar%2FCapaSuperStar.png?alt=media&token=4eb58609-525a-4e49-aaa6-ad046da90beb',
-      }
-    },
-    {
-      id: 'lj-feed-03-gshow',
-      title: 'GShow 1',
-      aspectRatio: 1.77777777778,
-      media: {
-        type: 'image',
-        order: 7,
-        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F03-SuperStar%2FGShow1%2FGShow1.png?alt=media&token=39148d2c-02c9-4156-beeb-5ef15cfc1841',
-        allowScroll: true
-      }
-    },
     {
       id: 'lj-feed-03-video',
       title: 'SuperStar Apresentação',
@@ -529,79 +507,47 @@ export const AUDDAR_PROJECT: Project = {
     playerShadow: 'shadow-[0_0_50px_rgba(23,37,84,0.4)] animate-neon-pulse',
     navButtonBg: 'bg-[#172554]/60',
     navButtonColor: 'text-white',
-    playerWidth: 960,
+    playerWidth: 540,
     playerHeight: 540,
     borderWidth: '1px',
     borderRadius: '8px'
   },
-  aboutConfig: {
-    title: 'Estruturação de Marketing e Materiais de Venda',
-    subtitle: 'Audaar - Techospitality',
-    description: `Projeto de estruturação da comunicação e dos serviços da Audaar, empresa de tecnologia para o setor de hospedagem. Objetivo de organizar a proposta de valor da marca, desenvolver narrativa e materiais estratégicos de venda, com foco em clareza, consistência e conversão.
-
-Meu papel:
-Gerente de Marketing, atuando de forma integrada ao time comercial para estruturar comunicação, presença digital e suporte às vendas.
-
-Escopo de atuação:
-Desenvolvimento de narrativa, tom de voz e posicionamento
-Criação de apresentações comerciais e materiais de venda (propostas, serviços e pitch)
-Estruturação do Instagram (bio, destaques e identidade inicial)
-Produção de conteúdos estratégicos (carrosséis informativos)
-Criação de e-mail marketing (copy e layout) para relacionamento e apoio comercial
-Planejamento de ações e conteúdos alinhados à aquisição e posicionamento
-Apoio a demandas internas de comunicação (endomarketing)
-
-Entrega:
-Organização e clareza na comunicação dos serviços
-Materiais estruturados para apoio direto ao time comercial
-Base de presença digital alinhada ao posicionamento da marca
-Conteúdos voltados à educação do público e geração de demanda
-
-Foco estratégico:
-Tradução de soluções técnicas em comunicação acessível e orientada à conversão, conectando marketing, conteúdo e processo comercial`,
-    ctaText: 'Ver Projeto',
-    width: 'max-w-2xl',
-    backgroundColor: 'bg-zinc-900/90',
-    textColor: 'text-white',
-    ctaColor: 'bg-[#172554]',
-    ctaTextColor: 'text-white'
-  },
+  aboutConfig: undefined,
   feed: [
     {
       id: 'auddar-03',
       title: 'Apresentação Comercial',
-      aspectRatio: 1.777,
+      aspectRatio: 1.0,
       media: {
-        type: 'pdf',
-        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F03-Apresentacao.pdf?alt=media&token=e1773370-5a15-409c-9f1b-9cbbc8a5d284'
+        type: 'image',
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F03-Apresentacao_page-0001.jpg?alt=media&token=a6f10c92-e431-45b3-9c51-42d3391cbe67',
+        allowScroll: true
       }
     },
     {
       id: 'auddar-04',
       title: 'Parceria Estratégica',
-      aspectRatio: 0.8,
+      aspectRatio: 1.0,
       media: {
         type: 'image',
         url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F04-Parceria.png?alt=media&token=88d95213-2428-441a-8b02-587733d0cfae',
         allowScroll: true,
-        zoom: 1.01
       }
     },
     {
       id: 'auddar-05',
       title: 'E-mail Marketing',
-      aspectRatio: 0.8,
+      aspectRatio: 1.0,
       media: {
         type: 'image',
         url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F05-Email.png?alt=media&token=b4a3b159-284e-463f-9de8-8075862e73c7',
         allowScroll: true,
-        zoom: 1.01
       }
     },
     {
       id: 'auddar-carousel-1',
       title: 'Carrossel 1',
-      aspectRatio: 0.8,
+      aspectRatio: 1.0,
       media: {
         type: 'image',
         url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F06.png?alt=media&token=680da923-89b6-42c0-9137-dfa6fc042f2c'
@@ -617,7 +563,7 @@ Tradução de soluções técnicas em comunicação acessível e orientada à co
     {
       id: 'auddar-carousel-2',
       title: 'Carrossel 2',
-      aspectRatio: 0.8,
+      aspectRatio: 1.0,
       media: {
         type: 'image',
         url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F07.png?alt=media&token=2ea91a9d-1abb-488e-9911-1c8cd0030b30'

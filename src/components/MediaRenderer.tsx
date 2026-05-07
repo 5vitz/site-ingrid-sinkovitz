@@ -11,6 +11,7 @@ interface MediaRendererProps {
   isPlaying?: boolean;
   theme: any;
   projectId?: string;
+  feedIndex?: number;
 }
 
 export const MediaRenderer: React.FC<MediaRendererProps> = ({ 
@@ -19,7 +20,8 @@ export const MediaRenderer: React.FC<MediaRendererProps> = ({
   isMuted = true, 
   isPlaying = true,
   theme, 
-  projectId 
+  projectId,
+  feedIndex
 }) => {
   const videoRef = React.useRef<HTMLVideoElement>(null);
 
@@ -40,20 +42,50 @@ export const MediaRenderer: React.FC<MediaRendererProps> = ({
   }, [isPlaying, isActive]);
 
   if (!media) return null;
-  
-  // Fallback for Auddar project if specific media items need scroll but aren't flagged in DB
-  const forceScroll = projectId === 'projeto-auddar' && 
-    (media.id === 'auddar-04' || media.id === 'auddar-05' || media.url?.includes('04-Parceria.png') || media.url?.includes('05-Email.png'));
-  const allowScroll = media.allowScroll || forceScroll;
 
-  if (media.type === 'video') {
-    if (!media.url) return <div className="w-full h-full bg-zinc-900 animate-pulse" />;
+  // Determinar tipo e propriedades locais para evitar mutar o objeto original (prop)
+  let renderType = media.type;
+  let renderUrl = media.url;
+  
+  // Override para projeto Auddar (cards 1, 2 e 3 são documentos longos)
+  const isAuddarProject = projectId?.toLowerCase() === 'projeto-auddar' || projectId?.toLowerCase() === 'auddar';
+  
+  // Detecção por índice (Card 1, 2 e 3) ou por características do objeto (ID ou Título)
+  const isFirstThreeCards = typeof feedIndex === 'number' && feedIndex <= 2;
+  const isAuddarDocument = isAuddarProject && (
+    isFirstThreeCards || 
+    media.allowScroll === true || 
+    media.id?.includes('auddar-03') || 
+    media.id?.includes('auddar-04') || 
+    media.id?.includes('auddar-05') ||
+    media.title?.toLowerCase().includes('apresentação') ||
+    media.title?.toLowerCase().includes('parceria') ||
+    media.title?.toLowerCase().includes('email')
+  );
+
+  // Garantia ABSOLUTA de URL e TIPO para Auddar Card 1
+  if (isAuddarProject && (feedIndex === 0 || media.id === 'auddar-03' || media.title?.toLowerCase().includes('apresentação'))) {
+    renderType = 'image' as any;
+    // Se a URL estiver vazia ou for de um PDF antigo, forçamos o JPG
+    if (!renderUrl || renderUrl === '' || renderUrl.toLowerCase().includes('.pdf')) {
+      renderUrl = 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto5%2F03-Apresentacao_page-0001.jpg?alt=media&token=a6f10c92-e431-45b3-9c51-42d3391cbe67';
+    }
+  }
+
+  if (isAuddarDocument) {
+    renderType = 'image' as any;
+  }
+  
+  const allowScroll = media.allowScroll || isAuddarDocument;
+
+  if (renderType === 'video') {
+    if (!renderUrl) return <div className="w-full h-full bg-zinc-900 animate-pulse" />;
     return (
-      <div className="w-full h-full relative bg-black">
+      <div className="w-full h-full relative bg-zinc-950">
         <video
           ref={videoRef}
-          key={media.url}
-          src={media.url}
+          key={renderUrl}
+          src={renderUrl}
           className={`w-full h-full ${media.objectFit === 'contain' ? 'object-contain' : 'object-cover'}`}
           style={{ 
             transform: `scale(${media.zoom || 1}) translateX(${media.xOffset || 0}px) translateY(${media.yOffset || 0}px)`,
@@ -69,20 +101,19 @@ export const MediaRenderer: React.FC<MediaRendererProps> = ({
     );
   }
 
-  if (media.type === 'image' || media.type === 'pdf') {
-    const isPDF = media.type === 'pdf' || media.url?.toLowerCase().includes('.pdf');
-    if (isPDF) {
-      return (
-        <PDFViewer 
-          url={media.url || ''} 
-          title={media.title} 
-        />
-      );
-    }
+  if (renderType === 'pdf') {
+    return (
+      <PDFViewer 
+        url={renderUrl || ''} 
+        title={media.title} 
+      />
+    );
+  }
 
+  if (renderType === 'image') {
     if (media.images && media.images.length > 0) {
       return (
-        <div className="w-full h-full bg-black overflow-y-auto custom-scrollbar flex flex-col">
+        <div className="w-full h-full bg-zinc-950 overflow-y-auto custom-scrollbar flex flex-col">
           <div className="relative w-full">
             {media.images.map((url, i) => {
               if (!url) return null;
@@ -134,13 +165,19 @@ export const MediaRenderer: React.FC<MediaRendererProps> = ({
         </div>
       );
     }
-    if (!media.url) return <div className="w-full h-full bg-zinc-900 animate-pulse" />;
+    
+    if (!renderUrl) return <div className="w-full h-full bg-zinc-900 animate-pulse" />;
+    
+    // For Auddar project, if not scrolling, use object-contain to avoid cutting images that aren't perfectly square
+    const objectFitClass = isAuddarProject && !allowScroll ? 'object-contain' : (media.objectFit === 'contain' ? 'object-contain' : 'object-cover');
+
     return (
-      <div className={`w-full h-full relative ${allowScroll ? 'overflow-y-auto bg-black custom-scrollbar' : 'overflow-hidden'}`}>
-        <div className={`${allowScroll ? 'w-full block relative' : 'w-full h-full flex items-center justify-center'}`}>
+      <div className={`w-full h-full relative ${allowScroll ? 'overflow-y-scroll bg-zinc-950 custom-scrollbar' : 'overflow-hidden'}`}>
+        <div className={`${allowScroll ? 'w-full block relative' : 'w-full h-full flex items-center justify-center bg-zinc-950'}`}>
           <img 
-            src={media.url} 
-            className={`w-full block ${allowScroll ? 'h-auto !min-h-[101%]' : `h-full ${media.objectFit === 'contain' ? 'object-contain' : 'object-cover'}`}`}
+            key={renderUrl}
+            src={renderUrl} 
+            className={`w-full block object-top ${allowScroll ? 'h-auto !min-h-[101%]' : `h-full ${objectFitClass}`}`}
             style={{ 
               transformBasis: 'auto',
               flexShrink: 0,
@@ -148,6 +185,7 @@ export const MediaRenderer: React.FC<MediaRendererProps> = ({
             }}
             alt={media.title || ''}
             referrerPolicy="no-referrer"
+            loading={isFirstThreeCards ? "eager" : "lazy"}
           />
           {allowScroll && <div className="h-64 w-full" />} 
         </div>
@@ -155,11 +193,11 @@ export const MediaRenderer: React.FC<MediaRendererProps> = ({
     );
   }
 
-  if (media.type === 'iframe') {
+  if (renderType === 'iframe') {
     return (
       <div className={`w-full h-full ${theme.playerBg || 'bg-black'} relative overflow-hidden`}>
         <iframe 
-          src={media.url}
+          src={renderUrl}
           className="w-full h-full border-none"
           style={{ 
             transform: media.zoom ? `scale(${media.zoom})` : undefined,
@@ -175,7 +213,7 @@ export const MediaRenderer: React.FC<MediaRendererProps> = ({
     );
   }
 
-  if (media.type === 'text') {
+  if (renderType === 'text') {
     const content = typeof media.content === 'string' ? media.content : '';
     const title = typeof media.title === 'string' ? media.title : '';
     const subtitle = typeof media.subtitle === 'string' ? media.subtitle : '';
@@ -243,9 +281,9 @@ export const MediaRenderer: React.FC<MediaRendererProps> = ({
 
     return (
       <div className="w-full h-full relative flex flex-col overflow-hidden bg-white group">
-        {media.url && (
+        {renderUrl && (
           <img 
-            src={media.url} 
+            src={renderUrl} 
             className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-20 scale-125 transition-transform duration-1000 group-hover:scale-110" 
             alt="" 
           />

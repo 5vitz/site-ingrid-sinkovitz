@@ -50,19 +50,8 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
   }, []);
 
   const handleSelectProject = (project: Project) => {
-    // Caso de uso: Clique no card (Case A ou primeira etapa do Case B)
     if (project.isLocked && !user) {
       setLockedProject(project);
-      return;
-    }
-
-    // Se for mobile e o projeto for primordialmente um PDF, abrimos direto
-    const isMobile = window.innerWidth < 768;
-    const firstMedia = project.feed?.[0];
-    const isPDF = firstMedia?.media?.type === 'pdf' || firstMedia?.media?.url?.toLowerCase().includes('.pdf');
-    
-    if (isMobile && isPDF && firstMedia?.media?.url && !project.aboutConfig) {
-      window.open(firstMedia.media.url, '_blank');
       return;
     }
 
@@ -76,18 +65,6 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
   const handleStartProject = () => {
     if (aboutProject) {
       const p = aboutProject;
-      
-      // Se for mobile e o projeto for primordialmente um PDF, abrimos direto após o "Start"
-      const isMobile = window.innerWidth < 768;
-      const firstMedia = p.feed?.[0];
-      const isPDF = firstMedia?.media?.type === 'pdf' || firstMedia?.media?.url?.toLowerCase().includes('.pdf');
-
-      if (isMobile && isPDF && firstMedia?.media?.url) {
-        setAboutProject(null);
-        window.open(firstMedia.media.url, '_blank');
-        return;
-      }
-
       setAboutProject(null);
       if (p.isLocked) {
         setLockedProject(p);

@@ -67,26 +67,25 @@
 
 /* Estilo Exclusivo apenas para elementos com a classe .custom-scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px !important;
-  height: 6px !important;
+  width: 14px !important;
+  height: 14px !important;
   display: block !important;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
   background: #000000 !important;
-  border-radius: 10px !important;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: #ffffff !important;
-  border-radius: 10px !important;
-  border: 1px solid #111111 !important;
+  border-radius: 4px !important;
+  border: 3px solid #000000 !important;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #e0e0e0 !important;
+  background: #f0f0f0 !important;
 }
 .custom-scrollbar {
-  scrollbar-width: thin !important;
+  scrollbar-width: auto !important;
   scrollbar-color: #ffffff #000000 !important;
-  overflow-y: auto !important;
+  overflow-y: scroll !important;
   -webkit-overflow-scrolling: touch !important;
 }
 

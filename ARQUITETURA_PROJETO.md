@@ -1,25 +1,20 @@
-# Documento de Arquitetura Master - Portfólio Ingrid Sinkovitz (Versão 5.8 - Hybrid Mobile UX)
+# Documento de Arquitetura Master - Portfólio Ingrid Sinkovitz (Versão 6.1 - Restoration & Image Prep)
 
 ## 1. Visão Geral e OKR
-Este documento reflete a transição para uma arquitetura de visualização híbrida, onde o dispositivo do usuário dita a melhor tecnologia de renderização para documentos complexos (PDFs).
+Esta versão marca a restauração da estabilidade original do site. Abandonamos permanentemente a tentativa de exibir PDFs via iframe/visualizadores externos, migrando para uma estratégia 100% baseada em imagens de alta fidelidade.
 
-*   **Objetivo Principal (OKR):** Estabilidade absoluta na visualização de portfólio técnico.
-*   **Status Atual:** Sistema Híbrido Ativo (Modal no Desktop / Nativo no Mobile).
+*   **Objetivo Principal (OKR):** Estética impecável e navegação fluida em todos os dispositivos.
+*   **Status Atual:** Sistema de Navegação Restaurado. Aguardando links de imagens (PNG).
 
 ## 2. Princípios de Desenvolvimento (Implementados)
-*   **Context-Aware Navigation:** O sistema detecta a largura da viewport (`isMobile`) para decidir o fluxo de abertura de projetos.
-*   **Native Fidelity:** No mobile, priorizamos o visualizador nativo do sistema operacional (iOS/Android) via nova aba, eliminando problemas de CORS, zoom e freeze de navegação.
+*   **Unified Modal Experience:** Abertura em nova aba removida. O usuário permanece 100% do tempo no ecossistema da marca.
+*   **Clean Card Interaction:** O clique no card de projeto abre o fluxo padrão (About -> Modal), sem interrupções técnicas.
 
-## 3. Estrutura de Pastas e Componentização
-*   `src/components/ProjectSection.tsx`: Agora atua como um "Traffic Controller", decidindo entre o `ProjectModal` ou a abertura direta de arquivo.
-*   `src/components/PDFViewer.tsx`: Mantido como fallback de excelência para visualização integrada no desktop.
-
-## 4. Otimizações de UX & Estabilidade (Recentes)
-*   **Mobile PDF Trigger:**
-    *   O clique no card de projeto ("Iniciar Tour") em dispositivos móveis abre o PDF em página cheia se este for a primeira mídia.
-    *   Benefício: Elimina o "player" travado e foca 100% no conteúdo.
-*   **Desktop Integrity:**
-    *   O fluxo de modal e navegação interna por "dots" permanece intacto para usuários de computador, garantindo a coesão estética do site.
+## 4. Estado dos Componentes
+*   `src/components/PDFViewer.tsx`: Convertido em um placeholder informativo.
+*   `src/components/MediaRenderer.tsx`: Implementada estratégia de **Override de Dados** para o item `auddar-03`. Esta técnica garante que a nova imagem JPG seja renderizada imediatamente, sobrepondo os dados obsoletos (PDF) que ainda residem no Firestore.
+*   `src/constants/projects.ts`: Atualizado como base de referência, embora o Firestore seja o provedor principal.
+*   `src/App.tsx`: Lógica de transição estável.
 
 ---
-*Assinado: Agente Lincoln - Versão 5.8 "Hybrid UX Strategy".*
+*Assinado: Agente Lincoln - Versão 6.4 "The Override Breakthrough".*

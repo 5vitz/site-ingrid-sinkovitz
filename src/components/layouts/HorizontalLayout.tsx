@@ -51,12 +51,12 @@ export const HorizontalLayout: React.FC<LayoutProps> = ({
         }}
       >
         <div 
-          className={`w-full h-full ${theme.playerBg || 'bg-black'} overflow-hidden relative border ${theme.playerBorder || 'border-white/10'} ${theme.playerShadow || ''}`}
+          className={`w-full h-full bg-[#000000] overflow-hidden relative ${theme.playerShadow || ''}`}
           style={{
             width: '100%',
             height: '100%',
-            borderRadius: '8px',
-            borderWidth: '1px',
+            borderRadius: '0px',
+            borderWidth: '0px',
           } as React.CSSProperties}
         >
           <div className="w-full h-full">
@@ -67,6 +67,7 @@ export const HorizontalLayout: React.FC<LayoutProps> = ({
               isPlaying={isPlaying}
               theme={theme} 
               projectId={project.id} 
+              feedIndex={feedIndex}
             />
           </div>
         </div>
