@@ -67,6 +67,56 @@ export const ProjectManager = () => {
     }
   };
 
+  const handleDelete = async (p: Project) => {
+    if (!confirm(`Deseja realmente excluir o projeto "${p.title}"?\nEsta ação não pode ser desfeita.`)) return;
+    
+    try {
+      await deleteProject(p.id);
+      // O hook useCollection cuidará da atualização da lista via onSnapshot
+    } catch (err) {
+      console.error("Erro ao deletar projeto:", err);
+      alert("Houve um erro técnico ao tentar excluir o projeto. Verifique sua conexão.");
+    }
+  };
+
+  // Função para resolver conflitos de slots automaticamente
+  const resolveConflicts = async () => {
+    // Ordenar por slot atual, depois por ID para consistência
+    const sorted = [...projects].sort((a, b) => {
+      const orderA = a.order || 0;
+      const orderB = b.order || 0;
+      if (orderA !== orderB) return orderA - orderB;
+      return a.id.localeCompare(b.id);
+    });
+
+    try {
+      // Reatribui ordens sequenciais de 1 a N
+      for (let i = 0; i < sorted.length; i++) {
+        const p = sorted[i];
+        const newOrder = i + 1;
+        // Só atualiza se realmente mudou
+        if (p.order !== newOrder) {
+          await updateProject(p.id, { order: newOrder });
+        }
+      }
+      alert("Slots reordenados e conflitos resolvidos!");
+    } catch (err) {
+      console.error("Erro ao resolver conflitos:", err);
+      alert("Erro ao reordenar slots.");
+    }
+  };
+
+  const hasConflicts = (() => {
+    const seen = new Set<number>();
+    for (const p of projects) {
+      const o = p.order || 0;
+      if (o <= 0) return true; // Órfãos contam como conflito/pendência
+      if (seen.has(o)) return true; // Duplicados
+      seen.add(o);
+    }
+    return false;
+  })();
+
   if (loading && projects.length === 0) return (
     <div className="flex flex-col items-center justify-center p-20 gap-4 min-h-[400px]">
       <div className="w-10 h-10 border-4 border-accent border-t-transparent rounded-full animate-spin" />
@@ -81,12 +131,22 @@ export const ProjectManager = () => {
           <h2 className="text-2xl font-bold tracking-tight">Portfólio de Projetos</h2>
           <p className="text-zinc-500 text-sm">Gerencie o conteúdo visível na galeria e os detalhes de cada projeto.</p>
         </div>
-        <button 
-          onClick={() => setShowFlowConstructor(true)}
-          className="flex items-center gap-2 px-6 py-3 bg-accent text-black font-bold rounded-[8px] hover:bg-accent/80 transition shadow-lg shadow-accent/10"
-        >
-          <Plus size={20} /> Novo Projeto
-        </button>
+        <div className="flex items-center gap-3">
+          {hasConflicts && (
+            <button 
+              onClick={resolveConflicts}
+              className="flex items-center gap-2 px-4 py-3 bg-amber-500/10 text-amber-500 border border-amber-500/20 font-bold rounded-[8px] hover:bg-amber-500 hover:text-black transition text-xs uppercase"
+            >
+              <Settings2 size={16} /> Resolver Conflitos
+            </button>
+          )}
+          <button 
+            onClick={() => setShowFlowConstructor(true)}
+            className="flex items-center gap-2 px-6 py-3 bg-accent text-black font-bold rounded-[8px] hover:bg-accent/80 transition shadow-lg shadow-accent/10"
+          >
+            <Plus size={20} /> Novo Projeto
+          </button>
+        </div>
       </div>
 
       {showFlowConstructor && (
@@ -162,130 +222,65 @@ export const ProjectManager = () => {
 
       <div className="grid gap-4">
         {(() => {
-          // Lógica para mostrar slots (ocupados e vazios)
+          // 1. Preparar lista única e ordenada para renderização
+          const displayList: { type: 'project' | 'empty'; project?: Project; slot?: number; isDuplicate?: boolean }[] = [];
+          const slotGroups = new Map<number, Project[]>();
+          projects.forEach(p => {
+            const o = p.order || 0;
+            const current = slotGroups.get(o) || [];
+            slotGroups.set(o, [...current, p]);
+          });
+
           const maxSlot = Math.max(10, projects.reduce((max, p) => Math.max(max, p.order || 0), 0));
-          const slotMap = new Map(projects.map(p => [p.order || 0, p]));
-          const rows = [];
 
           for (let i = 1; i <= maxSlot; i++) {
-            const p = slotMap.get(i);
-            if (p) {
-              const idxInProjects = projects.findIndex(proj => proj.id === p.id);
-              rows.push(
-                <div key={p.id} className="bg-zinc-900/40 p-4 rounded-[8px] flex items-center justify-between group border border-white/5 hover:border-accent/20 transition-all">
-                  <div className="flex items-center gap-6">
-                    {/* Indicador de Slot */}
-                    <div className="flex flex-col items-center gap-1 min-w-[40px]">
-                      <button 
-                        onClick={() => {
-                          const sortedProjects = [...projects].sort((a, b) => (a.order || 0) - (b.order || 0));
-                          const currentIdx = sortedProjects.findIndex(proj => proj.id === p.id);
-                          if (currentIdx > 0) {
-                            const prev = sortedProjects[currentIdx-1];
-                            const tempOrder = p.order;
-                            updateProject(p.id, { order: prev.order });
-                            updateProject(prev.id, { order: tempOrder });
-                          }
-                        }}
-                        className="text-zinc-600 hover:text-accent disabled:opacity-0 transition-colors"
-                      >
-                        <MoveUp size={16} />
-                      </button>
-                      <div className="w-8 h-8 rounded-full bg-accent text-zinc-950 text-[10px] font-black flex items-center justify-center">
-                        {i}
-                      </div>
-                      <button 
-                        onClick={() => {
-                          const sortedProjects = [...projects].sort((a, b) => (a.order || 0) - (b.order || 0));
-                          const currentIdx = sortedProjects.findIndex(proj => proj.id === p.id);
-                          if (currentIdx < sortedProjects.length - 1) {
-                            const next = sortedProjects[currentIdx+1];
-                            const tempOrder = p.order;
-                            updateProject(p.id, { order: next.order });
-                            updateProject(next.id, { order: tempOrder });
-                          }
-                        }}
-                        className="text-zinc-600 hover:text-accent disabled:opacity-0 transition-colors"
-                      >
-                        <MoveDown size={16} />
-                      </button>
-                    </div>
-
-                    <div className="w-16 h-20 bg-zinc-800 rounded-[8px] overflow-hidden border border-white/10 shrink-0 shadow-xl group-hover:scale-105 transition-transform">
-                      {p.galleryThumbnail ? (
-                        <img src={p.galleryThumbnail} className="w-full h-full object-cover" alt="" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-zinc-700">
-                          <LayoutGrid size={24} />
-                        </div>
-                      )}
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-3">
-                        <span className="text-[10px] font-black uppercase text-zinc-500 tracking-tighter">Slot {i}</span>
-                        <h3 className="font-bold text-lg leading-tight">{p.title}</h3>
-                        {p.status === 'draft' && (
-                          <span className="flex items-center gap-1 text-[8px] bg-amber-500/10 text-amber-500 px-1.5 py-0.5 rounded font-black uppercase tracking-tighter border border-amber-500/20">
-                            <LockKeyhole size={10} /> Em Construção
-                          </span>
-                        )}
-                        {p.isLocked && (
-                          <span className="flex items-center gap-1 text-[8px] bg-red-500/10 text-red-500 px-1.5 py-0.5 rounded font-black uppercase tracking-tighter border border-red-500/20">
-                            <Lock size={10} /> Trancado
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-3 mt-1">
-                        <span className="text-[10px] uppercase font-black text-accent bg-accent/10 px-2 py-0.5 rounded-full">{p.layoutType}</span>
-                        <span className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">
-                          {p.feed?.length || 0} Tópicos • {p.feed?.reduce((acc, curr) => acc + (curr.stories?.length || 0), 0) || 0} Stories
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <button 
-                      onClick={() => { setEditingProject(p); setShowFlowConstructor(true); }}
-                      className="p-3 bg-blue-600/10 text-blue-500 hover:bg-blue-600 hover:text-white rounded-[8px] transition-all"
-                      title="Abrir Construtor de Flow"
-                    >
-                      <Share2 size={16} />
-                    </button>
-                    <button 
-                      onClick={() => startEditing(p)} 
-                      className="p-3 bg-white/5 hover:bg-zinc-700 rounded-[8px] transition-all flex items-center gap-2 font-bold text-xs uppercase tracking-widest text-zinc-300"
-                    >
-                      <Edit2 size={16} /> <span className="hidden md:inline">Editar</span>
-                    </button>
-                    <button 
-                      onClick={() => {
-                        if(confirm(`Excluir permanentemente o projeto "${p.title}"?`)) deleteProject(p.id);
-                      }} 
-                      className="p-3 bg-red-600/5 hover:bg-red-600 hover:text-white rounded-[8px] transition-all text-red-500 hover:text-white"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                </div>
-              );
+            const projectsInSlot = slotGroups.get(i) || [];
+            if (projectsInSlot.length > 0) {
+              projectsInSlot.forEach(p => {
+                displayList.push({ type: 'project', project: p, slot: i, isDuplicate: projectsInSlot.length > 1 });
+              });
             } else {
-              rows.push(
-                <div key={`empty-${i}`} className="bg-zinc-900/10 p-4 rounded-[8px] flex items-center justify-between border border-dashed border-white/5 opacity-40 hover:opacity-100 transition-opacity">
-                  <div className="flex items-center gap-6">
-                    <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-zinc-600 text-[10px] font-black">
-                      {i}
+              displayList.push({ type: 'empty', slot: i });
+            }
+          }
+
+          // 2. Renderizar baseado na displayList
+          let visualCounter = 0;
+          return displayList.map((item) => {
+            if (item.type === 'project' && item.project) {
+              const p = item.project;
+              visualCounter++;
+              return (
+                <ProjectRow 
+                  key={p.id} 
+                  project={p} 
+                  projects={projects} 
+                  visualNumber={visualCounter}
+                  slotNumber={item.slot} 
+                  isDuplicate={item.isDuplicate} 
+                  onEdit={startEditing} 
+                  onDelete={() => handleDelete(p)}
+                  onFlowEdit={() => { setEditingProject(p); setShowFlowConstructor(true); }}
+                />
+              );
+            } else if (item.type === 'empty') {
+              return (
+                <div key={`empty-${item.slot}`} className="bg-zinc-900/10 p-4 rounded-[8px] flex items-center justify-between border border-dashed border-white/5 opacity-40 hover:opacity-100 transition-opacity">
+                  <div className="flex items-center gap-6 text-zinc-500">
+                    <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-[10px] font-black">
+                      -
                     </div>
-                    <div className="w-16 h-20 bg-zinc-800/30 rounded-[8px] border border-dashed border-white/5 shrink-0 flex items-center justify-center text-zinc-700">
+                    <div className="w-16 h-20 bg-zinc-800/30 rounded-[8px] border border-dashed border-white/5 shrink-0 flex items-center justify-center">
                       <Plus size={24} />
                     </div>
                     <div>
-                      <span className="text-[10px] font-black uppercase text-zinc-700 tracking-tighter">Slot {i}</span>
-                      <h3 className="font-bold text-lg text-zinc-700">Slot Vazio</h3>
+                      <span className="text-[10px] font-black uppercase tracking-tighter">Slot {item.slot}</span>
+                      <h3 className="font-bold text-lg">Disponível</h3>
                     </div>
                   </div>
                   <button 
                     onClick={() => {
-                      setEditingProject({ order: i, title: '', layoutType: '2d', status: 'draft' });
+                      setEditingProject({ order: item.slot, title: '', layoutType: '2d', status: 'draft' });
                       setIsAdding(true);
                     }}
                     className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 text-zinc-500 hover:text-white rounded-[8px] text-[10px] font-black uppercase tracking-widest transition"
@@ -295,9 +290,135 @@ export const ProjectManager = () => {
                 </div>
               );
             }
-          }
-          return rows;
+            return null;
+          });
         })()}
+      </div>
+    </div>
+  );
+};
+
+// Sub-componente para a linha do projeto para deixar o código limpo
+const ProjectRow = ({ 
+  project: p, 
+  projects, 
+  visualNumber,
+  slotNumber, 
+  isOrphan, 
+  isDuplicate, 
+  onEdit, 
+  onDelete,
+  onFlowEdit 
+}: { 
+  project: Project, 
+  projects: Project[], 
+  visualNumber: number,
+  slotNumber?: number, 
+  isOrphan?: boolean, 
+  isDuplicate?: boolean,
+  onEdit: (p: Project) => void,
+  onDelete: () => void,
+  onFlowEdit: () => void
+}) => {
+  return (
+    <div className={`bg-zinc-900/40 p-4 rounded-[8px] flex items-center justify-between group border transition-all ${isDuplicate ? 'border-amber-500/30 bg-amber-500/5 shadow-[0_0_15px_rgba(245,158,11,0.05)]' : 'border-white/5 hover:border-accent/20'}`}>
+      <div className="flex items-center gap-6">
+        <div className="flex flex-col items-center gap-1 min-w-[40px]">
+          <button 
+            onClick={() => {
+              const sortedProjects = [...projects].sort((a, b) => (a.order || 0) - (b.order || 0));
+              const currentIdx = sortedProjects.findIndex(proj => proj.id === p.id);
+              if (currentIdx > 0) {
+                const prev = sortedProjects[currentIdx-1];
+                const tempOrder = p.order;
+                updateProject(p.id, { order: prev.order });
+                updateProject(prev.id, { order: tempOrder });
+              }
+            }}
+            className="text-zinc-600 hover:text-accent disabled:opacity-0 transition-colors"
+          >
+            <MoveUp size={16} />
+          </button>
+          <div className={`w-10 h-10 rounded-full ${isOrphan ? 'bg-zinc-700' : 'bg-accent'} text-zinc-950 text-[11px] font-black flex items-center justify-center shadow-lg`}>
+            {visualNumber}
+          </div>
+          <button 
+            onClick={() => {
+              const sortedProjects = [...projects].sort((a, b) => (a.order || 0) - (b.order || 0));
+              const currentIdx = sortedProjects.findIndex(proj => proj.id === p.id);
+              if (currentIdx < sortedProjects.length - 1) {
+                const next = sortedProjects[currentIdx+1];
+                const tempOrder = p.order;
+                updateProject(p.id, { order: next.order });
+                updateProject(next.id, { order: tempOrder });
+              }
+            }}
+            className="text-zinc-600 hover:text-accent disabled:opacity-0 transition-colors"
+          >
+            <MoveDown size={16} />
+          </button>
+        </div>
+
+        <div className="w-16 h-20 bg-zinc-800 rounded-[8px] overflow-hidden border border-white/10 shrink-0 shadow-xl group-hover:scale-105 transition-transform">
+          {p.galleryThumbnail ? (
+            <img src={p.galleryThumbnail} className="w-full h-full object-cover" alt="" />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-zinc-700">
+              <LayoutGrid size={24} />
+            </div>
+          )}
+        </div>
+        <div>
+          <div className="flex items-center gap-3">
+            <span className="text-[10px] font-black uppercase text-zinc-500 tracking-tighter">
+              {isOrphan ? 'Sem Slot' : `Slot ${slotNumber}`}
+            </span>
+            <h3 className="font-bold text-lg leading-tight">{p.title}</h3>
+            {isDuplicate && (
+              <span className="text-[8px] bg-amber-500/20 text-amber-500 px-2 py-0.5 rounded-full font-black uppercase tracking-tighter animate-pulse">
+                Conflito de Slot
+              </span>
+            )}
+            {p.status === 'draft' && (
+              <span className="flex items-center gap-1 text-[8px] bg-amber-500/10 text-amber-500 px-1.5 py-0.5 rounded font-black uppercase tracking-tighter border border-amber-500/20">
+                <LockKeyhole size={10} /> Em Construção
+              </span>
+            )}
+            {p.isLocked && (
+              <span className="flex items-center gap-1 text-[8px] bg-red-500/10 text-red-500 px-1.5 py-0.5 rounded font-black uppercase tracking-tighter border border-red-500/20">
+                <Lock size={10} /> Trancado
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-3 mt-1">
+            <span className="text-[10px] uppercase font-black text-accent bg-accent/10 px-2 py-0.5 rounded-full">{p.layoutType}</span>
+            <span className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">
+              {p.feed?.length || 0} Tópicos • {p.feed?.reduce((acc, curr) => acc + (curr.stories?.length || 0), 0) || 0} Stories
+            </span>
+          </div>
+        </div>
+      </div>
+      <div className="flex items-center gap-3">
+        <button 
+          onClick={onFlowEdit}
+          className="p-3 bg-blue-600/10 text-blue-500 hover:bg-blue-600 hover:text-white rounded-[8px] transition-all"
+          title="Abrir Construtor de Flow"
+        >
+          <Share2 size={16} />
+        </button>
+        <button 
+          onClick={() => onEdit(p)} 
+          className="p-3 bg-white/5 hover:bg-zinc-700 rounded-[8px] transition-all flex items-center gap-2 font-bold text-xs uppercase tracking-widest text-zinc-300"
+        >
+          <Edit2 size={16} /> <span className="hidden md:inline">Editar</span>
+        </button>
+        <button 
+          onClick={onDelete} 
+          className="p-3 bg-red-600/5 hover:bg-red-600 hover:text-white rounded-[8px] transition-all text-red-500 hover:text-white"
+          title="Excluir Projeto"
+        >
+          <Trash2 size={16} />
+        </button>
       </div>
     </div>
   );
