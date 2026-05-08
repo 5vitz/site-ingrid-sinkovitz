@@ -10,7 +10,8 @@ Este arquivo contém as regras fundamentais para o desenvolvimento deste projeto
 ## Metodologia de Trabalho (Método Lincoln)
 1. **Planejamento Extremo (Afiar o Machado):** Antes de tocar em qualquer arquivo, o agente deve propor o que irá fazer, quais arquivos serão afetados e como garantirá a integridade do restante do site.
 2. **Estado "Em Planejamento":** Sempre que o usuário digitar "Em Planejamento", o agente entra em um estado estrito de diálogo e análise. Neste estado, o agente **NÃO deve programar nem realizar alterações em arquivos de código**, focando exclusivamente na especificação técnica, planejamento e troca de ideias.
-3. **Respeito ao Contexto:** Evitar alterações em componentes globais ou estilos de menu/rodapé se a tarefa for pontual em uma seção específica.
+3. **Regra "Apenas responda":** Quando o usuário utilizar o termo "Apenas responda", qualquer programação fica suspensa. O agente deve apenas explicar seu entendimento da tarefa e o roteiro planejado, aguardando validação antes de agir.
+4. **Respeito ao Contexto:** Evitar alterações em componentes globais ou estilos de menu/rodapé se a tarefa for pontual em uma seção específica.
 4. **Pausa para Validação:** O agente deve explicar o caminho técnico que pretende seguir antes de executar a tarefa, permitindo ao usuário analisar a estratégia.
 
 ## Idioma

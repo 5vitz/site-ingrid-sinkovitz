@@ -14,7 +14,13 @@ import ReactFlow, {
   OnEdgesChange,
   Connection,
   addEdge,
-  ConnectionMode
+  ConnectionMode,
+  ReactFlowProvider,
+  useReactFlow,
+  BaseEdge,
+  EdgeLabelRenderer,
+  getBezierPath,
+  EdgeProps
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { 
@@ -40,8 +46,8 @@ interface CommunicationNodeData {
 const CommunicationNode = ({ id, data, selected }: NodeProps<CommunicationNodeData>) => {
   return (
     <div className={`
-      relative min-w-[280px] bg-zinc-900 border-2 rounded-xl overflow-hidden transition-all duration-300
-      ${selected ? 'border-accent shadow-[0_0_30px_rgba(254,242,0,0.2)] scale-[1.02]' : 'border-white/10'}
+      relative w-56 bg-zinc-900 border-2 rounded-xl overflow-hidden transition-all duration-300
+      ${selected ? 'border-accent shadow-[0_0_20px_rgba(254,242,0,0.15)] scale-[1.01]' : 'border-white/10'}
     `}>
       {/* Botão de Excluir Node */}
       <button 
@@ -120,6 +126,59 @@ const nodeTypes = {
   communication: CommunicationNode,
 };
 
+const ButtonEdge = ({
+  id,
+  sourceX,
+  sourceY,
+  targetX,
+  targetY,
+  sourcePosition,
+  targetPosition,
+  style = {},
+  markerEnd,
+}: EdgeProps) => {
+  const { setEdges } = useReactFlow();
+  const [edgePath, labelX, labelY] = getBezierPath({
+    sourceX,
+    sourceY,
+    sourcePosition,
+    targetX,
+    targetY,
+    targetPosition,
+  });
+
+  return (
+    <>
+      <BaseEdge path={edgePath} markerEnd={markerEnd} style={style} />
+      <EdgeLabelRenderer>
+        <div
+          style={{
+            position: 'absolute',
+            transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
+            pointerEvents: 'all',
+          }}
+          className="nodrag nopan"
+        >
+          <button 
+            className="w-4 h-4 bg-red-600 text-white rounded-full flex items-center justify-center border border-black hover:scale-125 hover:bg-red-500 transition shadow-lg text-[12px] font-bold z-50"
+            onClick={(event) => {
+              event.stopPropagation();
+              setEdges((edges) => edges.filter((edge) => edge.id !== id));
+            }}
+            title="Remover Conexão"
+          >
+            ×
+          </button>
+        </div>
+      </EdgeLabelRenderer>
+    </>
+  );
+};
+
+const edgeTypes = {
+  button: ButtonEdge,
+};
+
 // --- FLOW CONSTRUCTOR COMPONENT ---
 
 interface FlowConstructorProps {
@@ -128,11 +187,13 @@ interface FlowConstructorProps {
   onSave: (data: { nodes: any[], edges: any[], projectName: string }) => void;
 }
 
-export const FlowConstructor: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onSave }) => {
+const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onSave }) => {
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>(initialData?.edges || []);
   const [projectName, setProjectName] = useState(initialData?.projectName || 'Novo Projeto');
   const [selectingNodeId, setSelectingNodeId] = useState<string | null>(null);
+  
+  const { zoomIn, zoomOut, fitView } = useReactFlow();
 
   // Memorizar callbacks para evitar recriação constante de nós
   const onSelectMedia = useCallback((id: string) => {
@@ -182,7 +243,7 @@ export const FlowConstructor: React.FC<FlowConstructorProps> = ({ initialData, o
   );
 
   const onConnect = useCallback(
-    (params: Connection) => setEdges((eds) => addEdge({ ...params, animated: true, style: { stroke: '#FEF200', strokeWidth: 2 } }, eds)),
+    (params: Connection) => setEdges((eds) => addEdge({ ...params, type: 'button', animated: true, style: { stroke: '#FEF200', strokeWidth: 2 } }, eds)),
     [setEdges]
   );
 
@@ -230,7 +291,7 @@ export const FlowConstructor: React.FC<FlowConstructorProps> = ({ initialData, o
 
   const handleSave = () => {
     onSave({ 
-      nodes: nodes.map(n => ({ ...n, data: { ...n.data, onSelectMedia: undefined, onLabelChange: undefined } })), 
+      nodes: nodes.map(n => ({ ...n, data: { ...n.data, onSelectMedia: undefined, onLabelChange: undefined, onDelete: undefined } })), 
       edges,
       projectName 
     });
@@ -293,8 +354,12 @@ export const FlowConstructor: React.FC<FlowConstructorProps> = ({ initialData, o
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
           connectionMode={ConnectionMode.Loose}
           fitView
+          fitViewOptions={{ padding: 0.2, maxZoom: 1 }}
+          minZoom={0.05}
+          maxZoom={2}
           className="flow-engine"
         >
           <Background color="#1a1a1a" gap={20} size={1} />
@@ -302,11 +367,11 @@ export const FlowConstructor: React.FC<FlowConstructorProps> = ({ initialData, o
           <Panel position="bottom-center" className="mb-8 p-1 bg-zinc-900/80 backdrop-blur border border-white/10 rounded-xl flex items-center gap-1 shadow-2xl">
             <button className="p-2.5 hover:bg-white/10 text-zinc-400 rounded-lg transition" title="Menu" onClick={() => {}}><Layers size={18}/></button>
             <div className="w-px h-4 bg-white/10 mx-1" />
-            <button className="p-2.5 hover:bg-white/10 text-zinc-400 rounded-lg transition" title="Zoom Out"><ZoomOut size={18}/></button>
-            <div className="bg-black/50 px-3 py-2 rounded-md text-[10px] font-mono text-zinc-500">100%</div>
-            <button className="p-2.5 hover:bg-white/10 text-zinc-400 rounded-lg transition" title="Zoom In"><ZoomIn size={18}/></button>
+            <button className="p-2.5 hover:bg-white/10 text-zinc-400 rounded-lg transition" title="Zoom Out" onClick={() => zoomOut()}><ZoomOut size={18}/></button>
+            <div className="bg-black/50 px-3 py-2 rounded-md text-[10px] font-mono text-zinc-500">ZOOM</div>
+            <button className="p-2.5 hover:bg-white/10 text-zinc-400 rounded-lg transition" title="Zoom In" onClick={() => zoomIn()}><ZoomIn size={18}/></button>
             <div className="w-px h-4 bg-white/10 mx-1" />
-            <button className="p-2.5 hover:bg-white/10 text-zinc-400 rounded-lg transition" title="Reset View"><Maximize2 size={18}/></button>
+            <button className="p-2.5 hover:bg-white/10 text-zinc-400 rounded-lg transition" title="Reset View" onClick={() => fitView()}><Maximize2 size={18}/></button>
           </Panel>
 
           <Panel position="top-right" className="mr-6 mt-6 p-4 bg-zinc-900/50 backdrop-blur border border-white/5 rounded-2xl w-48 shadow-2xl">
@@ -378,3 +443,9 @@ export const FlowConstructor: React.FC<FlowConstructorProps> = ({ initialData, o
     </div>
   );
 };
+
+export const FlowConstructor: React.FC<FlowConstructorProps> = (props) => (
+  <ReactFlowProvider>
+    <FlowEngine {...props} />
+  </ReactFlowProvider>
+);

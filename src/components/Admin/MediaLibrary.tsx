@@ -214,8 +214,11 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true }: MediaLibr
           </button>
           
           {!standalone && (
-            <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full transition">
-              <X size={24} />
+            <button 
+              onClick={onClose} 
+              className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white rounded-lg border border-white/5 transition font-black text-[10px] uppercase tracking-widest"
+            >
+              <X size={14} /> Voltar ao Fluxo
             </button>
           )}
         </div>
