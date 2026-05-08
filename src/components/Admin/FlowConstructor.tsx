@@ -46,7 +46,7 @@ interface CommunicationNodeData {
 const CommunicationNode = ({ id, data, selected }: NodeProps<CommunicationNodeData>) => {
   return (
     <div className={`
-      relative w-56 bg-zinc-900 border-2 rounded-xl overflow-hidden transition-all duration-300
+      relative w-56 bg-zinc-900 border-2 rounded-xl transition-all duration-300
       ${selected ? 'border-accent shadow-[0_0_20px_rgba(254,242,0,0.15)] scale-[1.01]' : 'border-white/10'}
     `}>
       {/* Botão de Excluir Node */}
@@ -59,7 +59,7 @@ const CommunicationNode = ({ id, data, selected }: NodeProps<CommunicationNodeDa
       </button>
 
       {/* Header do Card */}
-      <div className="p-3 border-b border-white/5 flex items-center justify-between bg-black/40">
+      <div className="p-3 border-b border-white/5 flex items-center justify-between bg-black/40 rounded-t-[10px]">
         <div className="flex items-center gap-2 flex-1">
           <div className={`w-2 h-2 rounded-full ${data.type === 'video' ? 'bg-red-500' : 'bg-blue-500'}`} />
           <input 
@@ -113,11 +113,11 @@ const CommunicationNode = ({ id, data, selected }: NodeProps<CommunicationNodeDa
         </div>
       </div>
 
-      {/* Handles para conexões (Agora com Top e Bottom também) */}
-      <Handle type="target" position={Position.Left} className="!w-3 !h-3 !bg-accent !border-black" />
-      <Handle type="source" position={Position.Right} className="!w-3 !h-3 !bg-accent !border-black" />
-      <Handle type="target" position={Position.Top} className="!w-3 !h-3 !bg-accent !border-black" />
-      <Handle type="source" position={Position.Bottom} className="!w-3 !h-3 !bg-accent !border-black" />
+      {/* Handles para conexões (Com IDs para evitar conflitos) */}
+      <Handle type="target" position={Position.Left} id="left" className="!w-3 !h-3 !bg-accent !border-black" />
+      <Handle type="source" position={Position.Right} id="right" className="!w-3 !h-3 !bg-accent !border-black" />
+      <Handle type="target" position={Position.Top} id="top" className="!w-3 !h-3 !bg-accent !border-black" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="!w-3 !h-3 !bg-accent !border-black" />
     </div>
   );
 };
