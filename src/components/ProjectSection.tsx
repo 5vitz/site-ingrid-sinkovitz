@@ -8,9 +8,8 @@ export const ProjectSection: React.FC<{ onSelectProject: (p: Project) => void }>
 
   const displayProjects = React.useMemo(() => {
     if (!dbProjects) return [];
-    // Filtra apenas publicados por segurança na Home, ordena por order
+    // Ordena por slot (order)
     return [...dbProjects]
-      .filter(p => !p.status || p.status === 'published')
       .sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
   }, [dbProjects]);
 

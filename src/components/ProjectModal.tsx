@@ -21,6 +21,65 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   // 1. Definição de todos os Hooks
   const [feedIndex, setFeedIndex] = useState(0);
   const [storyIndex, setStoryIndex] = useState(0);
+  
+  // Memória da navegação por Flow
+  const [currentNodeId, setCurrentNodeId] = useState<string | null>(null);
+
+  // Helper para obter o feed atual baseado no Flow ou na Lista Linear
+  const getNavigationInfo = useCallback(() => {
+    if (!project) return { currentFeed: null, totalFeed: 0, isFlow: false };
+
+    // Se tiver FlowData, usamos a lógica de grafos
+    if (project.flowData && project.flowData.nodes.length > 0) {
+      const nodes = project.flowData.nodes;
+      const edges = project.flowData.edges || [];
+      
+      // Se não temos um node atual, pegamos o inicial (menor Y, depois menor X)
+      let activeNodeId = currentNodeId;
+      if (!activeNodeId) {
+        const sortedNodes = [...nodes].sort((a, b) => {
+          if (Math.abs(a.position.y - b.position.y) > 100) return a.position.y - b.position.y;
+          return a.position.x - b.position.x;
+        });
+        activeNodeId = sortedNodes[0]?.id;
+      }
+
+      const activeNode = nodes.find(n => n.id === activeNodeId);
+      
+      // Mapeia o node para um FeedItem fake para o modal entender
+      const flowFeed: FeedItem | null = activeNode ? {
+        id: activeNode.id,
+        title: activeNode.data.label || '',
+        media: {
+          type: activeNode.data.type || 'image',
+          url: activeNode.data.thumbnail || activeNode.data.url || '',
+          order: 1
+        },
+        aspectRatio: activeNode.data.type === 'video' ? 0.56 : 0.8,
+        stories: [] // Flow nodes ainda não suportam sub-stories diretamente aqui
+      } : null;
+
+      return { 
+        currentFeed: flowFeed, 
+        totalFeed: nodes.length, 
+        isFlow: true,
+        activeNode,
+        nodes,
+        edges
+      };
+    }
+
+    // Caso contrário, usa a lista linear antiga
+    const total = Array.isArray(project.feed) ? project.feed.length : 0;
+    return {
+      currentFeed: total > 0 ? project.feed![feedIndex] : null,
+      totalFeed: total,
+      isFlow: false
+    };
+  }, [project, feedIndex, currentNodeId]);
+
+  const { currentFeed, totalFeed, isFlow, activeNode, nodes, edges } = getNavigationInfo();
+  
   const [showPlayer, setShowPlayer] = useState(true);
   const [isPlaying, setIsPlaying] = useState(true);
   const [showPlayStateIcon, setShowPlayStateIcon] = useState<boolean | null>(null);
@@ -40,8 +99,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     height: typeof window !== 'undefined' ? window.innerHeight : 800 
   });
   
-  const totalFeed = project && Array.isArray(project.feed) ? project.feed.length : 0;
-  const currentFeed = project && totalFeed > 0 ? project.feed[feedIndex] : null;
   const currentStories = currentFeed && Array.isArray(currentFeed.stories) ? currentFeed.stories : [];
   const totalStories = currentStories.length + (currentFeed ? 1 : 0);
   const totalStoriesForNav = totalStories;
@@ -53,39 +110,53 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
 
   // 2. Callbacks e Efeitos
   
-  // Efeito de Preloading Inteligente
-  useEffect(() => {
-    if (!project || !project.feed) return;
-
-    const urlsToPreload: string[] = [];
-
-    // 1. Preload das próximas 2 imagens do feed
-    for (let i = 1; i <= 2; i++) {
-      const nextFeed = project.feed[feedIndex + i];
-      if (nextFeed?.media?.url) urlsToPreload.push(nextFeed.media.url);
-    }
-
-    // 2. Preload das próximas 2 imagens de stories do feed atual
-    if (currentStories.length > 0) {
-      for (let i = storyIndex; i < storyIndex + 2; i++) {
-        const nextStory = currentStories[i];
-        if (nextStory?.url) urlsToPreload.push(nextStory.url);
-      }
-    }
-
-    // Executar o preload
-    urlsToPreload.forEach(url => {
-      if (url && !preloadedUrls.current.has(url)) {
-        const img = new Image();
-        img.src = url;
-        preloadedUrls.current.add(url);
-      }
-    });
-
-  }, [project, feedIndex, storyIndex, currentStories]);
-  
+  // Navegação Inteligente (Flow + Linear)
   const navigateFeed = useCallback((direction: 1 | -1) => {
     if (isScrollingRef.current) return;
+
+    if (isFlow && activeNode && nodes) {
+      // Tentar encontrar conexão explícita (Bottom ou Top)
+      const handle = direction === 1 ? (activeNode.position.y > 0 ? 'bottom' : 'bottom') : 'top';
+      const explicitEdge = edges?.find(e => 
+        (direction === 1 && e.source === activeNode.id && (e.sourceHandle === 'bottom' || !e.sourceHandle)) ||
+        (direction === -1 && e.target === activeNode.id && (e.targetHandle === 'top' || !e.targetHandle))
+      );
+
+      if (explicitEdge) {
+        const targetId = direction === 1 ? explicitEdge.target : explicitEdge.source;
+        setCurrentNodeId(targetId);
+        setStoryIndex(0);
+        return;
+      }
+
+      // REGRA GLOBAL: Navegação Vertical Automática entre níveis
+      const currentY = activeNode.position.y;
+      const otherNodes = nodes.filter(n => 
+        direction === 1 ? n.position.y > currentY + 150 : n.position.y < currentY - 150
+      );
+
+      if (otherNodes.length > 0) {
+        // Encontra o nível mais próximo
+        const nextLevelY = direction === 1 
+          ? Math.min(...otherNodes.map(n => n.position.y))
+          : Math.max(...otherNodes.map(n => n.position.y));
+        
+        // Pega o primeiro card (menor X) desse nível
+        const levelNodes = otherNodes.filter(n => Math.abs(n.position.y - nextLevelY) < 100);
+        const nextNode = [...levelNodes].sort((a, b) => a.position.x - b.position.x)[0];
+        
+        if (nextNode) {
+          setCurrentNodeId(nextNode.id);
+          setStoryIndex(0);
+          isScrollingRef.current = true;
+          setTimeout(() => { isScrollingRef.current = false; }, 500);
+          return;
+        }
+      }
+      return;
+    }
+
+    // Lógica Linear Antiga
     const next = feedIndex + direction;
     if (project?.feed && Array.isArray(project.feed) && next >= 0 && next < project.feed.length) {
       isScrollingRef.current = true;
@@ -93,17 +164,49 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       setStoryIndex(0);
       setTimeout(() => { isScrollingRef.current = false; }, 500);
     }
-  }, [feedIndex, project?.feed]);
+  }, [feedIndex, isFlow, activeNode, nodes, edges, project?.feed]);
 
-  const navigateStory = useCallback((direction: number) => {
+  const navigateStory = useCallback((direction: 1 | -1) => {
     if (isScrollingRef.current) return;
+
+    if (isFlow && activeNode && nodes) {
+      // Prioridade 1: Conexão Explícita (Linha Amarela)
+      const explicitEdge = edges?.find(e => 
+        (direction === 1 && e.source === activeNode.id && (e.sourceHandle === 'right' || !e.sourceHandle)) ||
+        (direction === -1 && e.target === activeNode.id && (e.targetHandle === 'left' || !e.targetHandle))
+      );
+
+      if (explicitEdge) {
+        const targetId = direction === 1 ? explicitEdge.target : explicitEdge.source;
+        setCurrentNodeId(targetId);
+        return;
+      }
+
+      // Prioridade 2: Próximo node na mesma faixa horizontal (Y)
+      const sameRowNodes = nodes.filter(n => 
+        n.id !== activeNode.id && 
+        Math.abs(n.position.y - activeNode.position.y) < 150 &&
+        (direction === 1 ? n.position.x > activeNode.position.x : n.position.x < activeNode.position.x)
+      );
+
+      if (sameRowNodes.length > 0) {
+        const nextNode = [...sameRowNodes].sort((a, b) => 
+          direction === 1 ? a.position.x - b.position.x : b.position.x - a.position.x
+        )[0];
+        setCurrentNodeId(nextNode.id);
+        return;
+      }
+      return;
+    }
+
+    // Lógica Story Linear
     const next = storyIndex + direction;
     if (next >= 0 && next < totalStoriesForNav) {
       isScrollingRef.current = true;
       setStoryIndex(next);
       setTimeout(() => { isScrollingRef.current = false; }, 400);
     }
-  }, [storyIndex, totalStoriesForNav]);
+  }, [storyIndex, totalStoriesForNav, isFlow, activeNode, nodes, edges]);
 
   useEffect(() => {
     try {
@@ -124,6 +227,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     if (project) {
       setFeedIndex(0);
       setStoryIndex(0);
+      setCurrentNodeId(null); // Resetar posição do Flow para o início
       setShowPlayer(true);
       setIsPlaying(true);
       setShowPlayStateIcon(null);

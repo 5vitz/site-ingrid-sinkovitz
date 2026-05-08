@@ -1,7 +1,8 @@
 import React from 'react';
 import { Project } from '../types';
-import { Play, ArrowUpRight, ChevronRight, ChevronDown, Lock } from 'lucide-react';
+import { Play, ArrowUpRight, ChevronRight, ChevronDown, Lock, Construction } from 'lucide-react';
 import { motion } from 'motion/react';
+import { useAuth } from '../hooks/useAuth';
 
 interface ProjectCardProps {
   project: Project;
@@ -12,6 +13,8 @@ interface ProjectCardProps {
 }
 
 export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, hasRight, hasDown, hasDownMobile }) => {
+  const { role } = useAuth();
+  const isAdmin = !!role;
   const isVertical = project.layoutType === 'vertical';
   const cardClass = isVertical ? 'card-vertical' : 'card-horizontal';
   const isDraft = project.status === 'draft';
@@ -39,19 +42,24 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, hasR
 
   return (
     <motion.div 
-      whileHover={{ y: -8, scale: 1.01 }}
+      whileHover={(!isDraft || isAdmin) ? { y: -8, scale: 1.01 } : {}}
       onMouseEnter={handleMouseEnter}
-      onClick={onClick}
-      className={`${cardClass} cursor-pointer group rounded-[8px] snap-center bg-zinc-900 shadow-xl overflow-hidden relative flex items-center justify-center border border-white/5 transition-all duration-300`}
+      onClick={() => {
+        if (!isDraft || isAdmin) {
+          onClick();
+        } else {
+          alert("Este projeto está em construção e em breve estará disponível para visualização.");
+        }
+      }}
+      className={`${cardClass} ${(!isDraft || isAdmin) ? 'cursor-pointer' : 'cursor-default'} group rounded-[8px] snap-center bg-zinc-900 shadow-xl overflow-hidden relative flex items-center justify-center border border-white/5 transition-all duration-300`}
     >
       {/* Fundo Simples com Degradê */}
       <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-950 z-0" />
       
       {isDraft && (
-        <div className="absolute top-4 right-4 z-20">
-          <div className="bg-black/40 backdrop-blur-sm p-1.5 rounded-full border border-white/5 opacity-40">
-            <Lock size={10} className="text-zinc-500" />
-          </div>
+        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/60 backdrop-blur-[2px]">
+          <Construction size={32} className="text-zinc-500 mb-2 opacity-50" />
+          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">Em Construção</span>
         </div>
       )}
       

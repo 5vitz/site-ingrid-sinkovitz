@@ -65,17 +65,38 @@ export const updateSettings = (key: 'global' | 'sobre', data: any) => {
   return setDoc(doc(db, 'settings', key), data, { merge: true });
 };
 
+// Helper para limpar propriedades undefined (que o Firestore não aceita)
+const cleanData = (data: any): any => {
+  const result: any = {};
+  Object.keys(data).forEach(key => {
+    if (data[key] !== undefined) {
+      if (data[key] !== null && typeof data[key] === 'object' && !Array.isArray(data[key])) {
+        result[key] = cleanData(data[key]);
+      } else if (Array.isArray(data[key])) {
+        result[key] = data[key].map((item: any) => 
+          (item !== null && typeof item === 'object') ? cleanData(item) : item
+        );
+      } else {
+        result[key] = data[key];
+      }
+    }
+  });
+  return result;
+};
+
 // Projects CRUD
 export const subscribeToProjects = (callback: (data: Project[]) => void) => {
   return subscribeToCollection<Project>('projects', callback);
 };
 
 export const addProject = (data: Omit<Project, 'id'>) => {
-  return addDoc(collection(db, 'projects'), data);
+  return addDoc(collection(db, 'projects'), cleanData(data));
 };
 
 export const updateProject = (id: string, data: Partial<Project>) => {
-  return updateDoc(doc(db, 'projects', id), data);
+  // Para updateDoc, precisamos remover o ID do corpo do dado se ele existir
+  const { id: _, ...rest } = data as any;
+  return updateDoc(doc(db, 'projects', id), cleanData(rest));
 };
 
 export const deleteProject = (id: string) => {

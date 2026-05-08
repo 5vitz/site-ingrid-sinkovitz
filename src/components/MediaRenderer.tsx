@@ -79,7 +79,12 @@ export const MediaRenderer: React.FC<MediaRendererProps> = ({
   const allowScroll = media.allowScroll || isAuddarDocument;
 
   if (renderType === 'video') {
-    if (!renderUrl) return <div className="w-full h-full bg-zinc-900 animate-pulse" />;
+    if (!renderUrl) return (
+      <div className="w-full h-full bg-zinc-950 flex flex-col items-center justify-center gap-2 border border-white/5">
+        <Smartphone size={24} className="text-zinc-800" />
+        <span className="text-[8px] font-black uppercase tracking-[0.2em] text-zinc-800">Vídeo não selecionado</span>
+      </div>
+    );
     return (
       <div className="w-full h-full relative bg-zinc-950">
         <video
@@ -168,7 +173,12 @@ export const MediaRenderer: React.FC<MediaRendererProps> = ({
       );
     }
     
-    if (!renderUrl) return <div className="w-full h-full bg-zinc-900 animate-pulse" />;
+    if (!renderUrl) return (
+      <div className="w-full h-full bg-zinc-950 flex flex-col items-center justify-center gap-3 border border-white/5">
+        <LayoutGrid size={32} className="text-zinc-800" />
+        <span className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-800">Conteúdo em breve</span>
+      </div>
+    );
     
     // For Auddar project, if not scrolling, use object-contain to avoid cutting images that aren't perfectly square
     const objectFitClass = isAuddarProject && !allowScroll ? 'object-contain' : (media.objectFit === 'contain' ? 'object-contain' : 'object-cover');

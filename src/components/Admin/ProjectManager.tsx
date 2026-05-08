@@ -35,19 +35,26 @@ export const ProjectManager = () => {
     if (!editingProject?.title || !editingProject?.layoutType) return;
 
     try {
+      const occupiedSlots = new Map(projects.map(p => [p.order || 0, p.id]));
+      const requestedOrder = editingProject.order || 1;
+
       if (editingProject.id) {
+        // Se mudou para um slot que já tem dono, avisar ou trocar?
+        // Vamos permitir salvar, mas o ideal seria o sistema de "swap" da lista
         await updateProject(editingProject.id, editingProject);
       } else {
-        // Encontra o primeiro slot (order) vago
-        const occupiedOrders = new Set(projects.map(p => p.order || 0));
-        let firstFreeSlot = 1;
-        while (occupiedOrders.has(firstFreeSlot)) {
-          firstFreeSlot++;
+        // Encontra o primeiro slot vago se não especificado
+        let finalOrder = editingProject.order;
+        if (!finalOrder) {
+          finalOrder = 1;
+          while (occupiedSlots.has(finalOrder)) {
+            finalOrder++;
+          }
         }
 
         await addProject({
           ...editingProject as Omit<Project, 'id'>,
-          order: editingProject.order || firstFreeSlot,
+          order: finalOrder,
           feed: editingProject.feed || [],
           mediaItems: editingProject.mediaItems || []
         });
@@ -95,9 +102,12 @@ export const ProjectManager = () => {
             const newFeed: FeedItem[] = flowResult.nodes.map((node: any) => ({
               id: node.id,
               title: node.data.label || 'Sem Título',
-              type: 'story',
-              mediaUrl: node.data.thumbnail || '',
-              mediaType: node.data.type || 'image',
+              media: {
+                type: node.data.type || 'image',
+                url: node.data.thumbnail || '',
+                order: 1
+              },
+              aspectRatio: node.data.type === 'video' ? 0.56 : 1,
               stories: []
             }));
 
@@ -138,112 +148,143 @@ export const ProjectManager = () => {
       </AnimatePresence>
 
       <div className="grid gap-4">
-        {projects.length === 0 ? (
-          <div className="p-20 text-center border-2 border-dashed border-white/5 rounded-[8px]">
-            <span className="text-zinc-600">Nenhum projeto cadastrado ainda.</span>
-          </div>
-        ) : (
-          [...projects].sort((a, b) => (a.order || 0) - (b.order || 0)).map((p, idx) => (
-            <div key={p.id} className="bg-zinc-900/40 p-4 rounded-[8px] flex items-center justify-between group border border-white/5 hover:border-accent/20 transition-all">
-              <div className="flex items-center gap-6">
-                {/* Indicador de Slot */}
-                <div className="flex flex-col items-center gap-1 min-w-[40px]">
-                  <button 
-                    onClick={() => {
-                      if (idx > 0) {
-                        const prev = projects[idx-1];
-                        const tempOrder = p.order;
-                        updateProject(p.id, { order: prev.order });
-                        updateProject(prev.id, { order: tempOrder });
-                      }
-                    }}
-                    disabled={idx === 0}
-                    className="text-zinc-600 hover:text-accent disabled:opacity-0 transition-colors"
-                  >
-                    <MoveUp size={16} />
-                  </button>
-                  <div className="w-8 h-8 rounded-full bg-accent/10 border border-accent/30 flex items-center justify-center text-accent text-[10px] font-black">
-                    {p.order || idx + 1}
-                  </div>
-                  <button 
-                    onClick={() => {
-                      if (idx < projects.length - 1) {
-                        const next = projects[idx+1];
-                        const tempOrder = p.order;
-                        updateProject(p.id, { order: next.order });
-                        updateProject(next.id, { order: tempOrder });
-                      }
-                    }}
-                    disabled={idx === projects.length - 1}
-                    className="text-zinc-600 hover:text-accent disabled:opacity-0 transition-colors"
-                  >
-                    <MoveDown size={16} />
-                  </button>
-                </div>
+        {(() => {
+          // Lógica para mostrar slots (ocupados e vazios)
+          const maxSlot = Math.max(10, projects.reduce((max, p) => Math.max(max, p.order || 0), 0));
+          const slotMap = new Map(projects.map(p => [p.order || 0, p]));
+          const rows = [];
 
-                <div className="w-16 h-20 bg-zinc-800 rounded-[8px] overflow-hidden border border-white/10 shrink-0 shadow-xl group-hover:scale-105 transition-transform">
-                  {p.galleryThumbnail ? (
-                    <img src={p.galleryThumbnail} className="w-full h-full object-cover" alt="" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-zinc-700">
-                      <LayoutGrid size={24} />
+          for (let i = 1; i <= maxSlot; i++) {
+            const p = slotMap.get(i);
+            if (p) {
+              const idxInProjects = projects.findIndex(proj => proj.id === p.id);
+              rows.push(
+                <div key={p.id} className="bg-zinc-900/40 p-4 rounded-[8px] flex items-center justify-between group border border-white/5 hover:border-accent/20 transition-all">
+                  <div className="flex items-center gap-6">
+                    {/* Indicador de Slot */}
+                    <div className="flex flex-col items-center gap-1 min-w-[40px]">
+                      <button 
+                        onClick={() => {
+                          const sortedProjects = [...projects].sort((a, b) => (a.order || 0) - (b.order || 0));
+                          const currentIdx = sortedProjects.findIndex(proj => proj.id === p.id);
+                          if (currentIdx > 0) {
+                            const prev = sortedProjects[currentIdx-1];
+                            const tempOrder = p.order;
+                            updateProject(p.id, { order: prev.order });
+                            updateProject(prev.id, { order: tempOrder });
+                          }
+                        }}
+                        className="text-zinc-600 hover:text-accent disabled:opacity-0 transition-colors"
+                      >
+                        <MoveUp size={16} />
+                      </button>
+                      <div className="w-8 h-8 rounded-full bg-accent text-zinc-950 text-[10px] font-black flex items-center justify-center">
+                        {i}
+                      </div>
+                      <button 
+                        onClick={() => {
+                          const sortedProjects = [...projects].sort((a, b) => (a.order || 0) - (b.order || 0));
+                          const currentIdx = sortedProjects.findIndex(proj => proj.id === p.id);
+                          if (currentIdx < sortedProjects.length - 1) {
+                            const next = sortedProjects[currentIdx+1];
+                            const tempOrder = p.order;
+                            updateProject(p.id, { order: next.order });
+                            updateProject(next.id, { order: tempOrder });
+                          }
+                        }}
+                        className="text-zinc-600 hover:text-accent disabled:opacity-0 transition-colors"
+                      >
+                        <MoveDown size={16} />
+                      </button>
                     </div>
-                  )}
-                </div>
-                <div>
+
+                    <div className="w-16 h-20 bg-zinc-800 rounded-[8px] overflow-hidden border border-white/10 shrink-0 shadow-xl group-hover:scale-105 transition-transform">
+                      {p.galleryThumbnail ? (
+                        <img src={p.galleryThumbnail} className="w-full h-full object-cover" alt="" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-zinc-700">
+                          <LayoutGrid size={24} />
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-3">
+                        <span className="text-[10px] font-black uppercase text-zinc-500 tracking-tighter">Slot {i}</span>
+                        <h3 className="font-bold text-lg leading-tight">{p.title}</h3>
+                        {p.status === 'draft' && (
+                          <span className="flex items-center gap-1 text-[8px] bg-amber-500/10 text-amber-500 px-1.5 py-0.5 rounded font-black uppercase tracking-tighter border border-amber-500/20">
+                            <LockKeyhole size={10} /> Em Construção
+                          </span>
+                        )}
+                        {p.isLocked && (
+                          <span className="flex items-center gap-1 text-[8px] bg-red-500/10 text-red-500 px-1.5 py-0.5 rounded font-black uppercase tracking-tighter border border-red-500/20">
+                            <Lock size={10} /> Trancado
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-3 mt-1">
+                        <span className="text-[10px] uppercase font-black text-accent bg-accent/10 px-2 py-0.5 rounded-full">{p.layoutType}</span>
+                        <span className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">
+                          {p.feed?.length || 0} Tópicos • {p.feed?.reduce((acc, curr) => acc + (curr.stories?.length || 0), 0) || 0} Stories
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-[10px] font-black uppercase text-zinc-500 tracking-tighter">Slot {p.order || idx + 1}</span>
-                    <h3 className="font-bold text-lg leading-tight">{p.title}</h3>
-                    {p.status === 'draft' && (
-                      <span className="flex items-center gap-1 text-[8px] bg-amber-500/10 text-amber-500 px-1.5 py-0.5 rounded font-black uppercase tracking-tighter border border-amber-500/20">
-                        <LockKeyhole size={10} /> Em Construção
-                      </span>
-                    )}
-                    {p.isLocked && (
-                      <span className="flex items-center gap-1 text-[8px] bg-red-500/10 text-red-500 px-1.5 py-0.5 rounded font-black uppercase tracking-tighter border border-red-500/20">
-                        <Lock size={10} /> Trancado
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-3 mt-1">
-                    <span className="text-[10px] uppercase font-black text-accent bg-accent/10 px-2 py-0.5 rounded-full">{p.layoutType}</span>
-                    <span className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">
-                      {p.feed?.length || 0} Tópicos • {p.feed?.reduce((acc, curr) => acc + (curr.stories?.length || 0), 0) || 0} Stories
-                    </span>
-                    {p.flowData && (
-                      <span className="text-[9px] text-blue-500 font-bold uppercase flex items-center gap-1">
-                        <Share2 size={10} /> Tem Estrutura de Flow
-                      </span>
-                    )}
+                    <button 
+                      onClick={() => { setEditingProject(p); setShowFlowConstructor(true); }}
+                      className="p-3 bg-blue-600/10 text-blue-500 hover:bg-blue-600 hover:text-white rounded-[8px] transition-all"
+                      title="Abrir Construtor de Flow"
+                    >
+                      <Share2 size={16} />
+                    </button>
+                    <button 
+                      onClick={() => startEditing(p)} 
+                      className="p-3 bg-white/5 hover:bg-zinc-700 rounded-[8px] transition-all flex items-center gap-2 font-bold text-xs uppercase tracking-widest text-zinc-300"
+                    >
+                      <Edit2 size={16} /> <span className="hidden md:inline">Editar</span>
+                    </button>
+                    <button 
+                      onClick={() => {
+                        if(confirm(`Excluir permanentemente o projeto "${p.title}"?`)) deleteProject(p.id);
+                      }} 
+                      className="p-3 bg-red-600/5 hover:bg-red-600 hover:text-white rounded-[8px] transition-all text-red-500 hover:text-white"
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <button 
-                  onClick={() => { setEditingProject(p); setShowFlowConstructor(true); }}
-                  className="p-3 bg-blue-600/10 text-blue-500 hover:bg-blue-600 hover:text-white rounded-[8px] transition-all"
-                  title="Abrir Construtor de Flow"
-                >
-                  <Share2 size={16} />
-                </button>
-                <button 
-                  onClick={() => startEditing(p)} 
-                  className="p-3 bg-white/5 hover:bg-accent hover:text-black rounded-[8px] transition-all flex items-center gap-2 font-bold text-xs uppercase tracking-widest"
-                >
-                  <Edit2 size={16} /> <span className="hidden md:inline">Editar</span>
-                </button>
-                <button 
-                  onClick={() => {
-                    if(confirm(`Excluir permanentemente o projeto "${p.title}"?`)) deleteProject(p.id);
-                  }} 
-                  className="p-3 bg-red-600/5 hover:bg-red-600 hover:text-white rounded-[8px] transition-all text-red-500 hover:text-white"
-                >
-                  <Trash2 size={16} />
-                </button>
-              </div>
-            </div>
-          ))
-        )}
+              );
+            } else {
+              rows.push(
+                <div key={`empty-${i}`} className="bg-zinc-900/10 p-4 rounded-[8px] flex items-center justify-between border border-dashed border-white/5 opacity-40 hover:opacity-100 transition-opacity">
+                  <div className="flex items-center gap-6">
+                    <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-zinc-600 text-[10px] font-black">
+                      {i}
+                    </div>
+                    <div className="w-16 h-20 bg-zinc-800/30 rounded-[8px] border border-dashed border-white/5 shrink-0 flex items-center justify-center text-zinc-700">
+                      <Plus size={24} />
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-black uppercase text-zinc-700 tracking-tighter">Slot {i}</span>
+                      <h3 className="font-bold text-lg text-zinc-700">Slot Vazio</h3>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      setEditingProject({ order: i, title: '', layoutType: '2d', status: 'draft' });
+                      setIsAdding(true);
+                    }}
+                    className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 text-zinc-500 hover:text-white rounded-[8px] text-[10px] font-black uppercase tracking-widest transition"
+                  >
+                    Ocupar Slot
+                  </button>
+                </div>
+              );
+            }
+          }
+          return rows;
+        })()}
       </div>
     </div>
   );
