@@ -11,27 +11,62 @@ import {
   orderBy,
   onSnapshot
 } from 'firebase/firestore';
-import { db } from '../lib/firebase';
+import { db, auth } from '../lib/firebase';
 import { Project, Service, Testimonial, SiteSettings, AboutMe, UserRoleDoc } from '../types';
+
+// Tipagem para erros do Firestore conforme instruções
+enum OperationType {
+  CREATE = 'create',
+  UPDATE = 'update',
+  DELETE = 'delete',
+  LIST = 'list',
+  GET = 'get',
+  WRITE = 'write',
+}
+
+interface FirestoreErrorInfo {
+  error: string;
+  operationType: OperationType;
+  path: string | null;
+  authInfo: {
+    userId?: string | null;
+    email?: string | null;
+    emailVerified?: boolean | null;
+    isAnonymous?: boolean | null;
+  }
+}
+
+function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
+  const errInfo: FirestoreErrorInfo = {
+    error: error instanceof Error ? error.message : String(error),
+    authInfo: {
+      userId: auth?.currentUser?.uid,
+      email: auth?.currentUser?.email,
+      emailVerified: auth?.currentUser?.emailVerified,
+      isAnonymous: auth?.currentUser?.isAnonymous,
+    },
+    operationType,
+    path
+  };
+  console.error('Firestore Error Detailed: ', JSON.stringify(errInfo));
+  throw new Error(JSON.stringify(errInfo));
+}
 
 // Generic fetcher
 export const subscribeToCollection = <T,>(collectionName: string, callback: (data: T[]) => void) => {
   try {
     const q = query(collection(db, collectionName));
     return onSnapshot(q, (snapshot) => {
-      const items = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as T));
-      // Sort locally as fallback or define complex queries if needed
+      const items = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as T));
       const sorted = [...items].sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
       callback(sorted);
     }, (error) => {
-      console.error(`Erro na subscrição da coleção [${collectionName}]:`, error);
-      // Em caso de erro, retornamos lista vazia para destravar o "loading"
-      callback([]);
+      handleFirestoreError(error, OperationType.GET, collectionName);
     });
   } catch (error) {
     console.error(`Falha crítica ao tentar subscrever coleção [${collectionName}]:`, error);
     callback([]);
-    return () => {}; // No-op unsubscribe
+    return () => {};
   }
 };
 
@@ -94,26 +129,38 @@ export const subscribeToProjects = (callback: (data: Project[]) => void) => {
   return subscribeToCollection<Project>('projects', callback);
 };
 
-export const addProject = (data: Omit<Project, 'id'>) => {
+export const addProject = async (data: Omit<Project, 'id'>) => {
   const cleaned = cleanData(data);
-  console.log("Firestore: addProject", cleaned);
-  return addDoc(collection(db, 'projects'), cleaned);
+  try {
+    console.log("Firestore: addProject", cleaned);
+    return await addDoc(collection(db, 'projects'), cleaned);
+  } catch (error) {
+    handleFirestoreError(error, OperationType.CREATE, 'projects');
+  }
 };
 
-export const updateProject = (id: string, data: Partial<Project>) => {
+export const updateProject = async (id: string, data: Partial<Project>) => {
   if (!id) {
     console.error("Firestore Error: Tentativa de update sem ID");
     return Promise.reject(new Error("ID do projeto é obrigatório para atualização"));
   }
-  // Para updateDoc, precisamos remover o ID do corpo do dado se ele existir
   const { id: _, ...rest } = data as any;
   const cleaned = cleanData(rest);
-  console.log(`Firestore: updateProject [${id}]`, cleaned);
-  return updateDoc(doc(db, 'projects', id), cleaned);
+  try {
+    console.log(`Firestore: updateProject [${id}]`, cleaned);
+    return await updateDoc(doc(db, 'projects', id), cleaned);
+  } catch (error) {
+    handleFirestoreError(error, OperationType.UPDATE, `projects/${id}`);
+  }
 };
 
-export const deleteProject = (id: string) => {
-  return deleteDoc(doc(db, 'projects', id));
+export const deleteProject = async (id: string) => {
+  try {
+    console.log(`Firestore: deleteProject [${id}]`);
+    return await deleteDoc(doc(db, 'projects', id));
+  } catch (error) {
+    handleFirestoreError(error, OperationType.DELETE, `projects/${id}`);
+  }
 };
 
 // Services CRUD

@@ -19,6 +19,7 @@ export const ProjectManager = () => {
   const [editingProject, setEditingProject] = useState<Partial<Project> | null>(null);
   const [isAdding, setIsAdding] = useState(false);
   const [showFlowConstructor, setShowFlowConstructor] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
 
   // Garantir que ao editar, campos novos existam
   const startEditing = (p: Project) => {
@@ -68,14 +69,23 @@ export const ProjectManager = () => {
   };
 
   const handleDelete = async (p: Project) => {
-    if (!confirm(`Deseja realmente excluir o projeto "${p.title}"?\nEsta ação não pode ser desfeita.`)) return;
+    setProjectToDelete(p);
+  };
+
+  const confirmDelete = async () => {
+    if (!projectToDelete) return;
+    const p = projectToDelete;
     
+    console.log("Executando exclusão confirmada:", p.title, p.id);
     try {
       await deleteProject(p.id);
-      // O hook useCollection cuidará da atualização da lista via onSnapshot
+      console.log("Projeto deletado com sucesso:", p.id);
+      setProjectToDelete(null);
     } catch (err) {
       console.error("Erro ao deletar projeto:", err);
-      alert("Houve um erro técnico ao tentar excluir o projeto. Verifique sua conexão.");
+      const msg = err instanceof Error ? err.message : String(err);
+      alert(`Falha ao excluir: ${msg}`);
+      setProjectToDelete(null);
     }
   };
 
@@ -216,6 +226,44 @@ export const ProjectManager = () => {
                 onChange={setEditingProject}
               />
             </div>
+          </motion.div>
+        )}
+
+        {projectToDelete && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[1100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              className="bg-zinc-950 border border-white/10 p-8 rounded-[12px] max-w-md w-full shadow-2xl"
+            >
+              <div className="w-16 h-16 bg-red-600/20 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Trash2 size={32} />
+              </div>
+              <h3 className="text-xl font-bold text-center mb-2">Excluir Projeto?</h3>
+              <p className="text-zinc-400 text-center text-sm mb-8">
+                Deseja realmente excluir <span className="text-white font-bold">"{projectToDelete.title}"</span>? 
+                Esta ação é permanente e removerá todos os dados do banco de dados.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setProjectToDelete(null)}
+                  className="flex-1 py-3 px-4 bg-white/5 hover:bg-white/10 rounded-[8px] font-bold text-xs uppercase tracking-widest transition"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  className="flex-1 py-3 px-4 bg-red-600 hover:bg-red-700 text-white rounded-[8px] font-bold text-xs uppercase tracking-widest transition shadow-lg shadow-red-600/20"
+                >
+                  Excluir Agora
+                </button>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -373,6 +421,7 @@ const ProjectRow = ({
             <span className="text-[10px] font-black uppercase text-zinc-500 tracking-tighter">
               {isOrphan ? 'Sem Slot' : `Slot ${slotNumber}`}
             </span>
+            <span className="text-[10px] font-mono text-zinc-700">ID: ...{p.id?.slice(-4)}</span>
             <h3 className="font-bold text-lg leading-tight">{p.title}</h3>
             {isDuplicate && (
               <span className="text-[8px] bg-amber-500/20 text-amber-500 px-2 py-0.5 rounded-full font-black uppercase tracking-tighter animate-pulse">
