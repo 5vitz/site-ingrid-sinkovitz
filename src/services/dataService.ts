@@ -65,23 +65,28 @@ export const updateSettings = (key: 'global' | 'sobre', data: any) => {
   return setDoc(doc(db, 'settings', key), data, { merge: true });
 };
 
-// Helper para limpar propriedades undefined (que o Firestore não aceita)
+// Helper para limpar propriedades undefined e valores não serializáveis (que o Firestore não aceita)
 const cleanData = (data: any): any => {
-  const result: any = {};
-  Object.keys(data).forEach(key => {
-    if (data[key] !== undefined) {
-      if (data[key] !== null && typeof data[key] === 'object' && !Array.isArray(data[key])) {
-        result[key] = cleanData(data[key]);
-      } else if (Array.isArray(data[key])) {
-        result[key] = data[key].map((item: any) => 
-          (item !== null && typeof item === 'object') ? cleanData(item) : item
-        );
-      } else {
-        result[key] = data[key];
+  if (data === null || data === undefined) return null;
+  
+  if (Array.isArray(data)) {
+    return data.map(item => cleanData(item));
+  }
+
+  if (typeof data === 'object') {
+    // Se for um objeto que não é literal, tentamos converter se tiver método toJSON ou similar, 
+    // mas aqui focamos em objetos planos do ReactFlow/App
+    const result: any = {};
+    Object.keys(data).forEach(key => {
+      const value = data[key];
+      if (value !== undefined && typeof value !== 'function') {
+        result[key] = cleanData(value);
       }
-    }
-  });
-  return result;
+    });
+    return result;
+  }
+
+  return data;
 };
 
 // Projects CRUD
@@ -90,13 +95,21 @@ export const subscribeToProjects = (callback: (data: Project[]) => void) => {
 };
 
 export const addProject = (data: Omit<Project, 'id'>) => {
-  return addDoc(collection(db, 'projects'), cleanData(data));
+  const cleaned = cleanData(data);
+  console.log("Firestore: addProject", cleaned);
+  return addDoc(collection(db, 'projects'), cleaned);
 };
 
 export const updateProject = (id: string, data: Partial<Project>) => {
+  if (!id) {
+    console.error("Firestore Error: Tentativa de update sem ID");
+    return Promise.reject(new Error("ID do projeto é obrigatório para atualização"));
+  }
   // Para updateDoc, precisamos remover o ID do corpo do dado se ele existir
   const { id: _, ...rest } = data as any;
-  return updateDoc(doc(db, 'projects', id), cleanData(rest));
+  const cleaned = cleanData(rest);
+  console.log(`Firestore: updateProject [${id}]`, cleaned);
+  return updateDoc(doc(db, 'projects', id), cleaned);
 };
 
 export const deleteProject = (id: string) => {

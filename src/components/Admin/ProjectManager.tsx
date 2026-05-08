@@ -97,7 +97,7 @@ export const ProjectManager = () => {
             projectName: editingProject.title 
           } : undefined}
           onCancel={() => setShowFlowConstructor(false)} 
-          onSave={(flowResult) => {
+          onSave={async (flowResult) => {
             // Conversão inteligente: Nós do Flow -> Tópicos do Feed
             const newFeed: FeedItem[] = flowResult.nodes.map((node: any) => ({
               id: node.id,
@@ -111,16 +111,29 @@ export const ProjectManager = () => {
               stories: []
             }));
 
-            setEditingProject({
+            const projectData = {
               ...editingProject,
               flowData: { nodes: flowResult.nodes, edges: flowResult.edges },
               feed: editingProject?.feed && editingProject.feed.length > 0 ? editingProject.feed : newFeed,
               title: flowResult.projectName || editingProject?.title || 'Novo Projeto via Flow',
               layoutType: editingProject?.layoutType || '2d',
               status: editingProject?.status || 'draft'
-            });
-            setShowFlowConstructor(false);
-            if (!editingProject?.id) {
+            };
+
+            if (editingProject?.id) {
+              try {
+                await updateProject(editingProject.id, projectData);
+                alert("Estrutura e projeto salvos com sucesso!");
+                setEditingProject(null);
+                setShowFlowConstructor(false);
+              } catch (err) {
+                console.error("Erro ao salvar flow:", err);
+                alert("Erro ao salvar no banco de dados. Verifique o console.");
+              }
+            } else {
+              // Se for um projeto totalmente novo (sem ID ainda), apenas preparamos os dados e abrimos o form final
+              setEditingProject(projectData);
+              setShowFlowConstructor(false);
               setIsAdding(true);
             }
           }} 

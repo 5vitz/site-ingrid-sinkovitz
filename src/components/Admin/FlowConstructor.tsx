@@ -113,11 +113,11 @@ const CommunicationNode = ({ id, data, selected }: NodeProps<CommunicationNodeDa
         </div>
       </div>
 
-      {/* Handles para conexões (Com IDs para evitar conflitos) */}
-      <Handle type="target" position={Position.Left} id="left" className="!w-3 !h-3 !bg-accent !border-black" />
-      <Handle type="source" position={Position.Right} id="right" className="!w-3 !h-3 !bg-accent !border-black" />
-      <Handle type="target" position={Position.Top} id="top" className="!w-3 !h-3 !bg-accent !border-black" />
-      <Handle type="source" position={Position.Bottom} id="bottom" className="!w-3 !h-3 !bg-accent !border-black" />
+      {/* Handles para conexões (Tamanho aumentado para facilitar clique) */}
+      <Handle type="target" position={Position.Left} id="left" className="!w-4 !h-4 !bg-accent !border-zinc-950 !border-2 shadow-[0_0_10px_rgba(254,242,0,0.5)]" />
+      <Handle type="source" position={Position.Right} id="right" className="!w-4 !h-4 !bg-accent !border-zinc-950 !border-2 shadow-[0_0_10px_rgba(254,242,0,0.5)]" />
+      <Handle type="target" position={Position.Top} id="top" className="!w-4 !h-4 !bg-accent !border-zinc-950 !border-2 shadow-[0_0_10px_rgba(254,242,0,0.5)]" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="!w-4 !h-4 !bg-accent !border-zinc-950 !border-2 shadow-[0_0_10px_rgba(254,242,0,0.5)]" />
     </div>
   );
 };
@@ -192,6 +192,8 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
   const [edges, setEdges] = useState<Edge[]>(initialData?.edges || []);
   const [projectName, setProjectName] = useState(initialData?.projectName || 'Novo Projeto');
   const [selectingNodeId, setSelectingNodeId] = useState<string | null>(null);
+  
+  const [isSaving, setIsSaving] = useState(false);
   
   const { zoomIn, zoomOut, fitView } = useReactFlow();
 
@@ -289,12 +291,57 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
     setSelectingNodeId(null);
   };
 
-  const handleSave = () => {
-    onSave({ 
-      nodes: nodes.map(n => ({ ...n, data: { ...n.data, onSelectMedia: undefined, onLabelChange: undefined, onDelete: undefined } })), 
-      edges,
-      projectName 
-    });
+  const handleSave = async () => {
+    if (isSaving) return;
+    setIsSaving(true);
+    try {
+      // Limpeza profunda dos nodes para persistência
+      // Removemos funções e propriedades internas do ReactFlow que podem causar erro de serialização
+      const cleanedNodes = nodes.map(n => {
+        const { 
+          dragging: _, 
+          dragHandle: __, 
+          selected: ___, 
+          measured: ____,
+          width: _____,
+          height: ______,
+          ...rest 
+        } = n as any;
+        
+        return {
+          ...rest,
+          data: {
+            id: n.data.id,
+            label: n.data.label,
+            type: n.data.type,
+            thumbnail: n.data.thumbnail || '',
+          }
+        };
+      });
+
+      // Limpeza das edges
+      const cleanedEdges = edges.map(e => ({
+        id: e.id,
+        source: e.source,
+        target: e.target,
+        sourceHandle: e.sourceHandle,
+        targetHandle: e.targetHandle,
+        type: e.type,
+        animated: e.animated,
+        style: e.style
+      }));
+
+      await onSave({ 
+        nodes: cleanedNodes, 
+        edges: cleanedEdges,
+        projectName 
+      });
+    } catch (err) {
+      console.error("Erro ao preparar salvamento:", err);
+      alert("Houve um erro ao processar os dados do flow para salvamento.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -337,9 +384,14 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
             </button>
             <button 
               onClick={handleSave}
-              className="px-8 py-2 bg-accent text-black text-[10px] font-black uppercase rounded-lg hover:bg-accent/80 transition shadow-[0_0_20px_rgba(0,102,255,0.3)] flex items-center gap-2"
+              disabled={isSaving}
+              className={`px-8 py-2 ${isSaving ? 'bg-zinc-700' : 'bg-accent'} text-black text-[10px] font-black uppercase rounded-lg hover:bg-accent/80 transition shadow-[0_0_20px_rgba(0,102,255,0.3)] flex items-center gap-2 disabled:opacity-50`}
             >
-              <Save size={14} /> Salvar Estrutura
+              {isSaving ? (
+                <>Salvando...</>
+              ) : (
+                <><Save size={14} /> Salvar Estrutura</>
+              )}
             </button>
           </div>
         </div>
@@ -357,9 +409,9 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
           edgeTypes={edgeTypes}
           connectionMode={ConnectionMode.Loose}
           fitView
-          fitViewOptions={{ padding: 0.2, maxZoom: 1 }}
-          minZoom={0.05}
-          maxZoom={2}
+          fitViewOptions={{ padding: 0.3 }}
+          minZoom={0.01}
+          maxZoom={4}
           className="flow-engine"
         >
           <Background color="#1a1a1a" gap={20} size={1} />
@@ -421,15 +473,16 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
 
       <style>{`
         .react-flow__handle {
-          width: 8px;
-          height: 8px;
-          background-color: #FEF200 !important;
-          border: 2px solid #000 !important;
+          cursor: crosshair;
+        }
+        .react-flow__handle:hover {
+          transform: scale(1.3);
+          background-color: #ffffff !important;
         }
         .react-flow__edge-path {
           stroke: #FEF200;
-          stroke-width: 2;
-          stroke-dasharray: 5;
+          stroke-width: 2.5;
+          stroke-dasharray: 6;
           animation: flow-dash 1s linear infinite;
         }
         @keyframes flow-dash {
