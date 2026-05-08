@@ -93,21 +93,15 @@ export const HorizontalLayout: React.FC<LayoutProps> = ({
               </div>
 
               <button 
-                onClick={(e) => { 
-                  e.stopPropagation(); 
-                  navigateStory(-1);
-                }}
-                className={`absolute -left-10 md:-left-[47px] top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full border border-white/20 transition-all hover:scale-110 active:scale-95 shadow-[0_0_10px_rgba(0,0,0,0.5)] z-[10020] bg-white/20 text-white
+                onClick={(e) => { e.stopPropagation(); navigateStory(-1); }}
+                className={`absolute -left-[47px] top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full border border-white/20 transition-all hover:scale-110 active:scale-95 shadow-[0_0_10px_rgba(0,0,0,0.5)] z-[10020] bg-white/20 text-white
                   ${storyIndex === 0 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
               >
                 <ChevronLeft size={18} strokeWidth={3} />
               </button>
               <button 
-                onClick={(e) => { 
-                  e.stopPropagation(); 
-                  navigateStory(1);
-                }}
-                className={`absolute -right-10 md:-right-[47px] top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full border border-white/20 transition-all hover:scale-110 active:scale-95 shadow-[0_0_10px_rgba(0,0,0,0.5)] z-[10020] bg-white/20 text-white
+                onClick={(e) => { e.stopPropagation(); navigateStory(1); }}
+                className={`absolute -right-[47px] top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full border border-white/20 transition-all hover:scale-110 active:scale-95 shadow-[0_0_10px_rgba(0,0,0,0.5)] z-[10020] bg-white/20 text-white
                   ${storyIndex === totalStories - 1 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
               >
                 <ChevronRight size={18} strokeWidth={3} />

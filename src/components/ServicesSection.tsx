@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { CheckCircle2, Plus, Minus } from 'lucide-react';
+import { useCollection } from '../hooks/useCollection';
+import { Service } from '../types';
 
 const AccordionItem = ({ title, items }: { title: string, items: string[], key?: React.Key }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -47,6 +49,8 @@ const AccordionItem = ({ title, items }: { title: string, items: string[], key?:
 };
 
 export const ServicesSection: React.FC = () => {
+  const { data: services } = useCollection<Service>('services');
+
   return (
     <section id="servicos" className="section-container scroll-mt-20 !pt-0">
       <div className="section-card p-5 flex flex-col items-center">
@@ -57,52 +61,13 @@ export const ServicesSection: React.FC = () => {
         </div>
 
         <div className="w-full space-y-4">
-          {[
-            {
-              title: "Estratégia & Posicionamento",
-              items: [
-                "Planejamento estratégico de conteúdo para redes sociais",
-                "Construção de narrativa, tom de voz e storytelling da marca",
-                "Desenvolvimento de linha editorial alinhada ao posicionamento",
-                "Pesquisa, benchmarking e análise de mercado"
-              ]
-            },
-            {
-              title: "Planejamento & Execução",
-              items: [
-                "Planejamento e gestão de calendário editorial",
-                "Criação de pautas, roteiros e briefings para produção de conteúdo",
-                "Desenvolvimento e coordenação de campanhas digitais"
-              ]
-            },
-            {
-              title: "Gestão & Coordenação",
-              items: [
-                "Coordenação, direcionamento e apoio a times de social media e criação",
-                "Organização de fluxos de trabalho e processos de produção de conteúdo",
-                "Monitoramento da qualidade das entregas, garantindo consistência e alinhamento estratégico",
-                "Gestão de múltiplos projetos e prazos simultaneamente"
-              ]
-            },
-            {
-              title: "Acompanhamento & Otimização",
-              items: [
-                "Acompanhamento de métricas e performance de conteúdo",
-                "Análise de resultados e otimização estratégica contínua",
-                "Identificação de oportunidades de melhoria na comunicação"
-              ]
-            },
-            {
-              title: "Relacionamento & Gestão de Projetos",
-              items: [
-                "Condução de reuniões, alinhamentos e apresentações estratégicas",
-                "Interface entre cliente e equipe criativa",
-                "Gestão de feedbacks e acompanhamento de demandas"
-              ]
-            }
-          ].map((service, idx) => (
-            <AccordionItem key={idx} title={service.title} items={service.items} />
-          ))}
+          {services && services.length > 0 ? (
+            services.map((service, idx) => (
+              <AccordionItem key={service.id || idx} title={service.title} items={service.items} />
+            ))
+          ) : (
+            <div className="text-center text-zinc-500 py-10">Carregando serviços...</div>
+          )}
         </div>
       </div>
     </section>

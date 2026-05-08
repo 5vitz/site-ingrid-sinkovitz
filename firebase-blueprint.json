@@ -2,93 +2,113 @@
   "entities": {
     "Project": {
       "title": "Project",
-      "description": "Portfólio project containing media items (reels, images, texts)",
+      "description": "A project in the portfolio",
       "type": "object",
       "properties": {
         "id": { "type": "string" },
         "title": { "type": "string" },
         "description": { "type": "string" },
-        "layoutType": { "type": "string" },
+        "layoutType": { "type": "string", "enum": ["vertical", "horizontal", "2d"] },
         "audioUrl": { "type": "string" },
         "galleryThumbnail": { "type": "string" },
         "coverImage": { "type": "string" },
         "thumbnailFit": { "type": "string", "enum": ["cover", "contain"] },
         "cardBg": { "type": "string" },
+        "mediaItems": { "type": "array", "items": { "$ref": "#/entities/MediaItem" } },
+        "feed": { "type": "array", "items": { "$ref": "#/entities/FeedItem" } },
         "order": { "type": "number" },
-        "theme": {
-          "type": "object",
-          "properties": {
-            "playerBg": { "type": "string" },
-            "playerBorder": { "type": "string" },
-            "playerShadow": { "type": "string" },
-            "modalOverlayBg": { "type": "string" },
-            "accentColor": { "type": "string" },
-            "navButtonBg": { "type": "string" },
-            "navButtonColor": { "type": "string" },
-            "closeButtonBg": { "type": "string" },
-            "closeButtonColor": { "type": "string" }
-          }
-        },
-        "feed": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "id": { "type": "string" },
-              "title": { "type": "string" },
-              "aspectRatio": { "type": "number" },
-              "media": { "$ref": "#/definitions/MediaItem" },
-              "stories": {
-                "type": "array",
-                "items": { "$ref": "#/definitions/MediaItem" }
-              }
-            }
-          }
-        }
-      },
-      "required": ["id", "title", "description", "order"]
+        "status": { "type": "string", "enum": ["published", "draft"] },
+        "isLocked": { "type": "boolean" },
+        "password": { "type": "string" },
+        "theme": { "$ref": "#/entities/ProjectTheme" },
+        "aboutConfig": { "$ref": "#/entities/AboutConfig" }
+      }
     },
     "MediaItem": {
       "title": "Media Item",
+      "description": "A piece of media within a project",
       "type": "object",
       "properties": {
-        "type": { "type": "string", "enum": ["image", "video", "text", "link", "iframe"] },
+        "id": { "type": "string" },
+        "type": { "type": "string", "enum": ["image", "video", "text", "link", "iframe", "pdf"] },
+        "layout": { "type": "string", "enum": ["gshow", "standard"] },
         "url": { "type": "string" },
+        "thumbnail": { "type": "string" },
+        "order": { "type": "number" },
+        "label": { "type": "string" },
         "title": { "type": "string" },
         "subtitle": { "type": "string" },
+        "credits": { "type": "string" },
         "content": { "type": "string" },
-        "order": { "type": "number" },
-        "aspectRatio": { "type": "number" },
-        "objectFit": { "type": "string" },
-        "allowScroll": { "type": "boolean" }
+        "images": { "type": "array", "items": { "type": "string" } },
+        "zoom": { "type": "number" },
+        "yOffset": { "type": "number" },
+        "xOffset": { "type": "number" },
+        "objectFit": { "type": "string", "enum": ["cover", "contain"] },
+        "objectPosition": { "type": "string" },
+        "allowScroll": { "type": "boolean" },
+        "aspectRatio": { "type": "number" }
       }
     },
-    "UserRole": {
-      "title": "User Role",
-      "description": "RBAC for administration",
+    "FeedItem": {
+      "title": "Feed Item",
+      "description": "An item in the 2D feed layout",
       "type": "object",
       "properties": {
-        "email": { "type": "string" },
-        "role": { "type": "string", "enum": ["super", "admin", "support"] },
-        "assignedBy": { "type": "string" }
-      },
-      "required": ["email", "role"]
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "media": { "$ref": "#/entities/MediaItem" },
+        "stories": { "type": "array", "items": { "$ref": "#/entities/MediaItem" } },
+        "aspectRatio": { "type": "number" }
+      }
+    },
+    "ProjectTheme": {
+      "title": "Project Theme",
+      "description": "Visual customization for a project",
+      "type": "object",
+      "properties": {
+        "playerBg": { "type": "string" },
+        "playerBorder": { "type": "string" },
+        "playerShadow": { "type": "string" },
+        "accentColor": { "type": "string" },
+        "navButtonBg": { "type": "string" },
+        "navButtonColor": { "type": "string" },
+        "playerWidth": { "type": "number" },
+        "playerHeight": { "type": "number" },
+        "borderWidth": { "type": "string" },
+        "borderRadius": { "type": "string" }
+      }
+    },
+    "AboutConfig": {
+      "title": "About Config",
+      "description": "Configuration for the project's about modal",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "subtitle": { "type": "string" },
+        "description": { "type": "string" },
+        "ctaText": { "type": "string" },
+        "width": { "type": "string" },
+        "backgroundColor": { "type": "string" },
+        "textColor": { "type": "string" },
+        "ctaColor": { "type": "string" },
+        "ctaTextColor": { "type": "string" }
+      }
     },
     "Service": {
       "title": "Service",
-      "description": "Offered services listed on landing page",
+      "description": "A service offered",
       "type": "object",
       "properties": {
         "id": { "type": "string" },
         "title": { "type": "string" },
         "items": { "type": "array", "items": { "type": "string" } },
         "order": { "type": "number" }
-      },
-      "required": ["id", "title", "items", "order"]
+      }
     },
     "Testimonial": {
       "title": "Testimonial",
-      "description": "Client testimonials",
+      "description": "A client testimonial",
       "type": "object",
       "properties": {
         "id": { "type": "string" },
@@ -97,80 +117,59 @@
         "text": { "type": "string" },
         "photoUrl": { "type": "string" },
         "order": { "type": "number" }
-      },
-      "required": ["id", "author", "role", "text", "photoUrl", "order"]
+      }
+    },
+    "SiteSettings": {
+      "title": "Site Settings",
+      "description": "Global settings for the application",
+      "type": "object",
+      "properties": {
+        "whatsappNumber": { "type": "string" },
+        "accentColor": { "type": "string" },
+        "maintenanceMode": { "type": "boolean" },
+        "maintenanceTitle": { "type": "string" },
+        "cor1": { "type": "string" },
+        "cor2": { "type": "string" },
+        "cor3": { "type": "string" },
+        "cor4": { "type": "string" },
+        "cor5": { "type": "string" },
+        "cor6": { "type": "string" },
+        "white": { "type": "string" },
+        "grayLight": { "type": "string" },
+        "textDark": { "type": "string" },
+        "shadow": { "type": "string" },
+        "fontSizeH1": { "type": "string" },
+        "fontSizeH2": { "type": "string" },
+        "fontSizeH3": { "type": "string" },
+        "fontSizeH4": { "type": "string" }
+      }
     },
     "AboutMe": {
       "title": "About Me",
-      "description": "Profile information including video and bio",
+      "description": "Information about the owner",
       "type": "object",
       "properties": {
         "videoUrl": { "type": "string" },
         "description": { "type": "string" }
-      },
-      "required": ["videoUrl", "description"]
+      }
     },
-    "SiteSettings": {
-      "title": "Site Settings",
-      "description": "Global configuration",
+    "UserRoleDoc": {
+      "title": "User Role",
+      "description": "Permissions for a user",
       "type": "object",
       "properties": {
-        "whatsappNumber": { "type": "string" },
-        "accentColor": { "type": "string" }
+        "email": { "type": "string" },
+        "role": { "type": "string", "enum": ["super", "admin", "support"] },
+        "assignedBy": { "type": "string" }
       },
-      "required": ["whatsappNumber"]
-    },
-    "Backup": {
-      "title": "Backup",
-      "description": "Snapshot of the entire database state",
-      "type": "object",
-      "properties": {
-        "id": { "type": "string" },
-        "name": { "type": "string" },
-        "createdAt": { "type": "string", "format": "date-time" },
-        "authorEmail": { "type": "string" },
-        "data": {
-          "type": "object",
-          "properties": {
-            "projects": { "type": "array", "items": { "$ref": "#/entities/Project" } },
-            "testimonials": { "type": "array", "items": { "$ref": "#/entities/Testimonial" } },
-            "services": { "type": "array", "items": { "$ref": "#/entities/Service" } },
-            "aboutMe": { "$ref": "#/entities/AboutMe" },
-            "globalSettings": { "$ref": "#/entities/SiteSettings" }
-          }
-        }
-      },
-      "required": ["id", "name", "createdAt", "authorEmail", "data"]
+      "required": ["email", "role"]
     }
   },
   "firestore": {
-    "projects/{projectId}": {
-      "schema": "Project",
-      "description": "Main projects collection"
-    },
-    "roles/{userId}": {
-      "schema": "UserRole",
-      "description": "Rbac collection"
-    },
-    "services/{serviceId}": {
-      "schema": "Service",
-      "description": "Services list"
-    },
-    "testimonials/{testimonialId}": {
-      "schema": "Testimonial",
-      "description": "Client feedback"
-    },
-    "settings/global": {
-      "schema": "SiteSettings",
-      "description": "Global app config"
-    },
-    "about/me": {
-      "schema": "AboutMe",
-      "description": "About me section content"
-    },
-    "backups/{backupId}": {
-      "schema": "Backup",
-      "description": "Database snapshots"
-    }
+    "projects": { "schema": "Project", "description": "Collection of projects" },
+    "services": { "schema": "Service", "description": "Collection of services" },
+    "testimonials": { "schema": "Testimonial", "description": "Collection of testimonials" },
+    "settings": { "schema": "object", "description": "Global settings (global and sobre)" },
+    "users_roles": { "schema": "UserRoleDoc", "description": "Collection of user roles" }
   }
 }

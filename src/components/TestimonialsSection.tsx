@@ -1,14 +1,9 @@
 import React, { useState } from 'react';
-import { Star, MessageSquare, Plus, Minus } from 'lucide-react';
+import { Plus, Minus } from 'lucide-react';
+import { useCollection } from '../hooks/useCollection';
+import { Testimonial } from '../types';
 
-interface TestimonialData {
-  author: string;
-  role: string;
-  text: string;
-  photoUrl: string;
-}
-
-const TestimonialCard = ({ t, isWide }: { t: TestimonialData, isWide: boolean, key?: React.Key }) => {
+const TestimonialCard = ({ t, isWide }: { t: Testimonial, isWide: boolean, key?: React.Key }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   
   return (
@@ -53,26 +48,7 @@ const TestimonialCard = ({ t, isWide }: { t: TestimonialData, isWide: boolean, k
 };
 
 export const TestimonialsSection: React.FC = () => {
-  const originalTestimonials = [
-    {
-      author: "Paulo Buzzo",
-      role: "Gestor Comercial | Growth | IA",
-      text: "Tive a honra de ter a Ingrid na equipe comercial da Auddar. Ela muito além do esperado, cuidando da comunicação interna, eventos e transformando as redes sociais, criando um planejamento estratégico de brilhar os olhos. Sempre proativa e cheia de ideias, destaco sua energia e dedicação inspiraram a todos ao redor. Ela é contagiante! Foi um privilégio ter Ingrid no time, e sei que onde ela estiver, trará sempre excelentes resultados e boas vibrações!",
-      photoUrl: "https://lh3.googleusercontent.com/d/1gOBdoaCX4zcS1xfMYbi-LTtZ_2WFeIva"
-    },
-    {
-      author: "Karina Redivo",
-      role: "Coordinadora de Marketing",
-      text: "A Ingrid é uma profissional multifuncional, muito dedicada, organizada e com senso de resolução incrível. Durante o time em que atuou como Social Media em nosso time de marketing, ela trouxe ideias fantásticas, ajudou a aprimorar processos de rotina conforme as necessidades do setor e estava sempre disposta a realizar tudo com responsabilidade e empenho. Linda, alegre, cativante, serena, cuidadosa com as entregas e resultados! Foi um prazer ter a Ingrid em nosso time. Simplesmente maravilhosa!",
-      photoUrl: "https://lh3.googleusercontent.com/d/1BkSIA3AFFHwMutkS8FVjOnImhIkPq92A"
-    },
-    {
-      author: "Guilherme Bressan",
-      role: "Creative Director at Estoriah",
-      text: "Tive o prazer de trabalhar com a Guigui em minha Produtora de Narrativas em 2022 e 2023. Uma pessoa muito carismática e de excelente comunicação que se destacava sempre por sua versatilidade e habilidade multitask. Além de Produtora Executiva, atuou como Assistente de Direção, acompanhando todas as etapas de produção de conteúdo sempre com uma postura proativa, pontualidade e uma capacidade impressionante de coordenação de equipe. Ela foi essencial em todas as etapas do processo: desde a gestão de produção, atendimento, visita técnica, até a coordenação da equipe envolvida.",
-      photoUrl: "https://lh3.googleusercontent.com/d/1rmHzyu5fdTHMGj6a30KQxElstZ78UGDS"
-    }
-  ];
+  const { data: testimonials } = useCollection<Testimonial>('testimonials');
 
   return (
     <section id="depoimentos" className="section-container !pt-0">
@@ -82,9 +58,13 @@ export const TestimonialsSection: React.FC = () => {
           </div>
           
           <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6 pb-12">
-            {originalTestimonials.map((t, idx) => (
-              <TestimonialCard key={idx} t={t} isWide={idx === 2} />
-            ))}
+            {testimonials && testimonials.length > 0 ? (
+              testimonials.map((t, idx) => (
+                <TestimonialCard key={t.id || idx} t={t} isWide={idx === 2} />
+              ))
+            ) : (
+              <div className="md:col-span-2 text-center text-zinc-500 py-10">Carregando depoimentos...</div>
+            )}
           </div>
       </div>
     </section>

@@ -1,44 +1,17 @@
 import React from 'react';
 import { Project } from '../types';
 import { useCollection } from '../hooks/useCollection';
-import { PROJECTS_LIST as STATIC_PROJECTS } from '../constants/projects';
 import { ProjectCard } from './ProjectCard';
 
 export const ProjectSection: React.FC<{ onSelectProject: (p: Project) => void }> = ({ onSelectProject }) => {
   const { data: dbProjects } = useCollection<Project>('projects');
 
   const displayProjects = React.useMemo(() => {
-    const base = Array.isArray(STATIC_PROJECTS) ? [...STATIC_PROJECTS] : [];
-    if (!dbProjects || dbProjects.length === 0) return base;
-
-    try {
-      const dbMap = new Map();
-      dbProjects.forEach(p => { if (p?.id) dbMap.set(p.id, p); });
-
-      const merged = base.map(sp => {
-        const dbP = dbMap.get(sp.id);
-        if (!dbP) return sp;
-        
-        // Prioriza a estrutura e conteúdo (feed, aboutConfig, audioUrl) do CÓDIGO
-        // Mas mantém metadados de controle do DB
-        return { 
-          ...dbP, 
-          title: sp.title,
-          feed: sp.feed, 
-          aboutConfig: sp.aboutConfig,
-          audioUrl: sp.audioUrl,
-          theme: { ...sp.theme, ...dbP.theme }
-        };
-      });
-
-      const staticIds = new Set(base.map(p => p.id));
-      const extras = dbProjects.filter(p => p?.id && !staticIds.has(p.id));
-
-      const final = [...merged, ...extras].sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
-      return final.length > 0 ? final : base;
-    } catch (e) {
-      return base;
-    }
+    if (!dbProjects) return [];
+    // Filtra apenas publicados por segurança na Home, ordena por order
+    return [...dbProjects]
+      .filter(p => !p.status || p.status === 'published')
+      .sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
   }, [dbProjects]);
 
   return (

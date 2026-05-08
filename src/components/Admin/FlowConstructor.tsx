@@ -37,15 +37,15 @@ interface CommunicationNodeData {
   onDelete?: (id: string) => void;
 }
 
-const CommunicationNode = ({ data, selected }: { data: CommunicationNodeData, selected: boolean }) => {
+const CommunicationNode = ({ id, data, selected }: NodeProps<CommunicationNodeData>) => {
   return (
     <div className={`
       relative min-w-[280px] bg-zinc-900 border-2 rounded-xl overflow-hidden transition-all duration-300
-      ${selected ? 'border-accent shadow-[0_0_30px_rgba(0,102,255,0.3)] scale-[1.02]' : 'border-white/10'}
+      ${selected ? 'border-accent shadow-[0_0_30px_rgba(254,242,0,0.2)] scale-[1.02]' : 'border-white/10'}
     `}>
       {/* Botão de Excluir Node */}
       <button 
-        onClick={(e) => { e.stopPropagation(); data.onDelete?.(data.id); }}
+        onClick={(e) => { e.stopPropagation(); data.onDelete?.(id); }}
         className="absolute -top-2 -right-2 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 border-2 border-black"
         title="Excluir Card"
       >
@@ -60,7 +60,7 @@ const CommunicationNode = ({ data, selected }: { data: CommunicationNodeData, se
             type="text"
             className="bg-transparent border-none p-0 text-[10px] uppercase font-black tracking-tighter text-zinc-400 focus:text-white focus:ring-0 w-full outline-none"
             value={data.label || ''}
-            onChange={(e) => data.onLabelChange?.(data.id, e.target.value)}
+            onChange={(e) => data.onLabelChange?.(id, e.target.value)}
           />
         </div>
         <div className="flex gap-1 shrink-0">
@@ -72,7 +72,7 @@ const CommunicationNode = ({ data, selected }: { data: CommunicationNodeData, se
       {/* Conteúdo do Card */}
       <div className="p-4 space-y-3">
         <button 
-          onClick={() => data.onSelectMedia?.(data.id)}
+          onClick={() => data.onSelectMedia?.(id)}
           className="w-full aspect-video bg-zinc-800 rounded-lg flex items-center justify-center border border-white/5 overflow-hidden group/media relative"
         >
           {data.thumbnail ? (
@@ -107,9 +107,11 @@ const CommunicationNode = ({ data, selected }: { data: CommunicationNodeData, se
         </div>
       </div>
 
-      {/* Handles para conexões */}
+      {/* Handles para conexões (Agora com Top e Bottom também) */}
       <Handle type="target" position={Position.Left} className="!w-3 !h-3 !bg-accent !border-black" />
       <Handle type="source" position={Position.Right} className="!w-3 !h-3 !bg-accent !border-black" />
+      <Handle type="target" position={Position.Top} className="!w-3 !h-3 !bg-accent !border-black" />
+      <Handle type="source" position={Position.Bottom} className="!w-3 !h-3 !bg-accent !border-black" />
     </div>
   );
 };
@@ -132,7 +134,22 @@ export const FlowConstructor: React.FC<FlowConstructorProps> = ({ initialData, o
   const [projectName, setProjectName] = useState(initialData?.projectName || 'Novo Projeto');
   const [selectingNodeId, setSelectingNodeId] = useState<string | null>(null);
 
-  // Inicializar nós com callbacks
+  // Memorizar callbacks para evitar recriação constante de nós
+  const onSelectMedia = useCallback((id: string) => {
+    console.log("Selecionando mídia para node:", id);
+    setSelectingNodeId(id);
+  }, []);
+
+  const onLabelChange = useCallback((id: string, newLabel: string) => {
+    setNodes((nds) => nds.map(n => n.id === id ? { ...n, data: { ...n.data, label: newLabel } } : n));
+  }, []);
+
+  const onDeleteNode = useCallback((id: string) => {
+    setNodes((nds) => nds.filter(n => n.id !== id));
+    setEdges((eds) => eds.filter(e => e.source !== id && e.target !== id));
+  }, []);
+
+  // Inicializar nós
   useEffect(() => {
     const rawNodes = initialData?.nodes && initialData.nodes.length > 0 
       ? initialData.nodes 
@@ -147,17 +164,12 @@ export const FlowConstructor: React.FC<FlowConstructorProps> = ({ initialData, o
       ...node,
       data: {
         ...node.data,
-        onSelectMedia: (id: string) => setSelectingNodeId(id),
-        onLabelChange: (id: string, newLabel: string) => {
-          setNodes((nds) => nds.map(n => n.id === id ? { ...n, data: { ...n.data, label: newLabel } } : n));
-        },
-        onDelete: (id: string) => {
-          setNodes((nds) => nds.filter(n => n.id !== id));
-          setEdges((eds) => eds.filter(e => e.source !== id && e.target !== id));
-        }
+        onSelectMedia,
+        onLabelChange,
+        onDelete: onDeleteNode
       }
     })));
-  }, [initialData]);
+  }, [initialData, onSelectMedia, onLabelChange, onDeleteNode]);
 
   const onNodesChange: OnNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -170,7 +182,7 @@ export const FlowConstructor: React.FC<FlowConstructorProps> = ({ initialData, o
   );
 
   const onConnect = useCallback(
-    (params: Connection) => setEdges((eds) => addEdge({ ...params, animated: true, style: { stroke: '#0066FF', strokeWidth: 2 } }, eds)),
+    (params: Connection) => setEdges((eds) => addEdge({ ...params, animated: true, style: { stroke: '#FEF200', strokeWidth: 2 } }, eds)),
     [setEdges]
   );
 
@@ -184,26 +196,24 @@ export const FlowConstructor: React.FC<FlowConstructorProps> = ({ initialData, o
         label: 'Novo Tópico', 
         type: 'image', 
         id: `TPC-${nodes.length + 1}`,
-        onSelectMedia: (id: string) => setSelectingNodeId(id),
-        onLabelChange: (id: string, newLabel: string) => {
-          setNodes((nds) => nds.map(n => n.id === id ? { ...n, data: { ...n.data, label: newLabel } } : n));
-        },
-        onDelete: (id: string) => {
-          setNodes((nds) => nds.filter(n => n.id !== id));
-          setEdges((eds) => eds.filter(e => e.source !== id && e.target !== id));
-        }
+        onSelectMedia,
+        onLabelChange,
+        onDelete: onDeleteNode
       },
     };
     setNodes((nds) => nds.concat(newNode));
   };
 
   const handleMediaSelect = (url: string) => {
-    if (!selectingNodeId) return;
+    const nodeId = selectingNodeId;
+    if (!nodeId) return;
     
-    const isVideo = url.toLowerCase().match(/\.(mp4|webm|ogg|mov)/i) || url.includes('/videos/');
+    console.log("Mídia selecionada:", url, "para node:", nodeId);
+
+    const isVideo = url.toLowerCase().match(/\.(mp4|webm|ogg|mov|m4v)/i) || url.includes('/videos/');
     
     setNodes((nds) => nds.map(node => {
-      if (node.id === selectingNodeId) {
+      if (node.id === nodeId) {
         return {
           ...node,
           data: {
@@ -308,11 +318,11 @@ export const FlowConstructor: React.FC<FlowConstructorProps> = ({ initialData, o
               </li>
               <li className="flex items-start gap-2 text-[9px] text-zinc-400">
                 <div className="w-1.5 h-1.5 rounded-full bg-accent mt-0.5" />
-                <span>Conecte as bolinhas azuis para criar o fluxo</span>
+                <span>Conecte as bolinhas amarelas para criar o fluxo</span>
               </li>
               <li className="flex items-start gap-2 text-[9px] text-zinc-400">
                 <div className="w-1.5 h-1.5 rounded-full bg-accent mt-0.5" />
-                <span>Use o Scroll para Zoom</span>
+                <span>Horizontal e Vertical permitidos</span>
               </li>
             </ul>
           </Panel>
@@ -348,11 +358,11 @@ export const FlowConstructor: React.FC<FlowConstructorProps> = ({ initialData, o
         .react-flow__handle {
           width: 8px;
           height: 8px;
-          background-color: #0066ff !important;
+          background-color: #FEF200 !important;
           border: 2px solid #000 !important;
         }
         .react-flow__edge-path {
-          stroke: #0066ff;
+          stroke: #FEF200;
           stroke-width: 2;
           stroke-dasharray: 5;
           animation: flow-dash 1s linear infinite;
