@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   LayoutGrid, MessageSquare, Mail, Play, Menu, 
-  ShieldCheck, Plus 
+  ShieldCheck, Plus, Share2, Image as ImageIcon,
+  ChevronRight
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { ProjectManager } from './ProjectManager';
 import { MediaLibrary } from './MediaLibrary';
+import { FlowConstructor } from './FlowConstructor';
 import { ServiceManager } from './ServiceManager';
 import { TestimonialManager } from './TestimonialManager';
 import { AboutManager } from './AboutManager';
@@ -14,6 +16,9 @@ import { GlobalSettingsManager } from './GlobalSettingsManager';
 import { UserManagement } from './UserManagement';
 import { DatabaseControlCenter } from './DatabaseControlCenter';
 import { seedAll } from '../../seed';
+import { updateProject } from '../../services/dataService';
+import { useCollection } from '../../hooks/useCollection';
+import { Project, FeedItem } from '../../types';
 
 const AdminNavItem = ({ active, onClick, icon, label }: { active: boolean, onClick: () => void, icon: React.ReactNode, label: string }) => (
   <button 
@@ -26,7 +31,13 @@ const AdminNavItem = ({ active, onClick, icon, label }: { active: boolean, onCli
 
 export const AdminPanel: React.FC = () => {
   const { logout, role } = useAuth();
-  const [activeTab, setActiveTab] = useState<'projects' | 'services' | 'testimonials' | 'about' | 'users' | 'settings' | 'media'>('projects');
+  const [activeTab, setActiveTab] = useState<'projects' | 'services' | 'testimonials' | 'about' | 'users' | 'settings' | 'media' | 'flow'>('projects');
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+
+  // Resetar seleção ao trocar de aba para evitar estados inconsistentes
+  useEffect(() => {
+    setSelectedProjectId(null);
+  }, [activeTab]);
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white flex flex-col md:flex-row">
@@ -38,7 +49,8 @@ export const AdminPanel: React.FC = () => {
 
         <nav className="flex-1 space-y-2">
           <AdminNavItem active={activeTab === 'projects'} onClick={() => setActiveTab('projects')} icon={<LayoutGrid size={20}/>} label="Projetos" />
-          <AdminNavItem active={activeTab === 'media'} onClick={() => setActiveTab('media')} icon={<Plus size={20}/>} label="Mídias (Upload)" />
+          <AdminNavItem active={activeTab === 'flow'} onClick={() => setActiveTab('flow')} icon={<Share2 size={20}/>} label="Construtor de Flow" />
+          <AdminNavItem active={activeTab === 'media'} onClick={() => setActiveTab('media')} icon={<ImageIcon size={20}/>} label="Biblioteca de Mídia" />
           <AdminNavItem active={activeTab === 'services'} onClick={() => setActiveTab('services')} icon={<MessageSquare size={20}/>} label="Serviços" />
           <AdminNavItem active={activeTab === 'testimonials'} onClick={() => setActiveTab('testimonials')} icon={<Mail size={20}/>} label="Depoimentos" />
           <AdminNavItem active={activeTab === 'about'} onClick={() => setActiveTab('about')} icon={<Play size={20}/>} label="Sobre Mim" />
@@ -55,7 +67,64 @@ export const AdminPanel: React.FC = () => {
       <main className="flex-1 p-8 md:p-16 overflow-y-auto max-h-screen">
         <div className="max-w-5xl mx-auto">
           {activeTab === 'projects' && <ProjectManager />}
-          {activeTab === 'media' && <MediaLibrary />}
+          {activeTab === 'flow' && (
+            <StructuralCenter 
+              title="Construtor de Flow" 
+              description="Selecione um projeto para editar sua árvore lógica de tópicos e stories."
+              selectedId={selectedProjectId}
+              onSelect={setSelectedProjectId}
+              renderTool={(project) => (
+                <div className="fixed inset-0 z-50 bg-black">
+                  <FlowConstructor 
+                    initialData={{ 
+                      nodes: project.flowData?.nodes || [], 
+                      edges: project.flowData?.edges || [],
+                      projectName: project.title 
+                    }}
+                    onCancel={() => setSelectedProjectId(null)}
+                    cancelLabel="Voltar à Central"
+                    onSave={async (flowResult) => {
+                      try {
+                        const newFeed: FeedItem[] = flowResult.nodes.map((node: any) => ({
+                          id: node.id,
+                          title: node.data.label || 'Sem Título',
+                          media: {
+                            type: node.data.type || 'image',
+                            url: node.data.thumbnail || '',
+                            order: 1
+                          },
+                          aspectRatio: node.data.type === 'video' ? 0.56 : 1,
+                          stories: []
+                        }));
+
+                        const projectData = {
+                          ...project,
+                          flowData: { nodes: flowResult.nodes, edges: flowResult.edges },
+                          feed: project.feed && project.feed.length > 0 ? project.feed : newFeed,
+                        };
+
+                        await updateProject(project.id, projectData);
+                        alert("Fluxo salvo com sucesso!");
+                        setSelectedProjectId(null);
+                      } catch (err) {
+                        console.error("Erro ao salvar flow:", err);
+                        alert("Erro ao salvar o fluxo.");
+                      }
+                    }}
+                  />
+                </div>
+              )}
+            />
+          )}
+          {activeTab === 'media' && (
+            <StructuralCenter 
+              title="Biblioteca de Mídia" 
+              description="Gerencie arquivos, uploads e pastas vinculadas à estrutura visual."
+              selectedId={selectedProjectId}
+              onSelect={setSelectedProjectId}
+              renderTool={() => <MediaLibrary standalone={false} onClose={() => setSelectedProjectId(null)} closeLabel="Voltar à Central" />}
+            />
+          )}
           {activeTab === 'services' && <ServiceManager />}
           {activeTab === 'testimonials' && <TestimonialManager />}
           {activeTab === 'about' && <AboutManager />}
@@ -63,6 +132,56 @@ export const AdminPanel: React.FC = () => {
           {activeTab === 'users' && <UserManagement />}
         </div>
       </main>
+    </div>
+  );
+};
+
+const StructuralCenter = ({ title, description, selectedId, onSelect, renderTool }: { 
+  title: string, 
+  description: string, 
+  selectedId: string | null,
+  onSelect: (id: string | null) => void,
+  renderTool: (p: Project) => React.ReactNode 
+}) => {
+  const { data: projects, loading } = useCollection<Project>('projects');
+  const selectedProject = projects.find(p => p.id === selectedId);
+
+  if (selectedId && selectedProject) {
+    return <>{renderTool(selectedProject)}</>;
+  }
+
+  return (
+    <div className="space-y-8">
+      <div className="bg-zinc-900/50 p-8 rounded-[12px] border border-white/5">
+        <h2 className="text-3xl font-bold tracking-tight">{title}</h2>
+        <p className="text-zinc-500 mt-2">{description}</p>
+      </div>
+
+      <div className="grid gap-3">
+        <div className="text-[10px] font-black uppercase tracking-widest text-zinc-600 mb-2">Selecione uma Estrutura</div>
+        {loading ? (
+          <div className="p-12 text-center text-zinc-600 animate-pulse">Carregando projetos...</div>
+        ) : (
+          projects.map(p => (
+            <button 
+              key={p.id}
+              onClick={() => onSelect(p.id)}
+              className="w-full bg-zinc-900/30 p-5 rounded-[8px] border border-white/5 hover:border-accent/40 hover:bg-zinc-900/50 transition-all flex items-center justify-between group"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-zinc-800 rounded-[6px] overflow-hidden border border-white/10 shrink-0">
+                  {p.galleryThumbnail && <img src={p.galleryThumbnail} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" alt="" />}
+                </div>
+                <div className="text-left">
+                  <span className="text-[9px] font-black uppercase text-zinc-600 tracking-tighter">Projeto</span>
+                  <h3 className="font-bold text-lg leading-none">{p.title}</h3>
+                </div>
+              </div>
+              <ChevronRight className="text-zinc-700 group-hover:text-accent transition-colors" />
+            </button>
+          ))
+        )}
+      </div>
     </div>
   );
 };

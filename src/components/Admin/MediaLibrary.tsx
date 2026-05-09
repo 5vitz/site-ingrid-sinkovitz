@@ -12,9 +12,10 @@ interface MediaLibraryProps {
   onSelect?: (url: string) => void;
   onClose?: () => void;
   standalone?: boolean;
+  closeLabel?: string;
 }
 
-export const MediaLibrary = ({ onSelect, onClose, standalone = true }: MediaLibraryProps) => {
+export const MediaLibrary = ({ onSelect, onClose, standalone = true, closeLabel }: MediaLibraryProps) => {
   const [items, setItems] = useState<MediaLibraryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -298,7 +299,7 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true }: MediaLibr
               onClick={onClose} 
               className="flex items-center gap-2 px-6 py-2 bg-accent/10 hover:bg-accent text-accent hover:text-black rounded-lg border border-accent/20 transition font-black text-[10px] uppercase tracking-widest group"
             >
-              <X size={14} className="group-hover:rotate-90 transition-transform" /> Voltar ao Flow
+              <X size={14} className="group-hover:rotate-90 transition-transform" /> {closeLabel || 'Voltar'}
             </button>
           )}
         </div>

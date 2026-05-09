@@ -41,7 +41,7 @@ export const ProjectModalFlow: React.FC<ProjectModalFlowProps> = ({
       type: currentNode.data.type || 'image',
       url: currentNode.data.thumbnail || currentNode.data.url || '',
       title: currentNode.data.label || '',
-      aspectRatio: project.theme?.aspectRatio || (currentNode.data.type === 'video' ? 0.56 : 0.8)
+      aspectRatio: currentNode.data.aspectRatio || project.theme?.aspectRatio || (currentNode.data.type === 'video' ? 0.56 : 0.8)
     };
   }, [currentNode, project.theme?.aspectRatio]);
 
@@ -181,11 +181,11 @@ export const ProjectModalFlow: React.FC<ProjectModalFlowProps> = ({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 1.05, y: -20 }}
           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="relative z-10 w-full flex items-center justify-center p-4 md:p-8"
+          className="relative z-10 flex items-center justify-center p-4 md:p-8"
           style={{
-            maxWidth: project.theme?.playerWidth ? `${project.theme.playerWidth}px` : '540px',
-            maxHeight: project.theme?.playerMaxHeight ? `${project.theme.playerMaxHeight}px` : '90vh',
-            aspectRatio: project.theme?.aspectRatio?.toString() || '0.8',
+            height: 'min(540px, 90vh)',
+            width: 'auto',
+            aspectRatio: currentNode.data.aspectRatio ? currentNode.data.aspectRatio.toString() : '0.8',
           }}
         >
           <div 
@@ -194,7 +194,7 @@ export const ProjectModalFlow: React.FC<ProjectModalFlowProps> = ({
               backgroundColor: project.theme?.playerBg?.startsWith('#') ? project.theme.playerBg : undefined,
               border: `${project.theme?.borderWidth || '1px'} solid ${project.theme?.playerBorderColor || 'rgba(255,255,255,0.1)'}`,
               borderRadius: project.theme?.borderRadius || '24px',
-              boxShadow: project.theme?.boxShadow || '0 0 50px rgba(0,0,0,0.5)',
+              boxShadow: project.theme?.boxShadow || `0 0 50px ${(project.theme?.accentColor || '#FEF200')}44`,
             }}
           >
             <div className={`flex-1 w-full overflow-y-auto overflow-x-hidden scrollbar-hide custom-scrollbar ${!project.theme?.playerBg?.startsWith('#') ? (project.theme?.playerBg || 'bg-zinc-900') : ''}`}>

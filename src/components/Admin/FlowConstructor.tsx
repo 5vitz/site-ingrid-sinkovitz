@@ -38,15 +38,27 @@ interface CommunicationNodeData {
   label: string;
   type: 'video' | 'image';
   thumbnail?: string;
+  aspectRatio?: number;
   onSelectMedia?: (id: string) => void;
   onLabelChange?: (id: string, newLabel: string) => void;
+  onAspectRatioChange?: (id: string, ratio: number) => void;
   onDelete?: (id: string) => void;
 }
 
 const CommunicationNode = ({ id, data, selected }: NodeProps<CommunicationNodeData>) => {
+  const ratios = [
+    { label: '9:16', value: 0.56 },
+    { label: '4:5', value: 0.8 },
+    { label: '1:1', value: 1.0 },
+    { label: '3:4', value: 0.75 },
+    { label: '16:9', value: 1.77 },
+  ];
+
+  const currentRatio = data.aspectRatio || (data.type === 'video' ? 0.56 : 0.8);
+
   return (
     <div className={`
-      relative w-56 bg-zinc-900 border-2 rounded-xl transition-all duration-300
+      relative w-64 bg-zinc-900 border-2 rounded-xl transition-all duration-300
       ${selected ? 'border-accent shadow-[0_0_20px_rgba(254,242,0,0.15)] scale-[1.01]' : 'border-white/10'}
     `}>
       {/* Botão de Excluir Node */}
@@ -76,10 +88,11 @@ const CommunicationNode = ({ id, data, selected }: NodeProps<CommunicationNodeDa
       </div>
 
       {/* Conteúdo do Card */}
-      <div className="p-4 space-y-3">
+      <div className="p-4 flex flex-col gap-0">
         <button 
           onClick={() => data.onSelectMedia?.(id)}
-          className="w-full aspect-video bg-zinc-800 rounded-lg flex items-center justify-center border border-white/5 overflow-hidden group/media relative"
+          className="w-full bg-zinc-800 rounded-lg flex items-center justify-center border border-white/5 overflow-hidden group/media relative"
+          style={{ aspectRatio: currentRatio }}
         >
           {data.thumbnail ? (
             <>
@@ -96,20 +109,28 @@ const CommunicationNode = ({ id, data, selected }: NodeProps<CommunicationNodeDa
           )}
         </button>
         
-        <div className="space-y-1">
-          <div className="h-2 w-3/4 bg-white/10 rounded" />
-          <div className="h-2 w-1/2 bg-white/5 rounded" />
-        </div>
-
-        <div className="pt-2 border-t border-white/5 flex justify-between items-center">
-          <div className="flex -space-x-2">
-            {[1, 2].map(i => (
-              <div key={i} className="w-5 h-5 rounded-full bg-zinc-800 border border-zinc-900 flex items-center justify-center text-[8px] font-bold text-zinc-500">
-                +
-              </div>
+        <div className="mt-4 pt-4 border-t border-white/10 flex flex-col gap-3">
+          <div className="flex flex-wrap gap-1">
+            {ratios.map(r => (
+              <button
+                key={r.value}
+                onClick={() => data.onAspectRatioChange?.(id, r.value)}
+                className={`
+                  px-1.5 py-1 text-[8px] font-black rounded-sm border transition-all
+                  ${currentRatio === r.value 
+                    ? 'bg-accent text-black border-accent' 
+                    : 'bg-zinc-800 text-zinc-500 border-white/5 hover:border-white/20'
+                  }
+                `}
+              >
+                {r.label}
+              </button>
             ))}
           </div>
-          <span className="text-[8px] text-zinc-500 font-mono uppercase">#{data.id || '001'}</span>
+          <div className="flex justify-between items-center">
+            <span className="text-[8px] text-zinc-600 font-bold uppercase tracking-widest">Aspect Ratio</span>
+            <span className="text-[8px] text-zinc-500 font-mono uppercase">#{data.id || '001'}</span>
+          </div>
         </div>
       </div>
 
@@ -185,9 +206,10 @@ interface FlowConstructorProps {
   initialData?: { nodes: any[], edges: any[], projectName?: string };
   onCancel: () => void;
   onSave: (data: { nodes: any[], edges: any[], projectName: string }) => void;
+  cancelLabel?: string;
 }
 
-const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onSave }) => {
+const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onSave, cancelLabel }) => {
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>(initialData?.edges || []);
   const [projectName, setProjectName] = useState(initialData?.projectName || 'Novo Projeto');
@@ -206,6 +228,10 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
 
   const onLabelChange = useCallback((id: string, newLabel: string) => {
     setNodes((nds) => nds.map(n => n.id === id ? { ...n, data: { ...n.data, label: newLabel } } : n));
+  }, []);
+
+  const onAspectRatioChange = useCallback((id: string, ratio: number) => {
+    setNodes((nds) => nds.map(n => n.id === id ? { ...n, data: { ...n.data, aspectRatio: ratio } } : n));
   }, []);
 
   const onDeleteNode = useCallback((id: string) => {
@@ -230,10 +256,11 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
         ...node.data,
         onSelectMedia,
         onLabelChange,
+        onAspectRatioChange,
         onDelete: onDeleteNode
       }
     })));
-  }, [initialData, onSelectMedia, onLabelChange, onDeleteNode]);
+  }, [initialData, onSelectMedia, onLabelChange, onAspectRatioChange, onDeleteNode]);
 
   const onNodesChange: OnNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -262,6 +289,7 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
         id: `TPC-${nodes.length + 1}`,
         onSelectMedia,
         onLabelChange,
+        onAspectRatioChange,
         onDelete: onDeleteNode
       },
     };
@@ -316,6 +344,7 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
             label: n.data.label,
             type: n.data.type,
             thumbnail: n.data.thumbnail || '',
+            aspectRatio: n.data.aspectRatio || null,
           }
         };
       });
@@ -391,7 +420,7 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
               onClick={onCancel}
               className="px-4 py-2 text-[10px] font-black uppercase text-zinc-500 hover:text-white transition"
             >
-              Cancelar
+              {cancelLabel || 'Cancelar'}
             </button>
             <button 
               onClick={handleSave}

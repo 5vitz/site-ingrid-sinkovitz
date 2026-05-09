@@ -488,6 +488,62 @@ const ProjectRow = ({
   );
 };
 
+const PALETTE = [
+  '#FEF200', // Nosso Amarelo
+  '#FFFFFF', // Branco
+  '#FF3B30', // Vermelho
+  '#FF9500', // Laranja
+  '#4CD964', // Verde
+  '#00D2FF', // Ciano
+  '#007AFF', // Azul
+  '#5856D6', // Indigo
+  '#AF52DE', // Roxo
+  '#FF2D55', // Rosa
+  '#8E8E93', // Cinza
+  '#000000', // Preto
+];
+
+const ColorSelector = ({ value, onChange }: { value: string, onChange: (color: string) => void }) => {
+  const isCustom = !PALETTE.includes(value.toUpperCase());
+  
+  return (
+    <div className="space-y-3 pt-1">
+      <div className="flex flex-wrap gap-2">
+        {PALETTE.map((color) => (
+          <button
+            key={color}
+            type="button"
+            onClick={() => onChange(color)}
+            className={`w-6 h-6 rounded-full border-2 transition-all hover:scale-110 ${value.toUpperCase() === color ? 'border-white scale-110 shadow-[0_0_10px_rgba(255,255,255,0.3)]' : 'border-transparent shadow-md'}`}
+            style={{ backgroundColor: color }}
+          />
+        ))}
+        {/* Slot para mostrar a cor customizada se não estiver na paleta */}
+        {isCustom && (
+           <div 
+            className="w-6 h-6 rounded-full border-2 border-white scale-110 shadow-[0_0_10px_rgba(255,255,255,0.3)]"
+            style={{ backgroundColor: value }}
+           />
+        )}
+      </div>
+      <div className="flex items-center gap-2">
+        <input 
+          type="color"
+          className="w-8 h-8 rounded bg-transparent border-none cursor-pointer shrink-0"
+          value={value.startsWith('#') ? value : '#000000'}
+          onChange={e => onChange(e.target.value)}
+        />
+        <input 
+          className="admin-input-small flex-1 font-mono uppercase text-[10px]"
+          value={value}
+          onChange={e => onChange(e.target.value)}
+          placeholder="#HEX..."
+        />
+      </div>
+    </div>
+  );
+};
+
 const ProjectForm = ({ project, onSave, onCancel, onChange, onFlowOpen }: { 
   project: Partial<Project>, 
   onSave: () => void, 
@@ -495,33 +551,11 @@ const ProjectForm = ({ project, onSave, onCancel, onChange, onFlowOpen }: {
   onChange: (p: Partial<Project>) => void,
   onFlowOpen?: () => void
 }) => {
-  const [activeTab, setActiveTab] = useState<'info' | 'design' | 'content'>('info');
+  const [activeTab, setActiveTab] = useState<'info' | 'design'>('info');
   const [pickerConfig, setPickerConfig] = useState<{ isOpen: boolean, onSelect: (url: string) => void } | null>(null);
 
   const openPicker = (setter: (url: string) => void) => {
     setPickerConfig({ isOpen: true, onSelect: setter });
-  };
-
-  const addFeedItem = () => {
-    const newItem: FeedItem = {
-      id: `topic-${Date.now()}`,
-      title: 'Novo Tópico',
-      aspectRatio: 1,
-      media: { type: 'image', url: '', order: 1 },
-      stories: []
-    };
-    onChange({ ...project, feed: [...(project.feed || []), newItem] });
-  };
-
-  const removeFeedItem = (id: string) => {
-    onChange({ ...project, feed: project.feed?.filter(f => f.id !== id) });
-  };
-
-  const updateFeedItem = (id: string, updates: Partial<FeedItem>) => {
-    onChange({
-      ...project,
-      feed: project.feed?.map(f => f.id === id ? { ...f, ...updates } : f)
-    });
   };
 
   return (
@@ -546,7 +580,6 @@ const ProjectForm = ({ project, onSave, onCancel, onChange, onFlowOpen }: {
       <div className="flex border-b border-white/5 px-6">
         <TabButton active={activeTab === 'info'} onClick={() => setActiveTab('info')} icon={<FileText size={16}/>} label="Informações" />
         <TabButton active={activeTab === 'design'} onClick={() => setActiveTab('design')} icon={<Palette size={16}/>} label="Visual & Design" />
-        <TabButton active={activeTab === 'content'} onClick={() => setActiveTab('content')} icon={<Layers size={16}/>} label="Gestão de Conteúdo" />
         {project.id && (
           <button 
             onClick={onFlowOpen}
@@ -570,18 +603,6 @@ const ProjectForm = ({ project, onSave, onCancel, onChange, onFlowOpen }: {
                   onChange={e => onChange({ ...project, title: e.target.value })}
                   placeholder="Ex: Auddar - Estratégia"
                 />
-              </FormField>
-
-              <FormField label="Tipo de Layout" description="Formato da grade e navegação">
-                <select 
-                  className="admin-input"
-                  value={project.layoutType}
-                  onChange={e => onChange({ ...project, layoutType: e.target.value as LayoutType })}
-                >
-                  <option value="2d">2D (Temas Novos - Feed + Stories)</option>
-                  <option value="vertical">Vertical (Estilo Reel Antigo)</option>
-                  <option value="horizontal">Horizontal (Carrossel Simples)</option>
-                </select>
               </FormField>
 
               <FormField label="Slot na Galeria (Ordem)" description="Defina a posição do projeto na tela principal">
@@ -702,120 +723,85 @@ const ProjectForm = ({ project, onSave, onCancel, onChange, onFlowOpen }: {
             <div className="space-y-8">
                <h4 className="text-lg font-bold text-accent flex items-center gap-2 border-b border-white/5 pb-2"><Palette size={20}/> Player & Estilos</h4>
                
-               <div className="grid grid-cols-2 gap-4">
-                 <FormField label="Largura Base (px)" description="Largura ideal do player">
-                   <input 
-                    type="number"
-                    className="admin-input"
-                    value={project.theme?.playerWidth || 540}
-                    onChange={e => onChange({ ...project, theme: { ...project.theme, playerWidth: parseInt(e.target.value) || 0 } })}
-                  />
-                 </FormField>
-                 <FormField label="Altura Base (px)" description="Altura ideal do player">
-                   <input 
-                    type="number"
-                    className="admin-input"
-                    value={project.theme?.playerHeight || 540}
-                    onChange={e => onChange({ ...project, theme: { ...project.theme, playerHeight: parseInt(e.target.value) || 0 } })}
-                  />
-                 </FormField>
-               </div>
-
-               <div className="grid grid-cols-2 gap-4">
-                 <FormField label="Aspect Ratio" description="Proporção (ex: 0.56 p/ 9:16)">
-                   <input 
-                    type="number"
-                    step="0.01"
-                    className="admin-input"
-                    value={project.theme?.aspectRatio || 0.8}
-                    onChange={e => onChange({ ...project, theme: { ...project.theme, aspectRatio: parseFloat(e.target.value) || 0 } })}
-                  />
-                 </FormField>
-                 <FormField label="Altura Máxima (px)" description="Limite de altura na tela">
-                   <input 
-                    type="number"
-                    className="admin-input"
-                    value={project.theme?.playerMaxHeight || 900}
-                    onChange={e => onChange({ ...project, theme: { ...project.theme, playerMaxHeight: parseInt(e.target.value) || 0 } })}
-                  />
-                 </FormField>
-               </div>
-
-               <FormField label="Cor de Destaque (Accent)" description="Botões, ícones e detalhes">
-                 <div className="flex gap-4 items-center">
-                    <input 
-                      type="color"
-                      className="w-12 h-12 rounded-full border-none cursor-pointer bg-transparent shrink-0"
-                      value={project.theme?.accentColor || '#FEF200'}
-                      onChange={e => onChange({ ...project, theme: { ...project.theme, accentColor: e.target.value } })}
-                    />
-                    <input 
-                      className="admin-input flex-1 font-mono uppercase"
-                      value={project.theme?.accentColor || '#FEF200'}
-                      onChange={e => onChange({ ...project, theme: { ...project.theme, accentColor: e.target.value } })}
-                    />
-                 </div>
-               </FormField>
-
-               <div className="grid grid-cols-2 gap-4">
+               <div className="space-y-6">
+                 {/* 1 - Espessura da borda */}
                  <FormField label="Espessura da Borda" description="Ex: 1px, 2px, 0px">
                    <input 
                     className="admin-input"
                     placeholder="1px"
                     value={project.theme?.borderWidth || ''}
                     onChange={e => onChange({ ...project, theme: { ...project.theme, borderWidth: e.target.value } })}
-                  />
+                   />
                  </FormField>
-                 <FormField label="Cor da Borda" description="Ex: #ffffff20">
-                   <input 
-                    className="admin-input"
-                    placeholder="#ffffff20"
-                    value={project.theme?.playerBorderColor || ''}
-                    onChange={e => onChange({ ...project, theme: { ...project.theme, playerBorderColor: e.target.value } })}
-                  />
-                 </FormField>
-               </div>
 
-               <div className="grid grid-cols-2 gap-4">
+                 {/* 2 - Cor da borda */}
+                 <FormField label="Cor da Borda" description="Tom da moldura do player">
+                   <ColorSelector 
+                     value={project.theme?.playerBorderColor || '#ffffff20'}
+                     onChange={color => onChange({ ...project, theme: { ...project.theme, playerBorderColor: color } })}
+                   />
+                 </FormField>
+
+                 {/* 3 - Cor de Destaque */}
+                 <FormField label="Cor de Destaque (Accent)" description="Selecione na paleta ou defina um tom customizado">
+                   <ColorSelector 
+                     value={project.theme?.accentColor || '#FEF200'}
+                     onChange={color => onChange({ ...project, theme: { ...project.theme, accentColor: color } })}
+                   />
+                 </FormField>
+
+                 {/* 4 - Arredondamento (Radius) */}
                  <FormField label="Arredondamento (Radius)" description="Ex: 16px, 0px">
                    <input 
                     className="admin-input"
                     placeholder="16px"
                     value={project.theme?.borderRadius || ''}
                     onChange={e => onChange({ ...project, theme: { ...project.theme, borderRadius: e.target.value } })}
-                  />
+                   />
                  </FormField>
-                 <FormField label="Efeito (Box Shadow)" description="Ex: 0 0 50px rgba(0,0,0,0.5)">
+
+                 {/* 5 - Intensidade da Sombra */}
+                 <FormField label="Intensidade da Sombra" description="Arraste para ajustar o brilho e profundidade">
+                   <div className="flex items-center gap-4 pt-2">
+                     <input 
+                       type="range"
+                       min="0"
+                       max="100"
+                       className="flex-1 accent-accent h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer"
+                       value={parseInt(project.theme?.boxShadow?.match(/(\d+)px/)?.[1] || '0')}
+                       onChange={e => {
+                         const val = e.target.value;
+                         const color = project.theme?.accentColor || '#FEF200';
+                         onChange({ ...project, theme: { ...project.theme, boxShadow: `0 0 ${val}px ${color}66` } });
+                       }}
+                     />
+                     <span className="text-[10px] font-mono text-accent w-10 text-right">{project.theme?.boxShadow?.match(/(\d+)px/)?.[1] || '0'}px</span>
+                   </div>
+                 </FormField>
+
+                 {/* 6 - Cor do fundo */}
+                 <FormField label="Cor do Fundo (Borda/Modal)" description="Ex: #000000 ou bg-zinc-950">
                    <input 
-                    className="admin-input text-[10px]"
-                    placeholder="0 0 50px rgba(0,0,0,0.5)"
-                    value={project.theme?.boxShadow || ''}
-                    onChange={e => onChange({ ...project, theme: { ...project.theme, boxShadow: e.target.value } })}
-                  />
+                    className="admin-input font-mono"
+                    value={project.theme?.playerBg || 'bg-black'}
+                    onChange={e => onChange({ ...project, theme: { ...project.theme, playerBg: e.target.value } })}
+                   />
                  </FormField>
                </div>
-
-               <FormField label="Cor do Fundo (Borda/Modal)" description="Ex: #000000 ou bg-zinc-950">
-                 <input 
-                  className="admin-input font-mono"
-                  value={project.theme?.playerBg || 'bg-black'}
-                  onChange={e => onChange({ ...project, theme: { ...project.theme, playerBg: e.target.value } })}
-                />
-               </FormField>
             </div>
 
             <div className="space-y-6">
-              <div className="bg-zinc-900/40 p-10 rounded-[12px] border border-white/10 flex flex-col items-center justify-center text-center sticky top-0">
+              <div className="bg-black/60 p-12 rounded-[12px] border border-white/5 flex flex-col items-center justify-center text-center sticky top-0">
                  <div 
-                   className="mb-6 transition-all duration-500 overflow-hidden" 
+                   className="mb-6 transition-all duration-500" 
                    style={{ 
                      width: '180px', 
-                     aspectRatio: project.theme?.aspectRatio || '0.8',
+                     aspectRatio: '0.8',
                      maxHeight: '260px',
                      backgroundColor: project.theme?.playerBg?.startsWith('#') ? project.theme.playerBg : '#111',
                      border: `${project.theme?.borderWidth || '1px'} solid ${project.theme?.playerBorderColor || 'rgba(255,255,255,0.1)'}`,
                      borderRadius: project.theme?.borderRadius || '16px',
-                     boxShadow: project.theme?.boxShadow || '0 0 30px rgba(0,0,0,0.5)'
+                     boxShadow: project.theme?.boxShadow || `0 0 30px ${(project.theme?.accentColor || '#FEF200')}44`
                    }}
                  >
                    <div className="w-full h-full flex items-center justify-center p-4">
@@ -825,63 +811,9 @@ const ProjectForm = ({ project, onSave, onCancel, onChange, onFlowOpen }: {
                  <h5 className="font-bold mb-2 uppercase tracking-widest text-xs">Preview do Player</h5>
                  <p className="text-[10px] text-zinc-500 leading-relaxed max-w-[240px]">
                    Ajuste as propriedades ao lado para ver como o player se comportará no site. 
-                   O Aspect Ratio define se o vídeo/imagem será vertical ou mais quadrado.
+                   A altura máxima é limitada a 540px e a largura será proporcional ao aspect ratio de cada card.
                  </p>
               </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'content' && (
-          <div className="space-y-6">
-            <div className="bg-blue-600/10 border border-blue-600/20 p-6 rounded-[12px] mb-8">
-               <div className="flex items-center gap-3 mb-2">
-                 <Settings2 className="text-blue-500" size={20} />
-                 <h4 className="font-bold text-blue-500 uppercase tracking-widest text-xs">Atenção sobre Estrutura</h4>
-               </div>
-               <p className="text-zinc-400 text-xs leading-relaxed">
-                 Esta aba gerencia o conteúdo de forma <strong>linear</strong> (Feed + Stories). 
-                 Se você estiver usando o <strong>Construtor de Flow</strong>, esta lista serve apenas como backup dos tópicos gerados. 
-                 Para layouts do tipo "2D", os tópicos aqui definem os "Blocos" de navegação.
-               </p>
-            </div>
-
-            <div className="flex justify-between items-center">
-              <h4 className="text-lg font-bold">Estrutura de Tópicos e Stories</h4>
-              <button 
-                onClick={addFeedItem}
-                className="flex items-center gap-2 px-4 py-2 bg-white text-black font-bold rounded-[8px] text-xs hover:bg-zinc-200"
-              >
-                <Plus size={16}/> Adicionar Tópico
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              {project.feed?.length === 0 ? (
-                <div className="p-10 text-center bg-zinc-900/20 rounded-[8px] border border-dashed border-white/10">
-                  <p className="text-zinc-600 text-sm">Nenhum tópico adicionado. Clique no botão acima para começar.</p>
-                </div>
-              ) : (
-                project.feed?.map((item, idx) => (
-                  <FeedItemEditor 
-                    key={item.id} 
-                    item={item} 
-                    index={idx}
-                    onUpdate={(up) => updateFeedItem(item.id, up)}
-                    onRemove={() => removeFeedItem(item.id)}
-                    onOpenPicker={openPicker}
-                    totalItems={project.feed?.length || 0}
-                    onMove={(dir) => {
-                       const newFeed = [...(project.feed || [])];
-                       const target = dir === 'up' ? idx - 1 : idx + 1;
-                       if (target >= 0 && target < newFeed.length) {
-                         [newFeed[idx], newFeed[target]] = [newFeed[target], newFeed[idx]];
-                         onChange({ ...project, feed: newFeed });
-                       }
-                    }}
-                  />
-                ))
-              )}
             </div>
           </div>
         )}
@@ -907,172 +839,18 @@ const ProjectForm = ({ project, onSave, onCancel, onChange, onFlowOpen }: {
           onClick={onSave}
           className="px-10 py-3 bg-accent text-black font-bold rounded-[8px] flex items-center gap-2 hover:bg-accent/80 transition shadow-xl shadow-accent/20"
         >
-          <Save size={20} /> Salvar Tudo
+          <Save size={20} /> Salvar Configurações
         </button>
       </div>
     </div>
   );
 };
 
-const FeedItemEditor = ({ item, onUpdate, onRemove, index, totalItems, onMove, onOpenPicker }: { 
-  item: FeedItem, 
-  onUpdate: (up: Partial<FeedItem>) => void, 
-  onRemove: () => void,
-  index: number,
-  totalItems: number,
-  onMove: (dir: 'up' | 'down') => void,
-  onOpenPicker: (setter: (url: string) => void) => void,
-  key?: any
-}) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const addStory = () => {
-    const newStory: MediaItem = {
-      type: 'image',
-      url: '',
-      order: (item.stories?.length || 0) + 1
-    };
-    onUpdate({ stories: [...(item.stories || []), newStory] });
-  };
-
-  const updateStory = (sIdx: number, updates: Partial<MediaItem>) => {
-    const newStories = [...(item.stories || [])];
-    newStories[sIdx] = { ...newStories[sIdx], ...updates };
-    onUpdate({ stories: newStories });
-  };
-
-  const removeStory = (sIdx: number) => {
-    onUpdate({ stories: item.stories?.filter((_, i) => i !== sIdx) });
-  };
-
-  return (
-    <div className="bg-zinc-900/50 border border-white/5 rounded-[8px] overflow-hidden">
-      <div className="p-4 flex items-center justify-between gap-4 cursor-pointer hover:bg-white/5 transition" onClick={() => setIsOpen(!isOpen)}>
-        <div className="flex items-center gap-4 flex-1">
-          <div className="flex flex-col gap-1">
-             <button onClick={(e) => { e.stopPropagation(); onMove('up'); }} disabled={index === 0} className="text-zinc-600 hover:text-white disabled:opacity-0"><MoveUp size={14}/></button>
-             <button onClick={(e) => { e.stopPropagation(); onMove('down'); }} disabled={index === totalItems - 1} className="text-zinc-600 hover:text-white disabled:opacity-0"><MoveDown size={14}/></button>
-          </div>
-          <div className="bg-white/5 w-10 h-10 rounded-full flex items-center justify-center font-bold text-accent">
-            {index + 1}
-          </div>
-          <div className="flex-1">
-             <input 
-               className="bg-transparent border-none p-0 text-lg font-bold focus:ring-0 w-full placeholder:opacity-20"
-               value={item.title}
-               onClick={(e) => e.stopPropagation()}
-               onChange={(e) => onUpdate({ title: e.target.value })}
-               placeholder="Título do Tópico..."
-             />
-             <div className="text-[10px] uppercase font-bold text-zinc-500 tracking-widest">{item.stories?.length || 0} Stories adicionais</div>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <button onClick={(e) => { e.stopPropagation(); onRemove(); }} className="p-2 text-zinc-600 hover:text-red-500 transition"><Trash2 size={16}/></button>
-          {isOpen ? <ChevronDown size={20}/> : <ChevronRight size={20}/>}
-        </div>
-      </div>
-
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="border-t border-white/5 p-6 space-y-6"
-          >
-            {/* Mídia Principal do Tópico */}
-            <div className="bg-white/[0.02] p-4 rounded-[8px] border border-white/5">
-               <h5 className="text-[10px] uppercase font-black tracking-widest text-zinc-500 mb-4">Capa do Tópico (Primeira Página)</h5>
-               <div className="grid grid-cols-4 gap-4">
-                  <div className="col-span-1">
-                    <select 
-                      className="admin-input-small text-xs"
-                      value={item.media.type}
-                      onChange={(e) => onUpdate({ media: { ...item.media, type: e.target.value as MediaType } })}
-                    >
-                      <option value="image">Imagem</option>
-                      <option value="video">Vídeo</option>
-                      <option value="text">Texto</option>
-                    </select>
-                  </div>
-                  <div className="col-span-3 flex gap-2">
-                     <input 
-                      className="admin-input-small text-xs flex-1"
-                      value={item.media.type === 'text' ? item.media.content : item.media.url}
-                      onChange={(e) => onUpdate({ media: { ...item.media, [item.media.type === 'text' ? 'content' : 'url']: e.target.value } })}
-                      placeholder={item.media.type === 'text' ? "Texto do conteúdo..." : "URL da mídia..."}
-                    />
-                    {item.media.type !== 'text' && (
-                      <button 
-                        type="button"
-                        onClick={() => onOpenPicker((url) => onUpdate({ media: { ...item.media, url } }))}
-                        className="bg-accent/10 border border-accent/20 text-accent px-2 rounded-[4px] hover:bg-accent/20 transition"
-                      >
-                        <Plus size={14} />
-                      </button>
-                    )}
-                  </div>
-               </div>
-            </div>
-
-            {/* Lista de Stories */}
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <h5 className="text-[10px] uppercase font-black tracking-widest text-zinc-500">Páginas Adicionais (Stories)</h5>
-                <button onClick={addStory} className="text-accent hover:text-white text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
-                  <Plus size={14}/> Add Página
-                </button>
-              </div>
-
-              {item.stories?.length === 0 ? (
-                <div className="p-4 text-center text-zinc-700 text-xs italic">Nenhuma página adicional</div>
-              ) : (
-                <div className="space-y-3">
-                  {item.stories?.map((story, si) => (
-                    <div key={si} className="flex gap-2 items-center">
-                       <select 
-                          className="admin-input-small !py-1 text-[10px] w-24 shrink-0"
-                          value={story.type}
-                          onChange={(e) => updateStory(si, { type: e.target.value as MediaType })}
-                        >
-                          <option value="image">Foto</option>
-                          <option value="video">Vídeo</option>
-                          <option value="text">Texto</option>
-                        </select>
-                        <input 
-                          className="admin-input-small !py-1 text-[10px] flex-1"
-                          value={story.type === 'text' ? story.content : story.url}
-                          onChange={(e) => updateStory(si, { [story.type === 'text' ? 'content' : 'url']: e.target.value })}
-                          placeholder={story.type === 'text' ? "Conteúdo..." : "URL..."}
-                        />
-                        {story.type !== 'text' && (
-                          <button 
-                            type="button"
-                            onClick={() => onOpenPicker((url) => updateStory(si, { url }))}
-                            className="bg-accent/10 border border-accent/20 text-accent px-2 rounded-[4px] hover:bg-accent/20 transition"
-                          >
-                            <Plus size={12} />
-                          </button>
-                        )}
-                        <button onClick={() => removeStory(si)} className="p-1 text-zinc-600 hover:text-red-500"><X size={14}/></button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  )
-}
-
 // Helpers de Estilo Locais
 const TabButton = ({ active, onClick, icon, label }: { active: boolean, onClick: () => void, icon: React.ReactNode, label: string, key?: any }) => (
   <button 
     onClick={onClick}
-    className={`flex items-center gap-2 px-6 py-4 text-xs font-black uppercase tracking-widest transition border-b-2 ${active ? 'border-accent text-white' : 'border-transparent text-zinc-500 hover:text-zinc-300'}`}
+    className={`flex-1 flex items-center justify-center gap-2 px-6 py-4 text-[10px] font-black uppercase tracking-widest border-b-2 transition-all ${active ? 'border-accent text-accent bg-accent/5' : 'border-transparent text-zinc-500 hover:text-white hover:bg-white/5'}`}
   >
     {icon} {label}
   </button>
@@ -1080,11 +858,10 @@ const TabButton = ({ active, onClick, icon, label }: { active: boolean, onClick:
 
 const FormField = ({ label, description, children }: { label: string, description?: string, children: React.ReactNode }) => (
   <div className="space-y-2">
-    <div>
-      <label className="block text-sm font-bold text-white leading-tight">{label}</label>
-      {description && <p className="text-[10px] text-zinc-500 font-medium">{description}</p>}
+    <div className="flex flex-col">
+       <label className="text-[10px] uppercase font-black tracking-widest text-zinc-400">{label}</label>
+       {description && <p className="text-[9px] text-zinc-600 font-medium leading-tight">{description}</p>}
     </div>
     {children}
   </div>
 );
-

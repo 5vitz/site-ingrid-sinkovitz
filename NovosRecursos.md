@@ -24,5 +24,12 @@ Este documento serve como backlog técnico para futuras implementações visando
     - **Deleção em Massa:** Comando único para remover todos os elementos selecionados e suas respectivas Edges (arestas) conectadas.
 - **Persistência:** Garantir que as operações de grupo disparem uma única atualização no Firestore para otimização de escrita e cotas.
 
+## 3. Gestão Inteligente de Áudio (Ambient vs Video)
+**Objetivo:** Melhorar a experiência sonora, evitando conflitos entre a música ambiente do projeto e o áudio de vídeos em reprodução.
+
+### Especificação Técnica:
+- **Fade de Áudio (Ducking):** Implementar lógica para detectar quando um vídeo inicia a reprodução. O sistema deve aplicar um fade-out (redução gradual de volume ou pausa inteligente) na música ambiente milissegundos antes do áudio do vídeo atingir o pico, e um fade-in gradual para retomar a música quando o vídeo for interrompido ou terminar.
+- **Controle Unificado de Volume:** O slider de volume global deve ser sincronizado para controlar tanto a trilha sonora ambiente (audioUrl) quanto o volume dos elementos de vídeo (`<video>`). Atualmente, o controle afeta apenas a música de fundo inserida manualmente.
+
 ---
 *Documento criado em 09/05/2026 como base para o próximo ciclo de desenvolvimento.*
