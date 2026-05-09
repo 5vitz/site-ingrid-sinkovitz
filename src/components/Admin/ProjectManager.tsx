@@ -546,7 +546,7 @@ const ProjectForm = ({ project, onSave, onCancel, onChange, onFlowOpen }: {
       <div className="flex border-b border-white/5 px-6">
         <TabButton active={activeTab === 'info'} onClick={() => setActiveTab('info')} icon={<FileText size={16}/>} label="Informações" />
         <TabButton active={activeTab === 'design'} onClick={() => setActiveTab('design')} icon={<Palette size={16}/>} label="Visual & Design" />
-        <TabButton active={activeTab === 'content'} onClick={() => setActiveTab('content')} icon={<Layers size={16}/>} label="Conteúdo (Feed)" />
+        <TabButton active={activeTab === 'content'} onClick={() => setActiveTab('content')} icon={<Layers size={16}/>} label="Gestão de Conteúdo" />
         {project.id && (
           <button 
             onClick={onFlowOpen}
@@ -699,26 +699,103 @@ const ProjectForm = ({ project, onSave, onCancel, onChange, onFlowOpen }: {
 
         {activeTab === 'design' && (
           <div className="grid md:grid-cols-2 gap-10">
-            <div className="space-y-6">
-               <h4 className="text-lg font-bold text-accent flex items-center gap-2"><Palette size={20}/> Cores e Estilos</h4>
+            <div className="space-y-8">
+               <h4 className="text-lg font-bold text-accent flex items-center gap-2 border-b border-white/5 pb-2"><Palette size={20}/> Player & Estilos</h4>
                
+               <div className="grid grid-cols-2 gap-4">
+                 <FormField label="Largura Base (px)" description="Largura ideal do player">
+                   <input 
+                    type="number"
+                    className="admin-input"
+                    value={project.theme?.playerWidth || 540}
+                    onChange={e => onChange({ ...project, theme: { ...project.theme, playerWidth: parseInt(e.target.value) || 0 } })}
+                  />
+                 </FormField>
+                 <FormField label="Altura Base (px)" description="Altura ideal do player">
+                   <input 
+                    type="number"
+                    className="admin-input"
+                    value={project.theme?.playerHeight || 540}
+                    onChange={e => onChange({ ...project, theme: { ...project.theme, playerHeight: parseInt(e.target.value) || 0 } })}
+                  />
+                 </FormField>
+               </div>
+
+               <div className="grid grid-cols-2 gap-4">
+                 <FormField label="Aspect Ratio" description="Proporção (ex: 0.56 p/ 9:16)">
+                   <input 
+                    type="number"
+                    step="0.01"
+                    className="admin-input"
+                    value={project.theme?.aspectRatio || 0.8}
+                    onChange={e => onChange({ ...project, theme: { ...project.theme, aspectRatio: parseFloat(e.target.value) || 0 } })}
+                  />
+                 </FormField>
+                 <FormField label="Altura Máxima (px)" description="Limite de altura na tela">
+                   <input 
+                    type="number"
+                    className="admin-input"
+                    value={project.theme?.playerMaxHeight || 900}
+                    onChange={e => onChange({ ...project, theme: { ...project.theme, playerMaxHeight: parseInt(e.target.value) || 0 } })}
+                  />
+                 </FormField>
+               </div>
+
                <FormField label="Cor de Destaque (Accent)" description="Botões, ícones e detalhes">
                  <div className="flex gap-4 items-center">
                     <input 
                       type="color"
-                      className="w-12 h-12 rounded-full border-none cursor-pointer bg-transparent"
-                      value={project.theme?.accentColor || '#0066FF'}
+                      className="w-12 h-12 rounded-full border-none cursor-pointer bg-transparent shrink-0"
+                      value={project.theme?.accentColor || '#FEF200'}
                       onChange={e => onChange({ ...project, theme: { ...project.theme, accentColor: e.target.value } })}
                     />
                     <input 
                       className="admin-input flex-1 font-mono uppercase"
-                      value={project.theme?.accentColor || '#0066FF'}
+                      value={project.theme?.accentColor || '#FEF200'}
                       onChange={e => onChange({ ...project, theme: { ...project.theme, accentColor: e.target.value } })}
                     />
                  </div>
                </FormField>
 
-               <FormField label="Cor do Fundo (Modal)" description="Sugestão: bg-black ou bg-zinc-950">
+               <div className="grid grid-cols-2 gap-4">
+                 <FormField label="Espessura da Borda" description="Ex: 1px, 2px, 0px">
+                   <input 
+                    className="admin-input"
+                    placeholder="1px"
+                    value={project.theme?.borderWidth || ''}
+                    onChange={e => onChange({ ...project, theme: { ...project.theme, borderWidth: e.target.value } })}
+                  />
+                 </FormField>
+                 <FormField label="Cor da Borda" description="Ex: #ffffff20">
+                   <input 
+                    className="admin-input"
+                    placeholder="#ffffff20"
+                    value={project.theme?.playerBorderColor || ''}
+                    onChange={e => onChange({ ...project, theme: { ...project.theme, playerBorderColor: e.target.value } })}
+                  />
+                 </FormField>
+               </div>
+
+               <div className="grid grid-cols-2 gap-4">
+                 <FormField label="Arredondamento (Radius)" description="Ex: 16px, 0px">
+                   <input 
+                    className="admin-input"
+                    placeholder="16px"
+                    value={project.theme?.borderRadius || ''}
+                    onChange={e => onChange({ ...project, theme: { ...project.theme, borderRadius: e.target.value } })}
+                  />
+                 </FormField>
+                 <FormField label="Efeito (Box Shadow)" description="Ex: 0 0 50px rgba(0,0,0,0.5)">
+                   <input 
+                    className="admin-input text-[10px]"
+                    placeholder="0 0 50px rgba(0,0,0,0.5)"
+                    value={project.theme?.boxShadow || ''}
+                    onChange={e => onChange({ ...project, theme: { ...project.theme, boxShadow: e.target.value } })}
+                  />
+                 </FormField>
+               </div>
+
+               <FormField label="Cor do Fundo (Borda/Modal)" description="Ex: #000000 ou bg-zinc-950">
                  <input 
                   className="admin-input font-mono"
                   value={project.theme?.playerBg || 'bg-black'}
@@ -727,16 +804,48 @@ const ProjectForm = ({ project, onSave, onCancel, onChange, onFlowOpen }: {
                </FormField>
             </div>
 
-            <div className="bg-zinc-900/20 p-8 rounded-[8px] border border-white/5 flex flex-col items-center justify-center text-center">
-               <div className="w-10 h-10 rounded-full mb-4" style={{ backgroundColor: project.theme?.accentColor || '#0066FF' }} />
-               <h5 className="font-bold mb-2">Amostra Visual</h5>
-               <p className="text-xs text-zinc-500">Estas configurações definem a atmosfera visual do projeto ao ser visualizado pelo usuário.</p>
+            <div className="space-y-6">
+              <div className="bg-zinc-900/40 p-10 rounded-[12px] border border-white/10 flex flex-col items-center justify-center text-center sticky top-0">
+                 <div 
+                   className="mb-6 transition-all duration-500 overflow-hidden" 
+                   style={{ 
+                     width: '180px', 
+                     aspectRatio: project.theme?.aspectRatio || '0.8',
+                     maxHeight: '260px',
+                     backgroundColor: project.theme?.playerBg?.startsWith('#') ? project.theme.playerBg : '#111',
+                     border: `${project.theme?.borderWidth || '1px'} solid ${project.theme?.playerBorderColor || 'rgba(255,255,255,0.1)'}`,
+                     borderRadius: project.theme?.borderRadius || '16px',
+                     boxShadow: project.theme?.boxShadow || '0 0 30px rgba(0,0,0,0.5)'
+                   }}
+                 >
+                   <div className="w-full h-full flex items-center justify-center p-4">
+                      <div className="w-8 h-8 rounded-full" style={{ backgroundColor: project.theme?.accentColor || '#FEF200' }} />
+                   </div>
+                 </div>
+                 <h5 className="font-bold mb-2 uppercase tracking-widest text-xs">Preview do Player</h5>
+                 <p className="text-[10px] text-zinc-500 leading-relaxed max-w-[240px]">
+                   Ajuste as propriedades ao lado para ver como o player se comportará no site. 
+                   O Aspect Ratio define se o vídeo/imagem será vertical ou mais quadrado.
+                 </p>
+              </div>
             </div>
           </div>
         )}
 
         {activeTab === 'content' && (
           <div className="space-y-6">
+            <div className="bg-blue-600/10 border border-blue-600/20 p-6 rounded-[12px] mb-8">
+               <div className="flex items-center gap-3 mb-2">
+                 <Settings2 className="text-blue-500" size={20} />
+                 <h4 className="font-bold text-blue-500 uppercase tracking-widest text-xs">Atenção sobre Estrutura</h4>
+               </div>
+               <p className="text-zinc-400 text-xs leading-relaxed">
+                 Esta aba gerencia o conteúdo de forma <strong>linear</strong> (Feed + Stories). 
+                 Se você estiver usando o <strong>Construtor de Flow</strong>, esta lista serve apenas como backup dos tópicos gerados. 
+                 Para layouts do tipo "2D", os tópicos aqui definem os "Blocos" de navegação.
+               </p>
+            </div>
+
             <div className="flex justify-between items-center">
               <h4 className="text-lg font-bold">Estrutura de Tópicos e Stories</h4>
               <button 

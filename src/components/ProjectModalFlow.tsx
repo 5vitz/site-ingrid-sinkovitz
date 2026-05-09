@@ -41,9 +41,9 @@ export const ProjectModalFlow: React.FC<ProjectModalFlowProps> = ({
       type: currentNode.data.type || 'image',
       url: currentNode.data.thumbnail || currentNode.data.url || '',
       title: currentNode.data.label || '',
-      aspectRatio: currentNode.data.type === 'video' ? 0.56 : 0.8
+      aspectRatio: project.theme?.aspectRatio || (currentNode.data.type === 'video' ? 0.56 : 0.8)
     };
-  }, [currentNode]);
+  }, [currentNode, project.theme?.aspectRatio]);
 
   // Agrupar nodes por linha (Y) para identificar blocos/carrosséis
   const rowNodes = useMemo(() => {
@@ -181,10 +181,23 @@ export const ProjectModalFlow: React.FC<ProjectModalFlowProps> = ({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 1.05, y: -20 }}
           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="relative z-10 w-full max-w-4xl aspect-[4/5] md:aspect-[16/9] flex items-center justify-center p-4"
+          className="relative z-10 w-full flex items-center justify-center p-4 md:p-8"
+          style={{
+            maxWidth: project.theme?.playerWidth ? `${project.theme.playerWidth}px` : '540px',
+            maxHeight: project.theme?.playerMaxHeight ? `${project.theme.playerMaxHeight}px` : '90vh',
+            aspectRatio: project.theme?.aspectRatio?.toString() || '0.8',
+          }}
         >
-          <div className="w-full h-full rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/5 relative bg-zinc-900 flex flex-col">
-            <div className="flex-1 w-full overflow-y-auto overflow-x-hidden scrollbar-hide custom-scrollbar">
+          <div 
+            className="w-full h-full overflow-hidden relative flex flex-col transition-all duration-500"
+            style={{
+              backgroundColor: project.theme?.playerBg?.startsWith('#') ? project.theme.playerBg : undefined,
+              border: `${project.theme?.borderWidth || '1px'} solid ${project.theme?.playerBorderColor || 'rgba(255,255,255,0.1)'}`,
+              borderRadius: project.theme?.borderRadius || '24px',
+              boxShadow: project.theme?.boxShadow || '0 0 50px rgba(0,0,0,0.5)',
+            }}
+          >
+            <div className={`flex-1 w-full overflow-y-auto overflow-x-hidden scrollbar-hide custom-scrollbar ${!project.theme?.playerBg?.startsWith('#') ? (project.theme?.playerBg || 'bg-zinc-900') : ''}`}>
               <MediaRenderer 
                 media={currentMedia}
                 isActive={true}

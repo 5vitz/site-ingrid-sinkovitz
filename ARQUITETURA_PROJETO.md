@@ -1,33 +1,26 @@
-# Documento de Arquitetura Master - Portfólio Ingrid Sinkovitz (Versão 8.0 - Conflict Resolution & Sandbox Resilience)
+# Documento de Arquitetura Master - Portfólio Ingrid Sinkovitz (Versão 9.0 - Flow Navigation & Design Engine)
 
 ## 1. Visão Geral e OKR
-Esta versão foca na robustez do sistema de gerenciamento e na estabilidade da aplicação dentro de ambientes restritivos. Implementamos mecanismos de integridade de dados e resolvemos limitações técnicas de interface impostas por sandboxing.
+Esta versão introduz a navegação bidimensional baseada em fluxo e um motor de customização visual profunda para o Player, permitindo que cada projeto tenha sua própria identidade estética e lógica de navegação.
 
-*   **Objetivo Principal (OKR):** Integridade total do banco de dados e UX fluida, livre de falhas de comunicação com o Firestore.
-*   **Status Atual:** Sistema de Resolução de Conflitos Operacional. CRUD de Projetos blindado contra erros de sandbox.
+*   **Objetivo Principal (OKR):** Implementar navegação "Flow-based" (estilo dashboard/experiência 2D) e controle total sobre o aspecto e design do player via painel administrativo.
+*   **Status Atual:** ProjectModalFlow operacional com lógica híbrida (Conexões + Estrutura de Blocos).
 
-## 2. Princípios de Desenvolvimento (Implementados)
-*   **Sandbox Resilience:** Eliminação total de diálogos nativos (`confirm()`, `alert()`) em favor de Modais Customizados React, garantindo funcionamento 100% dentro do iframe do AI Studio.
-*   **Conflict-Aware UI:** A interface administrativa agora detecta e sinaliza visualmente quando dois projetos ocupam o mesmo Slot ("Bolhas Amarelas" de conflito).
-*   **Proactive Error Handling:** Implementação de logging detalhado e erro estruturado no `dataService` seguindo o padrão `FirestoreErrorInfo`.
+## 2. Inovações Técnicas (Versão 9.0)
+*   **Flow-Based Navigation Engine (`ProjectModalFlow`):** 
+    *   **Lógica Relacional (Hierárquica):** Prioridade nas conexões explícitas feitas pelo usuário no Construtor de Flow (Handles Top/Bottom/Left/Right).
+    *   **Lógica Estrutural (Blocos):** Fallback automático que identifica "Blocos" (nodes na mesma linha Y). Navegação lateral percorre o carrossel local; navegação vertical (Up/Down) redireciona sempre para o início do bloco adjacente.
+*   **Visual Design Engine:** Implementação de motor de estilização via `theme` do projeto, suportando `aspectRatio` variável, `boxShadow` customizado, bordas dinâmicas e `playerMaxHeight`.
 
 ## 4. Estado dos Componentes
-*   `src/components/Admin/ProjectManager.tsx`: Atualizado com **Conflict Resolver** (reordenação automática 1..N) e **Delete Confirmation Modal** customizado.
-*   `src/components/Admin/FlowConstructor.tsx`: Estabilizado com suporte a zoom profundo e navegação complexa de nodes.
-*   `src/services/dataService.ts`: Refatorado para operações assíncronas robustas com tratamento de erros centralizado.
+*   `src/components/ProjectModalFlow.tsx`: (Novo) Componente core de visualização 2D. Gerencia transições de nodes, estados de mídia e navegação via setas/teclado.
+*   `src/components/Admin/ProjectManager.tsx`: Evoluído com a aba **Visual & Design** contendo preview em tempo real e controles granulares de CSS.
+*   `src/components/Admin/FlowConstructor.tsx`: Refatorado com cabeçalho de design moderno e remoção de redundâncias de interface para foco total na construção.
 
-## 5. Sistema de Gerenciamento de Projetos (Slots & Integridade)
-Aprimoramos a lógica de organização para garantir que o site nunca exiba estados inconsistentes.
-
-*   **Lógica de Slots & Resolução:**
-    *   **Auto-Reordering:** Botão "Resolver Conflitos" que reorganiza toda a base de dados sequencialmente, eliminando slots duplicados ou "órfãos".
-    *   **Visual Counter:** Indicação visual numérica (1..N) independente do slot lógico, para facilitar a conferência rápida do total de projetos ativos.
-    *   **Safety Lock:** Lógica que mantém projetos existentes protegidos mesmo durante testes de novos slots (Cobaia), apenas empurrando-os na fila sem sobrescrever dados acidentalmente.
-
-*   **Integridade de Dados (Firestore):**
-    *   **Rules Hardening:** Regras de segurança validadas para acesso administrativo estrito.
-    *   **Sync Logic:** Uso de `onSnapshot` com ordenação local garantida, assegurando que mudanças no Admin reflitam instantaneamente na Galeria pública.
+## 5. Novos Recursos de Navegação
+*   **Scroll Inteligente:** O Player agora suporta `overflow-y` com scrollbar minimalista para conteúdos extraídos de PDFs ou mídias longas, mantendo a moldura do design intacta.
+*   **Indicadores de Progresso Dinâmicos:** O sistema de "pagination dots" agora reage à lógica de blocos, mostrando apenas o progresso dentro do carrossel atual onde o usuário se encontra.
 
 ---
-*Assinado: Agente Lincoln - Versão 8.0 "The Conflict Resolution & Sandbox Resilience Update".*
+*Assinado: Agente Lincoln - Versão 9.0 "The Flow Navigation & Design Engine Update".*
 

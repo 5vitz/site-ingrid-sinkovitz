@@ -348,20 +348,22 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
   return (
     <div className="fixed inset-0 z-[2000] bg-black flex flex-col font-sans">
       {/* Barra de Ferramentas Superior */}
-      <header className="h-16 border-b border-white/5 flex items-center justify-between px-6 bg-zinc-950">
+      <header className="h-24 border-b border-white/5 flex items-center justify-between px-8 bg-zinc-950">
         <div className="flex items-center gap-4">
-          <div className="bg-accent/20 p-2 rounded-lg text-accent">
-            <Share2 size={20} />
-          </div>
           <div>
-            <input 
-              type="text" 
-              value={projectName}
-              onChange={(e) => setProjectName(e.target.value)}
-              className="bg-transparent border-none p-0 text-sm font-black uppercase tracking-widest text-white focus:ring-0 w-64 outline-none"
-              placeholder="Nome do Projeto"
-            />
-            <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-tighter">Editando Estrutura Visual</p>
+            <h2 className="text-2xl font-black uppercase tracking-tighter flex items-center gap-3 text-white">
+               <Layers className="text-accent" /> Construtor de Flow
+            </h2>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest shrink-0">Editando Projeto:</span>
+              <input 
+                type="text" 
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value)}
+                className="bg-transparent border-none p-0 text-[10px] font-black uppercase tracking-widest text-accent focus:ring-0 min-w-[256px] outline-none placeholder:text-zinc-800"
+                placeholder="Nome do Projeto"
+              />
+            </div>
           </div>
         </div>
 
@@ -399,7 +401,7 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
               {isSaving ? (
                 <>Salvando...</>
               ) : (
-                <><Save size={14} /> Salvar Estrutura</>
+                <><Save size={14} /> Salvar Projeto</>
               )}
             </button>
           </div>
@@ -425,15 +427,6 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
         >
           <Background color="#1a1a1a" gap={20} size={1} />
           
-          <Panel position="bottom-center" className="mb-8 p-1 bg-zinc-900/80 backdrop-blur border border-white/10 rounded-xl flex items-center gap-1 shadow-2xl">
-            <button className="p-2.5 hover:bg-white/10 text-zinc-400 rounded-lg transition" title="Menu" onClick={() => {}}><Layers size={18}/></button>
-            <div className="w-px h-4 bg-white/10 mx-1" />
-            <button className="p-2.5 hover:bg-white/10 text-zinc-400 rounded-lg transition" title="Zoom Out" onClick={() => zoomOut()}><ZoomOut size={18}/></button>
-            <div className="bg-black/50 px-3 py-2 rounded-md text-[10px] font-mono text-zinc-500">ZOOM</div>
-            <button className="p-2.5 hover:bg-white/10 text-zinc-400 rounded-lg transition" title="Zoom In" onClick={() => zoomIn()}><ZoomIn size={18}/></button>
-            <div className="w-px h-4 bg-white/10 mx-1" />
-            <button className="p-2.5 hover:bg-white/10 text-zinc-400 rounded-lg transition" title="Reset View" onClick={() => fitView()}><Maximize2 size={18}/></button>
-          </Panel>
 
           <Panel position="top-right" className="mr-6 mt-6 p-4 bg-zinc-900/50 backdrop-blur border border-white/5 rounded-2xl w-48 shadow-2xl">
             <h3 className="text-[10px] font-black uppercase text-zinc-500 tracking-widest mb-3">Tutorial Rápido</h3>

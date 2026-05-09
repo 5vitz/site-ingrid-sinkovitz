@@ -68,8 +68,12 @@ export interface ProjectTheme {
   // Novas propriedades para customização total
   playerWidth?: number; // Largura customizada
   playerHeight?: number; // Altura (padrão 540)
+  playerMaxHeight?: number; // Altura máxima em px
+  aspectRatio?: number; // Ex: 0.56, 1.77, 1
   borderWidth?: string; // Ex: '1px'
+  playerBorderColor?: string; // Cor da borda
   borderRadius?: string; // Ex: '8px'
+  boxShadow?: string; // Efeito de sombra
 }
 
 export interface AboutConfig {
