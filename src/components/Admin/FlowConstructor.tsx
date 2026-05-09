@@ -249,10 +249,22 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
   const [selectingNodeId, setSelectingNodeId] = useState<string | null>(null);
   const [lastSelectedId, setLastSelectedId] = useState<string | null>(null);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
+  const [isFullScreen, setIsFullScreen] = useState(false);
   
   const [isSaving, setIsSaving] = useState(false);
   
   const { zoomIn, zoomOut, fitView } = useReactFlow();
+
+  // Handle Escape key for full screen
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isFullScreen) {
+        setIsFullScreen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFullScreen]);
 
   // Memorizar callbacks para evitar recriação constante de nós
   const onSelectMedia = useCallback((id: string) => {
@@ -458,65 +470,75 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
   return (
     <div className="fixed inset-0 z-[2000] bg-black flex flex-col font-sans">
       {/* Barra de Ferramentas Superior */}
-      <header className="h-24 border-b border-white/5 flex items-center justify-between px-8 bg-zinc-950">
-        <div className="flex items-center gap-4">
-          <div>
-            <h2 className="text-2xl font-black uppercase tracking-tighter flex items-center gap-3 text-white">
-               <Layers className="text-accent" /> Construtor de Flow
-            </h2>
-            <div className="flex items-center gap-2 mt-1">
-              <span className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest shrink-0">Editando Projeto:</span>
-              <input 
-                type="text" 
-                value={projectName}
-                onChange={(e) => setProjectName(e.target.value)}
-                className="bg-transparent border-none p-0 text-[10px] font-black uppercase tracking-widest text-accent focus:ring-0 min-w-[256px] outline-none placeholder:text-zinc-800"
-                placeholder="Nome do Projeto"
-              />
+      {!isFullScreen && (
+        <header className="h-24 border-b border-white/5 flex items-center justify-between px-8 bg-zinc-950">
+          <div className="flex items-center gap-4">
+            <div>
+              <h2 className="text-2xl font-black uppercase tracking-tighter flex items-center gap-3 text-white">
+                 <Layers className="text-accent" /> Construtor de Flow
+              </h2>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest shrink-0">Editando Projeto:</span>
+                <input 
+                  type="text" 
+                  value={projectName}
+                  onChange={(e) => setProjectName(e.target.value)}
+                  className="bg-transparent border-none p-0 text-[10px] font-black uppercase tracking-widest text-accent focus:ring-0 min-w-[256px] outline-none placeholder:text-zinc-800"
+                  placeholder="Nome do Projeto"
+                />
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2 bg-zinc-900 p-1 rounded-lg border border-white/5">
-             <button onClick={addNode} className="p-2 hover:bg-white/5 rounded text-zinc-400 hover:text-accent transition flex items-center gap-2 px-3">
-               <Plus size={16} /> <span className="text-[10px] font-black uppercase">Novo Card</span>
-             </button>
-             <div className="w-px h-4 bg-white/5" />
-             <div className="px-2 text-zinc-600 text-[10px] uppercase font-bold">
-               {nodes.length} cards
-             </div>
-          </div>
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2 bg-zinc-900 p-1 rounded-lg border border-white/5">
+               <button onClick={addNode} className="p-2 hover:bg-white/5 rounded text-zinc-400 hover:text-accent transition flex items-center gap-2 px-3">
+                 <Plus size={16} /> <span className="text-[10px] font-black uppercase">Novo Card</span>
+               </button>
+               <div className="w-px h-4 bg-white/5" />
+               <div className="px-2 text-zinc-600 text-[10px] uppercase font-bold">
+                 {nodes.length} cards
+               </div>
+            </div>
 
-          <div className="flex items-center gap-2">
-            <button 
-              onClick={() => setIsLibraryOpen(true)}
-              className="px-4 py-2 text-[10px] font-black uppercase text-accent hover:text-white transition flex items-center gap-2"
-              title="Acessar galeria de mídias deste projeto"
-            >
-              <ImageIcon size={14} /> Arquivos do Projeto
-            </button>
-            <div className="w-px h-4 bg-white/10 mx-2" />
-            <button 
-              onClick={onCancel}
-              className="px-4 py-2 text-[10px] font-black uppercase text-zinc-500 hover:text-white transition flex items-center gap-2"
-            >
-              <X size={14} /> {cancelLabel || 'Sair'}
-            </button>
-            <button 
-              onClick={handleSave}
-              disabled={isSaving}
-              className={`px-8 py-2 ${isSaving ? 'bg-zinc-700' : 'bg-accent'} text-black text-[10px] font-black uppercase rounded-lg hover:bg-accent/80 transition shadow-[0_0_20px_rgba(254,242,0,0.2)] flex items-center gap-2 disabled:opacity-50`}
-            >
-              {isSaving ? (
-                <>Salvando...</>
-              ) : (
-                <><Save size={14} /> Salvar Projeto</>
-              )}
-            </button>
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={() => setIsFullScreen(true)}
+                className="p-2 bg-zinc-900 border border-white/5 text-zinc-400 hover:text-accent rounded-lg transition"
+                title="Modo Foco (Tela Cheia)"
+              >
+                <Maximize2 size={16} />
+              </button>
+              <div className="w-px h-4 bg-white/10 mx-2" />
+              <button 
+                onClick={() => setIsLibraryOpen(true)}
+                className="px-4 py-2 text-[10px] font-black uppercase text-accent hover:text-white transition flex items-center gap-2"
+                title="Acessar galeria de mídias deste projeto"
+              >
+                <ImageIcon size={14} /> Arquivos do Projeto
+              </button>
+              <div className="w-px h-4 bg-white/10 mx-2" />
+              <button 
+                onClick={onCancel}
+                className="px-4 py-2 text-[10px] font-black uppercase text-zinc-500 hover:text-white transition flex items-center gap-2"
+              >
+                <X size={14} /> {cancelLabel || 'Sair'}
+              </button>
+              <button 
+                onClick={handleSave}
+                disabled={isSaving}
+                className={`px-8 py-2 ${isSaving ? 'bg-zinc-700' : 'bg-accent'} text-black text-[10px] font-black uppercase rounded-lg hover:bg-accent/80 transition shadow-[0_0_20px_rgba(254,242,0,0.2)] flex items-center gap-2 disabled:opacity-50`}
+              >
+                {isSaving ? (
+                  <>Salvando...</>
+                ) : (
+                  <><Save size={14} /> Salvar Projeto</>
+                )}
+              </button>
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
+      )}
 
       {/* Área de Trabalho (Canvas) */}
       <main className="flex-1 relative bg-[#0a0a0a]">
@@ -558,6 +580,19 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
           </Panel>
           
           <Controls showInteractive={false} className="!bg-zinc-900 !border-white/10 !rounded-lg !overflow-hidden !shadow-xl !m-6" />
+
+          {/* Botão de Fechar Tela Cheia */}
+          {isFullScreen && (
+            <Panel position="top-right" className="m-6">
+              <button 
+                onClick={() => setIsFullScreen(false)}
+                className="w-10 h-10 bg-zinc-900 border border-white/10 text-zinc-400 hover:text-accent rounded-full flex items-center justify-center shadow-2xl transition group"
+                title="Sair do Modo Foco (Esc)"
+              >
+                <Minimize2 size={20} className="group-hover:scale-110 transition-transform" />
+              </button>
+            </Panel>
+          )}
 
           {/* Botões de Alinhamento (Apenas quando múltiplos selecionados) */}
           <AnimatePresence>
@@ -613,16 +648,18 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
       </AnimatePresence>
 
       {/* Barra de Status Inferior */}
-      <footer className="h-10 bg-zinc-950 border-t border-white/5 flex items-center justify-between px-6">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1 text-[9px] text-zinc-600 font-bold uppercase tracking-widest">
-            <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-            Live Sync Ativo
+      {!isFullScreen && (
+        <footer className="h-10 bg-zinc-950 border-t border-white/5 flex items-center justify-between px-6">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1 text-[9px] text-zinc-600 font-bold uppercase tracking-widest">
+              <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+              Live Sync Ativo
+            </div>
+            <div className="text-[9px] text-zinc-600 font-mono">NODES: {nodes.length} | EDGES: {edges.length}</div>
           </div>
-          <div className="text-[9px] text-zinc-600 font-mono">NODES: {nodes.length} | EDGES: {edges.length}</div>
-        </div>
-        <div className="text-[9px] text-zinc-700 font-black uppercase tracking-tight">Ingrid v2.0 // Flow Engine Mockup Mode</div>
-      </footer>
+          <div className="text-[9px] text-zinc-700 font-black uppercase tracking-tight">Ingrid v2.0 // Flow Engine Mockup Mode</div>
+        </footer>
+      )}
 
       <style>{`
         .react-flow__handle {
