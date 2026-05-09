@@ -48,7 +48,7 @@ export const AdminPanel: React.FC = () => {
         </div>
 
         <nav className="flex-1 space-y-2">
-          <AdminNavItem active={activeTab === 'projects'} onClick={() => setActiveTab('projects')} icon={<LayoutGrid size={20}/>} label="Projetos" />
+          <AdminNavItem active={activeTab === 'projects'} onClick={() => setActiveTab('projects')} icon={<LayoutGrid size={20}/>} label="Editor de Projetos" />
           <AdminNavItem active={activeTab === 'flow'} onClick={() => setActiveTab('flow')} icon={<Share2 size={20}/>} label="Construtor de Flow" />
           <AdminNavItem active={activeTab === 'media'} onClick={() => setActiveTab('media')} icon={<ImageIcon size={20}/>} label="Biblioteca de Mídia" />
           <AdminNavItem active={activeTab === 'services'} onClick={() => setActiveTab('services')} icon={<MessageSquare size={20}/>} label="Serviços" />
@@ -66,24 +66,76 @@ export const AdminPanel: React.FC = () => {
 
       <main className="flex-1 p-8 md:p-16 overflow-y-auto max-h-screen">
         <div className="max-w-5xl mx-auto">
-          {activeTab === 'projects' && <ProjectManager />}
+          {activeTab === 'projects' && (
+            <StructuralCenter 
+              key={`projects-center-${selectedProjectId}`}
+              title="Editor de Projetos" 
+              description="Gerencie as configurações básicas, temas e estilos visuais do seu portfólio."
+              selectedId={selectedProjectId}
+              onSelect={setSelectedProjectId}
+              onNew={() => {
+                setSelectedProjectId('new');
+              }}
+              renderTool={() => (
+                <ProjectManager 
+                  initialProjectId={selectedProjectId === 'new' ? null : selectedProjectId} 
+                  isStartingNew={selectedProjectId === 'new'}
+                  onClose={() => setSelectedProjectId(null)} 
+                />
+              )}
+            />
+          )}
           {activeTab === 'flow' && (
             <StructuralCenter 
+              key={`flow-center-${selectedProjectId}`}
               title="Construtor de Flow" 
               description="Selecione um projeto para editar sua árvore lógica de tópicos e stories."
               selectedId={selectedProjectId}
               onSelect={setSelectedProjectId}
-              renderTool={(project) => (
-                <div className="fixed inset-0 z-50 bg-black">
-                  <FlowConstructor 
-                    initialData={{ 
-                      nodes: project.flowData?.nodes || [], 
-                      edges: project.flowData?.edges || [],
-                      projectName: project.title 
-                    }}
-                    onCancel={() => setSelectedProjectId(null)}
-                    cancelLabel="Voltar à Central"
-                    onSave={async (flowResult) => {
+              renderTool={(project) => {
+                // Lógica de Migração/Auto-Mapeamento:
+                // Se não existir flowData, mas existir feed, populamos o gráfico automaticamente
+                const initialNodes = project.flowData?.nodes?.length ? project.flowData.nodes : (
+                  project.feed?.map((item, idx) => ({
+                    id: item.id,
+                    type: 'communication',
+                    position: { x: 100 + (idx * 350), y: 200 },
+                    data: { 
+                      label: item.title, 
+                      type: item.media.type === 'video' ? 'video' : 'image',
+                      thumbnail: item.media.url,
+                      id: `IMT-${idx + 1}`,
+                      aspectRatio: item.aspectRatio || (item.media.type === 'video' ? 0.56 : 1)
+                    }
+                  })) || []
+                );
+
+                const initialEdges = project.flowData?.edges?.length ? project.flowData.edges : (
+                  project.feed?.map((item, idx, arr) => {
+                    if (idx === arr.length - 1) return null;
+                    return {
+                      id: `e-${item.id}-${arr[idx+1].id}`,
+                      source: item.id,
+                      target: arr[idx+1].id,
+                      type: 'button',
+                      animated: true,
+                      style: { stroke: '#FEF200', strokeWidth: 2 }
+                    };
+                  }).filter(Boolean) || []
+                );
+
+                return (
+                  <div className="fixed inset-0 z-50 bg-black">
+                    <FlowConstructor 
+                      key={`flow-editor-${project.id}`}
+                      initialData={{ 
+                        nodes: initialNodes, 
+                        edges: initialEdges as any[],
+                        projectName: project.title 
+                      }}
+                      onCancel={() => setSelectedProjectId(null)}
+                      cancelLabel="Trocar Projeto"
+                      onSave={async (flowResult) => {
                       try {
                         const newFeed: FeedItem[] = flowResult.nodes.map((node: any) => ({
                           id: node.id,
@@ -93,7 +145,7 @@ export const AdminPanel: React.FC = () => {
                             url: node.data.thumbnail || '',
                             order: 1
                           },
-                          aspectRatio: node.data.type === 'video' ? 0.56 : 1,
+                          aspectRatio: node.data.aspectRatio || (node.data.type === 'video' ? 0.56 : 1),
                           stories: []
                         }));
 
@@ -113,16 +165,18 @@ export const AdminPanel: React.FC = () => {
                     }}
                   />
                 </div>
-              )}
+                );
+              }}
             />
           )}
           {activeTab === 'media' && (
             <StructuralCenter 
+              key={`media-center-${selectedProjectId}`}
               title="Biblioteca de Mídia" 
               description="Gerencie arquivos, uploads e pastas vinculadas à estrutura visual."
               selectedId={selectedProjectId}
               onSelect={setSelectedProjectId}
-              renderTool={() => <MediaLibrary standalone={false} onClose={() => setSelectedProjectId(null)} closeLabel="Voltar à Central" />}
+              renderTool={() => <MediaLibrary key={`media-lib-${selectedProjectId}`} standalone={false} onClose={() => setSelectedProjectId(null)} closeLabel="Trocar Projeto" />}
             />
           )}
           {activeTab === 'services' && <ServiceManager />}
@@ -136,14 +190,21 @@ export const AdminPanel: React.FC = () => {
   );
 };
 
-const StructuralCenter = ({ title, description, selectedId, onSelect, renderTool }: { 
+const StructuralCenter = ({ title, description, selectedId, onSelect, onNew, renderTool }: { 
   title: string, 
   description: string, 
   selectedId: string | null,
   onSelect: (id: string | null) => void,
+  onNew?: () => void,
   renderTool: (p: Project) => React.ReactNode 
 }) => {
   const { data: projects, loading } = useCollection<Project>('projects');
+  
+  // Tratamento especial para criação de novo projeto
+  if (selectedId === 'new') {
+    return <>{renderTool({ id: 'new', title: 'Novo Projeto' } as Project)}</>;
+  }
+
   const selectedProject = projects.find(p => p.id === selectedId);
 
   if (selectedId && selectedProject) {
@@ -152,9 +213,19 @@ const StructuralCenter = ({ title, description, selectedId, onSelect, renderTool
 
   return (
     <div className="space-y-8">
-      <div className="bg-zinc-900/50 p-8 rounded-[12px] border border-white/5">
-        <h2 className="text-3xl font-bold tracking-tight">{title}</h2>
-        <p className="text-zinc-500 mt-2">{description}</p>
+      <div className="flex justify-between items-center bg-zinc-900/50 p-8 rounded-[12px] border border-white/5">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">{title}</h2>
+          <p className="text-zinc-500 mt-2">{description}</p>
+        </div>
+        {onNew && (
+          <button 
+            onClick={onNew}
+            className="flex items-center gap-2 px-6 py-3 bg-accent text-black font-bold rounded-[8px] hover:bg-accent/80 transition shadow-lg shadow-accent/10 whitespace-nowrap"
+          >
+            <Plus size={20} /> Novo Projeto
+          </button>
+        )}
       </div>
 
       <div className="grid gap-3">

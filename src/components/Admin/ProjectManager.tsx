@@ -14,12 +14,23 @@ import { MediaLibrary } from './MediaLibrary';
 
 import { FlowConstructor } from './FlowConstructor';
 
-export const ProjectManager = () => {
+export const ProjectManager = ({ initialProjectId, onClose, isStartingNew }: { initialProjectId?: string | null, onClose?: () => void, isStartingNew?: boolean }) => {
   const { data: projects, loading } = useCollection<Project>('projects');
   const [editingProject, setEditingProject] = useState<Partial<Project> | null>(null);
-  const [isAdding, setIsAdding] = useState(false);
+  const [isAdding, setIsAdding] = useState(isStartingNew || false);
   const [showFlowConstructor, setShowFlowConstructor] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
+
+  // Efeito para abrir o editor se um ID for passado ou se for um novo projeto
+  React.useEffect(() => {
+    if (isStartingNew) {
+      setEditingProject({ title: '', layoutType: '2d', status: 'draft' });
+      setIsAdding(true);
+    } else if (initialProjectId && projects.length > 0) {
+      const p = projects.find(proj => proj.id === initialProjectId);
+      if (p) startEditing(p);
+    }
+  }, [initialProjectId, projects, isStartingNew]);
 
   // Garantir que ao editar, campos novos existam
   const startEditing = (p: Project) => {
@@ -65,6 +76,7 @@ export const ProjectManager = () => {
       }
       setEditingProject(null);
       setIsAdding(false);
+      if (onClose) onClose(); // Notifica fechamento após salvar
     } catch (err) {
       console.error("Erro ao salvar projeto:", err);
       alert("Erro ao salvar projeto. Verifique o console.");
@@ -225,7 +237,11 @@ export const ProjectManager = () => {
               <ProjectForm 
                 project={editingProject!} 
                 onSave={handleSave} 
-                onCancel={() => { setEditingProject(null); setIsAdding(false); }} 
+                onCancel={() => { 
+                  setEditingProject(null); 
+                  setIsAdding(false); 
+                  if (onClose) onClose(); // Volta para a central ao cancelar
+                }} 
                 onChange={setEditingProject}
                 onFlowOpen={async () => {
                   // Salva o rascunho atual sem fechar o estado de edição

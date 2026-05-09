@@ -279,10 +279,10 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true, closeLabel 
             onClick={handleSync}
             disabled={syncing || uploading}
             className="bg-white/5 border border-white/10 text-white px-4 py-2 rounded-[8px] font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:bg-white/10 transition disabled:opacity-50"
-            title="Escaneia o Storage em busca de arquivos não registrados"
+            title="Sincroniza os arquivos com o banco de dados"
           >
             {syncing ? <RefreshCw size={14} className="animate-spin" /> : <RefreshCw size={14} />}
-            {syncing ? 'Sincronizando...' : 'Sincronizar Storage'}
+            {syncing ? 'Salvando...' : 'Salvar Alterações'}
           </button>
 
           <button 

@@ -239,7 +239,7 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
     setEdges((eds) => eds.filter(e => e.source !== id && e.target !== id));
   }, []);
 
-  // Inicializar nós
+  // Inicializar nós e conexões
   useEffect(() => {
     const rawNodes = initialData?.nodes && initialData.nodes.length > 0 
       ? initialData.nodes 
@@ -260,6 +260,11 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
         onDelete: onDeleteNode
       }
     })));
+
+    // Sincronizar edges e nome do projeto que estavam ficando "presos"
+    if (initialData?.edges) setEdges(initialData.edges);
+    if (initialData?.projectName) setProjectName(initialData.projectName);
+
   }, [initialData, onSelectMedia, onLabelChange, onAspectRatioChange, onDeleteNode]);
 
   const onNodesChange: OnNodesChange = useCallback(
@@ -411,21 +416,21 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
             <button 
               onClick={() => setIsLibraryOpen(true)}
               className="px-4 py-2 text-[10px] font-black uppercase text-accent hover:text-white transition flex items-center gap-2"
-              title="Acessar biblioteca de arquivos"
+              title="Acessar galeria de mídias deste projeto"
             >
-              <ImageIcon size={14} /> Biblioteca
+              <ImageIcon size={14} /> Arquivos do Projeto
             </button>
             <div className="w-px h-4 bg-white/10 mx-2" />
             <button 
               onClick={onCancel}
-              className="px-4 py-2 text-[10px] font-black uppercase text-zinc-500 hover:text-white transition"
+              className="px-4 py-2 text-[10px] font-black uppercase text-zinc-500 hover:text-white transition flex items-center gap-2"
             >
-              {cancelLabel || 'Cancelar'}
+              <X size={14} /> {cancelLabel || 'Sair'}
             </button>
             <button 
               onClick={handleSave}
               disabled={isSaving}
-              className={`px-8 py-2 ${isSaving ? 'bg-zinc-700' : 'bg-accent'} text-black text-[10px] font-black uppercase rounded-lg hover:bg-accent/80 transition shadow-[0_0_20px_rgba(0,102,255,0.3)] flex items-center gap-2 disabled:opacity-50`}
+              className={`px-8 py-2 ${isSaving ? 'bg-zinc-700' : 'bg-accent'} text-black text-[10px] font-black uppercase rounded-lg hover:bg-accent/80 transition shadow-[0_0_20px_rgba(254,242,0,0.2)] flex items-center gap-2 disabled:opacity-50`}
             >
               {isSaving ? (
                 <>Salvando...</>
