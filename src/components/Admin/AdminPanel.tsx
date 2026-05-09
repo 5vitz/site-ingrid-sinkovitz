@@ -94,37 +94,126 @@ export const AdminPanel: React.FC = () => {
               onSelect={setSelectedProjectId}
               renderTool={(project) => {
                 // Lógica de Migração/Auto-Mapeamento:
-                // Se não existir flowData, mas existir feed, populamos o gráfico automaticamente
-                const initialNodes = project.flowData?.nodes?.length ? project.flowData.nodes : (
-                  project.feed?.map((item, idx) => ({
-                    id: item.id,
-                    type: 'communication',
-                    position: { x: 300, y: 100 + (idx * 500) },
-                    data: { 
-                      label: item.title, 
-                      type: item.media.type === 'video' ? 'video' : 'image',
-                      thumbnail: item.media.url,
-                      id: `IMT-${idx + 1}`,
-                      aspectRatio: item.aspectRatio || (item.media.type === 'video' ? 0.56 : 1)
-                    }
-                  })) || []
-                );
+                const initialNodes: any[] = [];
+                const initialEdges: any[] = [];
 
-                const initialEdges = project.flowData?.edges?.length ? project.flowData.edges : (
-                  project.feed?.map((item, idx, arr) => {
-                    if (idx === arr.length - 1) return null;
-                    return {
-                      id: `e-${item.id}-${arr[idx+1].id}`,
-                      source: item.id,
-                      target: arr[idx+1].id,
-                      sourceHandle: 'bottom',
-                      targetHandle: 'top',
-                      type: 'button',
-                      animated: true,
-                      style: { stroke: '#FEF200', strokeWidth: 2 }
-                    };
-                  }).filter(Boolean) || []
-                );
+                try {
+                  const detectMediaType = (media: any) => {
+                    if (media?.type === 'video') return 'video';
+                    if (media?.type === 'image') return 'image';
+                    const url = media?.url || '';
+                    if (url.match(/\.(mp4|webm|ogg|mov|m4v)/i)) return 'video';
+                    return 'image';
+                  };
+
+                  if (project.flowData?.nodes?.length) {
+                    const repairedNodes = (project.flowData.nodes || []).filter(Boolean).map((node: any) => {
+                      if (!node.data.type || !node.data.thumbnail) {
+                        // Tenta encontrar o item correspondente no feed para recuperar os dados
+                        const feedItem = project.feed?.find((f: any) => f.id === node.id) || 
+                                       project.feed?.flatMap((f: any) => f.stories || []).find((s: any) => s.id === node.id);
+                        
+                        if (feedItem) {
+                          return {
+                            ...node,
+                            data: {
+                              ...node.data,
+                              type: node.data.type || detectMediaType(feedItem.media),
+                              thumbnail: node.data.thumbnail || feedItem.media?.url
+                            }
+                          };
+                        }
+                      }
+                      // Mesmo que tenha type, reforçamos a detecção do detectMediaType se for nulo
+                      if (!node.data.type) {
+                        node.data.type = detectMediaType({ url: node.data.thumbnail });
+                      }
+                      return node;
+                    });
+                    initialNodes.push(...repairedNodes);
+                    initialEdges.push(...(project.flowData.edges || []).filter(Boolean));
+                  } else if (project.feed?.length) {
+                    // Mapeamento Inteligente: Transforma feed linear em fluxo
+                    project.feed.forEach((item, itemIdx) => {
+                      if (!item) return;
+
+                      const mainNodeId = item.id || `item-${itemIdx}`;
+                      const baseY = 100 + (itemIdx * 600);
+                      const itemMediaType = detectMediaType(item.media);
+
+                      // Card Principal
+                      initialNodes.push({
+                        id: mainNodeId,
+                        type: 'communication',
+                        position: { x: 300, y: baseY },
+                        data: { 
+                          label: item.title || 'Sem título', 
+                          type: itemMediaType,
+                          thumbnail: item.media?.url,
+                          id: `IMT-${itemIdx + 1}`,
+                          aspectRatio: item.aspectRatio || (itemMediaType === 'video' ? 0.56 : 1)
+                        }
+                      });
+
+                      // Carrosséis (Stories)
+                      item.stories?.forEach((story, storyIdx) => {
+                        if (!story) return;
+
+                        const storyNodeId = story.id || `${mainNodeId}-story-${storyIdx}`;
+                        const storyMediaType = detectMediaType(story.media);
+
+                        initialNodes.push({
+                          id: storyNodeId,
+                          type: 'communication',
+                          position: { x: 300 + (storyIdx + 1) * 400, y: baseY },
+                          data: {
+                            label: story.title || `${item.title || 'Item'} - Pt ${storyIdx + 2}`,
+                            type: storyMediaType,
+                            thumbnail: story.media?.url,
+                            id: `STR-${itemIdx + 1}-${storyIdx + 1}`,
+                            aspectRatio: story.aspectRatio || item.aspectRatio || (storyMediaType === 'video' ? 0.56 : 1)
+                          }
+                        });
+
+                        // Conector Horizontal (Carousel) - Lógica de ID robusta
+                        const prevId = storyIdx === 0 
+                          ? mainNodeId 
+                          : (item.stories?.[storyIdx - 1]?.id || `${mainNodeId}-story-${storyIdx - 1}`);
+
+                        initialEdges.push({
+                          id: `e-h-${prevId}-${storyNodeId}`,
+                          source: prevId,
+                          target: storyNodeId,
+                          sourceHandle: 'right',
+                          targetHandle: 'left',
+                          type: 'button',
+                          animated: true,
+                          style: { stroke: '#FEF200', strokeWidth: 2 }
+                        });
+                      });
+
+                      // Conector Vertical (Próximo Item)
+                      if (itemIdx < project.feed.length - 1) {
+                        const nextItem = project.feed[itemIdx + 1];
+                        if (nextItem && nextItem.id) {
+                          initialEdges.push({
+                            id: `e-v-${mainNodeId}-${nextItem.id}`,
+                            source: mainNodeId,
+                            target: nextItem.id,
+                            sourceHandle: 'bottom',
+                            targetHandle: 'top',
+                            type: 'button',
+                            animated: true,
+                            style: { stroke: '#FEF200', strokeWidth: 2, strokeDasharray: '5,5' }
+                          });
+                        }
+                      }
+                    });
+                  }
+                } catch (err) {
+                  console.error("Erro crítico no mapeamento de Flow:", err);
+                  // Se falhar o mapeamento, pelo menos não crashamos o render
+                }
 
                 return (
                   <div className="fixed inset-0 z-50 bg-black">
@@ -132,14 +221,17 @@ export const AdminPanel: React.FC = () => {
                       key={`flow-editor-${project.id}`}
                       initialData={{ 
                         nodes: initialNodes, 
-                        edges: initialEdges as any[],
+                        edges: initialEdges,
                         projectName: project.title 
                       }}
                       onCancel={() => setSelectedProjectId(null)}
                       cancelLabel="Trocar Projeto"
                       onSave={async (flowResult) => {
                       try {
-                        const newFeed: FeedItem[] = flowResult.nodes.map((node: any) => ({
+                        const { nodes, edges } = flowResult;
+                        
+                        // Função auxiliar para converter node em FeedItem
+                        const nodeToFeedItem = (node: any): FeedItem => ({
                           id: node.id,
                           title: node.data.label || 'Sem Título',
                           media: {
@@ -149,12 +241,52 @@ export const AdminPanel: React.FC = () => {
                           },
                           aspectRatio: node.data.aspectRatio || (node.data.type === 'video' ? 0.56 : 1),
                           stories: []
-                        }));
+                        });
+
+                        // 1. Identificar Roots (Nós que não tem entrada Left ou que são entrada de Top)
+                        const roots = nodes.filter(n => {
+                          const hasHorizontalInput = edges.some(e => e.target === n.id && e.targetHandle === 'left');
+                          return !hasHorizontalInput;
+                        });
+
+                        // 2. Ordenar Roots por Y
+                        roots.sort((a, b) => a.position.y - b.position.y);
+
+                        // 3. Para cada Root, seguir a trilha 'right' para criar stories
+                        const newFeed: FeedItem[] = roots.map(root => {
+                          const item = nodeToFeedItem(root);
+                          const stories: FeedItem[] = [];
+                          
+                          let currentId = root.id;
+                          let foundNext = true;
+                          let safetyCounter = 0;
+                          const visited = new Set([root.id]);
+
+                          while (foundNext && safetyCounter < 50) {
+                            safetyCounter++;
+                            const horizontalEdge = edges.find(e => e.source === currentId && e.sourceHandle === 'right');
+                            if (horizontalEdge) {
+                              const storyNode = nodes.find(n => n.id === horizontalEdge.target);
+                              if (storyNode && !visited.has(storyNode.id)) {
+                                stories.push(nodeToFeedItem(storyNode));
+                                currentId = storyNode.id;
+                                visited.add(currentId);
+                              } else {
+                                foundNext = false;
+                              }
+                            } else {
+                              foundNext = false;
+                            }
+                          }
+                          
+                          item.stories = stories as any[];
+                          return item;
+                        });
 
                         const projectData = {
                           ...project,
                           flowData: { nodes: flowResult.nodes, edges: flowResult.edges },
-                          feed: project.feed && project.feed.length > 0 ? project.feed : newFeed,
+                          feed: newFeed,
                         };
 
                         await updateProject(project.id, projectData);

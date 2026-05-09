@@ -98,15 +98,40 @@ const CommunicationNode = ({ id, data, selected }: NodeProps<CommunicationNodeDa
         >
           {data.thumbnail ? (
             <>
-              <img 
-                key={data.thumbnail}
-                src={data.thumbnail} 
-                className="w-full h-full object-cover opacity-80 group-hover/media:opacity-100 transition-opacity" 
-                alt=""
-                referrerPolicy="no-referrer"
-              />
+              {data.type === 'video' ? (
+                <video 
+                  key={`video-${id}-${data.thumbnail}`}
+                  src={data.thumbnail} 
+                  muted 
+                  playsInline
+                  autoPlay
+                  loop
+                  className="w-full h-full object-cover opacity-70 group-hover/media:opacity-100 transition-opacity"
+                  onError={(e) => {
+                    // Se o vídeo falhar, tenta carregar como imagem (fallback para urls de imagem com tipo vídeo)
+                    const target = e.target as HTMLVideoElement;
+                    target.style.display = 'none';
+                    const parent = target.parentElement;
+                    if (parent && !parent.querySelector('img')) {
+                      const img = document.createElement('img');
+                      img.src = data.thumbnail || '';
+                      img.className = "w-full h-full object-cover opacity-80 group-hover/media:opacity-100 transition-opacity";
+                      img.referrerPolicy = "no-referrer";
+                      parent.appendChild(img);
+                    }
+                  }}
+                />
+              ) : (
+                <img 
+                  key={`img-${id}-${data.thumbnail}`}
+                  src={data.thumbnail} 
+                  className="w-full h-full object-cover opacity-80 group-hover/media:opacity-100 transition-opacity" 
+                  alt=""
+                  referrerPolicy="no-referrer"
+                />
+              )}
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/media:opacity-100 transition-opacity flex items-center justify-center">
-                <ImageIcon size={24} className="text-white" />
+                {data.type === 'video' ? <Video size={24} className="text-white" /> : <ImageIcon size={24} className="text-white" />}
               </div>
             </>
           ) : (
