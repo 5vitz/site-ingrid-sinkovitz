@@ -56,6 +56,8 @@ const CommunicationNode = ({ id, data, selected }: NodeProps<CommunicationNodeDa
 
   const currentRatio = data.aspectRatio || (data.type === 'video' ? 0.56 : 0.8);
 
+  const isSelectedRatio = (val: number) => Math.abs(currentRatio - val) < 0.02;
+
   return (
     <div className={`
       relative w-64 bg-zinc-900 border-2 rounded-xl transition-all duration-300
@@ -96,7 +98,13 @@ const CommunicationNode = ({ id, data, selected }: NodeProps<CommunicationNodeDa
         >
           {data.thumbnail ? (
             <>
-              <img src={data.thumbnail} className="w-full h-full object-cover opacity-80 group-hover/media:opacity-100 transition-opacity" alt="" />
+              <img 
+                key={data.thumbnail}
+                src={data.thumbnail} 
+                className="w-full h-full object-cover opacity-80 group-hover/media:opacity-100 transition-opacity" 
+                alt=""
+                referrerPolicy="no-referrer"
+              />
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/media:opacity-100 transition-opacity flex items-center justify-center">
                 <ImageIcon size={24} className="text-white" />
               </div>
@@ -117,7 +125,7 @@ const CommunicationNode = ({ id, data, selected }: NodeProps<CommunicationNodeDa
                 onClick={() => data.onAspectRatioChange?.(id, r.value)}
                 className={`
                   px-1.5 py-1 text-[8px] font-black rounded-sm border transition-all
-                  ${currentRatio === r.value 
+                  ${isSelectedRatio(r.value) 
                     ? 'bg-accent text-black border-accent' 
                     : 'bg-zinc-800 text-zinc-500 border-white/5 hover:border-white/20'
                   }

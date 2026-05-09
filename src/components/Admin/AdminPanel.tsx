@@ -99,7 +99,7 @@ export const AdminPanel: React.FC = () => {
                   project.feed?.map((item, idx) => ({
                     id: item.id,
                     type: 'communication',
-                    position: { x: 100 + (idx * 350), y: 200 },
+                    position: { x: 300, y: 100 + (idx * 500) },
                     data: { 
                       label: item.title, 
                       type: item.media.type === 'video' ? 'video' : 'image',
@@ -117,6 +117,8 @@ export const AdminPanel: React.FC = () => {
                       id: `e-${item.id}-${arr[idx+1].id}`,
                       source: item.id,
                       target: arr[idx+1].id,
+                      sourceHandle: 'bottom',
+                      targetHandle: 'top',
                       type: 'button',
                       animated: true,
                       style: { stroke: '#FEF200', strokeWidth: 2 }
