@@ -18,6 +18,8 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true }: MediaLibr
   const [items, setItems] = useState<MediaLibraryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [currentUploadIdx, setCurrentUploadIdx] = useState(0);
+  const [totalUploads, setTotalUploads] = useState(0);
   const [syncing, setSyncing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [filter, setFilter] = useState<'all' | 'image' | 'video' | 'audio'>('all');
@@ -56,20 +58,41 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true }: MediaLibr
   };
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
+    const fileList = Array.from(files);
     setUploading(true);
+    setTotalUploads(fileList.length);
+    setCurrentUploadIdx(0);
     setProgress(0);
+
+    let errorCount = 0;
+
+    for (let i = 0; i < fileList.length; i++) {
+      setCurrentUploadIdx(i + 1);
+      setProgress(0);
+      try {
+        await uploadMedia(fileList[i], (p) => setProgress(p));
+      } catch (err) {
+        console.error(`Upload falhou para o arquivo ${fileList[i].name}:`, err);
+        errorCount++;
+      }
+    }
+
+    if (errorCount > 0) {
+      alert(`${errorCount} arquivo(s) falharam no upload. Verifique o console.`);
+    }
+
     try {
-      await uploadMedia(file, (p) => setProgress(p));
       await fetchItems();
     } catch (err) {
-      console.error("Upload falhou:", err);
-      alert("Erro ao subir arquivo.");
+      console.error("Erro ao atualizar lista após upload:", err);
     } finally {
       setUploading(false);
       setProgress(0);
+      setTotalUploads(0);
+      setCurrentUploadIdx(0);
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
@@ -210,7 +233,7 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true }: MediaLibr
             className="bg-accent text-black px-6 py-2 rounded-[8px] font-black text-xs uppercase tracking-widest flex items-center gap-2 hover:bg-accent/80 transition disabled:opacity-50"
           >
             {uploading ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
-            {uploading ? `Subindo ${Math.round(progress)}%` : 'Novo Upload'}
+            {uploading ? `${currentUploadIdx}/${totalUploads} (${Math.round(progress)}%)` : 'Novo Upload'}
           </button>
           
           {!standalone && (
@@ -263,6 +286,7 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true }: MediaLibr
         onChange={handleUpload} 
         className="hidden" 
         accept="image/*,video/*,audio/*"
+        multiple
       />
     </div>
   );

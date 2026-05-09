@@ -45,23 +45,12 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, hasR
       whileHover={(!isDraft || isAdmin) ? { y: -8, scale: 1.01 } : {}}
       onMouseEnter={handleMouseEnter}
       onClick={() => {
-        if (!isDraft || isAdmin) {
-          onClick();
-        } else {
-          alert("Este projeto está em construção e em breve estará disponível para visualização.");
-        }
+        onClick();
       }}
-      className={`${cardClass} ${(!isDraft || isAdmin) ? 'cursor-pointer' : 'cursor-default'} group rounded-[8px] snap-center bg-zinc-900 shadow-xl overflow-hidden relative flex items-center justify-center border border-white/5 transition-all duration-300`}
+      className={`${cardClass} cursor-pointer group rounded-[8px] snap-center bg-zinc-900 shadow-xl overflow-hidden relative flex items-center justify-center border border-white/5 transition-all duration-300`}
     >
       {/* Fundo Simples com Degradê */}
       <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-950 z-0" />
-      
-      {isDraft && (
-        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/60 backdrop-blur-[2px]">
-          <Construction size={32} className="text-zinc-500 mb-2 opacity-50" />
-          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">Em Construção</span>
-        </div>
-      )}
       
       <div className="relative flex flex-col items-center justify-center p-6 text-center z-10 pointer-events-none">
         <div className="space-y-3">

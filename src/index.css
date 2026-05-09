@@ -85,7 +85,7 @@
 .custom-scrollbar {
   scrollbar-width: auto !important;
   scrollbar-color: #ffffff #000000 !important;
-  overflow-y: scroll !important;
+  overflow-y: auto !important;
   -webkit-overflow-scrolling: touch !important;
 }
 

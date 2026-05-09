@@ -45,30 +45,30 @@ export const AboutProjectModal: React.FC<AboutProjectModalProps> = ({ project, o
           <X size={24} strokeWidth={2.5} />
         </button>
 
-        {/* Conteúdo com Scroll */}
-        <div className="overflow-y-auto custom-scrollbar flex-1">
-          <div className="w-full flex flex-col items-center justify-center text-center p-8 md:p-12">
+        {/* Conteúdo */}
+        <div className={`flex-1 flex flex-col ${project.status === 'draft' ? 'overflow-hidden justify-center' : 'overflow-y-auto custom-scrollbar'}`}>
+          <div className={`w-full flex flex-col items-center justify-center text-center ${project.status === 'draft' ? 'p-6 md:p-8' : 'p-8 md:p-12'}`}>
             {project.status === 'draft' ? (
-              <div className="w-full max-w-sm flex flex-col items-center py-8">
+              <div className="w-full max-w-sm flex flex-col items-center py-4">
                 <motion.div 
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ type: "spring", stiffness: 200, damping: 20 }}
-                  className="bg-white/5 p-8 rounded-full mb-8 border border-white/10 shadow-xl"
+                  className="bg-white/5 p-6 rounded-full mb-4 border border-white/10 shadow-xl"
                 >
-                  <Lock size={64} className="text-white" />
+                  <Lock size={48} className="text-white" />
                 </motion.div>
                 
-                <h2 className="text-xl md:text-2xl font-bold text-white tracking-tighter mb-4 not-italic">
+                <h2 className="text-xl md:text-2xl font-bold text-white tracking-tighter mb-2 not-italic">
                   Em Construção
                 </h2>
-
-                <p className="text-zinc-500 text-[10px] uppercase font-black tracking-widest text-center mb-12">
+                
+                <p className="text-zinc-500 text-[10px] uppercase font-black tracking-widest text-center mb-6">
                   Prepare-se. Grandes ideias tomam tempo.
                 </p>
                 
                 {/* Atalho administrativo */}
-                <div className="pt-8 border-t border-white/5 w-full grid grid-cols-2 gap-4">
+                <div className="pt-6 border-t border-white/5 w-full grid grid-cols-2 gap-4">
                   <button 
                     onClick={() => {
                       onClose();

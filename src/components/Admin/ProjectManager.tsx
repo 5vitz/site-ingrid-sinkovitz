@@ -227,6 +227,18 @@ export const ProjectManager = () => {
                 onSave={handleSave} 
                 onCancel={() => { setEditingProject(null); setIsAdding(false); }} 
                 onChange={setEditingProject}
+                onFlowOpen={async () => {
+                  // Salva o rascunho atual sem fechar o estado de edição
+                  try {
+                    if (editingProject?.id) {
+                      await updateProject(editingProject.id, editingProject);
+                    }
+                    setShowFlowConstructor(true);
+                  } catch (err) {
+                    console.error("Erro ao salvar antes de abrir flow:", err);
+                    alert("Erro ao salvar rascunho. Tente novamente.");
+                  }
+                }}
               />
             </div>
           </motion.div>
@@ -476,11 +488,12 @@ const ProjectRow = ({
   );
 };
 
-const ProjectForm = ({ project, onSave, onCancel, onChange }: { 
+const ProjectForm = ({ project, onSave, onCancel, onChange, onFlowOpen }: { 
   project: Partial<Project>, 
   onSave: () => void, 
   onCancel: () => void,
-  onChange: (p: Partial<Project>) => void
+  onChange: (p: Partial<Project>) => void,
+  onFlowOpen?: () => void
 }) => {
   const [activeTab, setActiveTab] = useState<'info' | 'design' | 'content'>('info');
   const [pickerConfig, setPickerConfig] = useState<{ isOpen: boolean, onSelect: (url: string) => void } | null>(null);
@@ -534,19 +547,14 @@ const ProjectForm = ({ project, onSave, onCancel, onChange }: {
         <TabButton active={activeTab === 'info'} onClick={() => setActiveTab('info')} icon={<FileText size={16}/>} label="Informações" />
         <TabButton active={activeTab === 'design'} onClick={() => setActiveTab('design')} icon={<Palette size={16}/>} label="Visual & Design" />
         <TabButton active={activeTab === 'content'} onClick={() => setActiveTab('content')} icon={<Layers size={16}/>} label="Conteúdo (Feed)" />
-        <button 
-          onClick={() => {
-            // Salva antes de sair para o Flow para não perder dados do form
-            // Mas aqui apenas abrimos o flow constructor configurado acima
-            const manager = (window as any).projectManagerContext; // Fake or just use the parent state
-            // No caso já temos o sehowFlowConstructor via parent, basta fechar o form
-            onSave(); // Salva estado atual
-            // A lógica de abrir o flow já está no botão da lista
-          }}
-          className="flex items-center gap-2 px-6 py-4 text-xs font-black uppercase tracking-widest text-blue-500 hover:text-blue-400"
-        >
-          <Share2 size={16}/> Abrir Construtor de Flow
-        </button>
+        {project.id && (
+          <button 
+            onClick={onFlowOpen}
+            className="flex items-center gap-2 px-6 py-4 text-xs font-black uppercase tracking-widest text-[#FEF200] hover:text-white transition-colors"
+          >
+            <Share2 size={16}/> Abrir Construtor de Flow
+          </button>
+        )}
       </div>
 
       {/* Conteúdo das Abas */}
