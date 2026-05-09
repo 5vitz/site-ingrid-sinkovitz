@@ -99,49 +99,97 @@ export const AdminPanel: React.FC = () => {
 
                 try {
                   const detectMediaType = (media: any) => {
-                    if (media?.type === 'video') return 'video';
-                    if (media?.type === 'image') return 'image';
-                    const url = media?.url || '';
-                    if (url.match(/\.(mp4|webm|ogg|mov|m4v)/i)) return 'video';
+                    const url = typeof media === 'string' ? media : (media?.url || media?.thumbnail || '');
+                    const type = typeof media === 'object' ? media?.type : null;
+                    if (type === 'video') return 'video';
+                    if (type === 'image') return 'image';
+                    if (url.match(/\.(mp4|webm|ogg|mov|m4v|m3u8|avi)/i)) return 'video';
                     return 'image';
                   };
 
-                  if (project.flowData?.nodes?.length) {
+                  const getMediaUrl = (media: any) => {
+                    if (typeof media === 'string') return media;
+                    if (media?.url) return media.url;
+                    if (media?.thumbnail) return media.thumbnail;
+                    if (media?.src) return media.src;
+                    if (media?.preview) return media.preview;
+                    if (media?.media?.url) return media.media.url; // Caso aninhado
+                    return '';
+                  };
+
+                  const getStoryMedia = (story: any) => {
+                    const url = getMediaUrl(story) || getMediaUrl(story?.media);
+                    return url;
+                  };
+
+                  // Debug if Metavix
+                  if (project.title?.toLowerCase().includes('metavix')) {
+                    console.log('Metavix Feed Probe:', project.feed);
+                  }
+
+                   if (project.flowData?.nodes?.length) {
                     const repairedNodes = (project.flowData.nodes || []).filter(Boolean).map((node: any) => {
-                      if (!node.data.type || !node.data.thumbnail) {
-                        // Tenta encontrar o item correspondente no feed para recuperar os dados
-                        const feedItem = project.feed?.find((f: any) => f.id === node.id) || 
-                                       project.feed?.flatMap((f: any) => f.stories || []).find((s: any) => s.id === node.id);
-                        
-                        if (feedItem) {
-                          return {
-                            ...node,
-                            data: {
-                              ...node.data,
-                              type: node.data.type || detectMediaType(feedItem.media),
-                              thumbnail: node.data.thumbnail || feedItem.media?.url
-                            }
-                          };
+                      // Se o nó já tem thumbnail e tipo, apenas verificamos se estão válidos
+                      if (node.data.thumbnail && node.data.type) return node;
+
+                      // Tenta encontrar o item correspondente no feed para recuperar os dados
+                      // 1. Busca direta por ID
+                      let feedItem = project.feed?.find((f: any) => f.id === node.id) || 
+                                     project.feed?.flatMap((f: any) => f.stories || []).find((s: any) => s.id === node.id);
+                      
+                      // 2. Busca por padrão de ID gerado (ex: metavix-item-0-story-1)
+                      if (!feedItem) {
+                        const storyMatches = node.id.match(/(.+)-story-(\d+)/);
+                        if (storyMatches) {
+                          const parentId = storyMatches[1];
+                          const storyIdx = parseInt(storyMatches[2]);
+                          // Tenta achar o pai pelo ID ou pelo índice se o parentId for genérico
+                          const parentItem = project.feed?.find((f: any) => f.id === parentId) || 
+                                           (parentId.includes('item-') ? project.feed?.[parseInt(parentId.split('-').pop() || '0')] : null);
+                          
+                          if (parentItem && parentItem.stories?.[storyIdx]) {
+                            feedItem = parentItem.stories[storyIdx];
+                          }
                         }
                       }
-                      // Mesmo que tenha type, reforçamos a detecção do detectMediaType se for nulo
-                      if (!node.data.type) {
-                        node.data.type = detectMediaType({ url: node.data.thumbnail });
+
+                      // 3. Busca por posição/contexto (Último recurso: se for STR-X-Y)
+                      if (!feedItem && node.data.id?.startsWith('STR-')) {
+                        const parts = node.data.id.split('-');
+                        const itemIdx = parseInt(parts[1]) - 1;
+                        const storyIdx = parseInt(parts[2]) - 1;
+                        if (project.feed?.[itemIdx]?.stories?.[storyIdx]) {
+                          feedItem = project.feed[itemIdx].stories[storyIdx];
+                        }
                       }
+
+                      if (feedItem) {
+                        const url = getStoryMedia(feedItem);
+                        const detectedType = detectMediaType(feedItem.media || feedItem);
+                        
+                        return {
+                          ...node,
+                          data: {
+                            ...node.data,
+                            type: node.data.type || detectedType,
+                            thumbnail: node.data.thumbnail || url
+                          }
+                        };
+                      }
+                      
                       return node;
                     });
                     initialNodes.push(...repairedNodes);
                     initialEdges.push(...(project.flowData.edges || []).filter(Boolean));
                   } else if (project.feed?.length) {
-                    // Mapeamento Inteligente: Transforma feed linear em fluxo
                     project.feed.forEach((item, itemIdx) => {
                       if (!item) return;
 
                       const mainNodeId = item.id || `item-${itemIdx}`;
-                      const baseY = 100 + (itemIdx * 600);
+                      const baseY = 100 + (itemIdx * 1000); // Mais espaço vertical
                       const itemMediaType = detectMediaType(item.media);
+                      const itemUrl = getMediaUrl(item.media);
 
-                      // Card Principal
                       initialNodes.push({
                         id: mainNodeId,
                         type: 'communication',
@@ -149,18 +197,18 @@ export const AdminPanel: React.FC = () => {
                         data: { 
                           label: item.title || 'Sem título', 
                           type: itemMediaType,
-                          thumbnail: item.media?.url,
+                          thumbnail: itemUrl,
                           id: `IMT-${itemIdx + 1}`,
                           aspectRatio: item.aspectRatio || (itemMediaType === 'video' ? 0.56 : 1)
                         }
                       });
 
-                      // Carrosséis (Stories)
                       item.stories?.forEach((story, storyIdx) => {
                         if (!story) return;
 
                         const storyNodeId = story.id || `${mainNodeId}-story-${storyIdx}`;
-                        const storyMediaType = detectMediaType(story.media);
+                        const storyUrl = getStoryMedia(story);
+                        const storyMediaType = detectMediaType(story.media || story);
 
                         initialNodes.push({
                           id: storyNodeId,
@@ -169,13 +217,12 @@ export const AdminPanel: React.FC = () => {
                           data: {
                             label: story.title || `${item.title || 'Item'} - Pt ${storyIdx + 2}`,
                             type: storyMediaType,
-                            thumbnail: story.media?.url,
+                            thumbnail: storyUrl,
                             id: `STR-${itemIdx + 1}-${storyIdx + 1}`,
                             aspectRatio: story.aspectRatio || item.aspectRatio || (storyMediaType === 'video' ? 0.56 : 1)
                           }
                         });
 
-                        // Conector Horizontal (Carousel) - Lógica de ID robusta
                         const prevId = storyIdx === 0 
                           ? mainNodeId 
                           : (item.stories?.[storyIdx - 1]?.id || `${mainNodeId}-story-${storyIdx - 1}`);
@@ -192,7 +239,6 @@ export const AdminPanel: React.FC = () => {
                         });
                       });
 
-                      // Conector Vertical (Próximo Item)
                       if (itemIdx < project.feed.length - 1) {
                         const nextItem = project.feed[itemIdx + 1];
                         if (nextItem && nextItem.id) {
@@ -212,7 +258,6 @@ export const AdminPanel: React.FC = () => {
                   }
                 } catch (err) {
                   console.error("Erro crítico no mapeamento de Flow:", err);
-                  // Se falhar o mapeamento, pelo menos não crashamos o render
                 }
 
                 return (
