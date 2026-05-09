@@ -20,7 +20,11 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      return isEmailVerified() && (getUserRole() == 'admin' || getUserRole() == 'super');
+      return isEmailVerified() && (
+        request.auth.token.email == 'sinkando@gmail.com' ||
+        getUserRole() == 'admin' || 
+        getUserRole() == 'super'
+      );
     }
 
     function isSuperAdmin() {

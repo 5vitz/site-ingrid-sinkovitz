@@ -36,7 +36,7 @@ interface FirestoreErrorInfo {
   }
 }
 
-function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
+function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null, preventThrow = false) {
   const errInfo: FirestoreErrorInfo = {
     error: error instanceof Error ? error.message : String(error),
     authInfo: {
@@ -49,6 +49,8 @@ function handleFirestoreError(error: unknown, operationType: OperationType, path
     path
   };
   console.error('Firestore Error Detailed: ', JSON.stringify(errInfo));
+  
+  if (preventThrow) return;
   throw new Error(JSON.stringify(errInfo));
 }
 
@@ -61,7 +63,10 @@ export const subscribeToCollection = <T,>(collectionName: string, callback: (dat
       const sorted = [...items].sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
       callback(sorted);
     }, (error) => {
-      handleFirestoreError(error, OperationType.GET, collectionName);
+      console.warn(`Erro na subscrição da coleção [${collectionName}]:`, error.message);
+      // Fallback para destravar UI
+      callback([]);
+      handleFirestoreError(error, OperationType.GET, collectionName, true);
     });
   } catch (error) {
     console.error(`Falha crítica ao tentar subscrever coleção [${collectionName}]:`, error);

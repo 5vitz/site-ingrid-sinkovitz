@@ -43,6 +43,8 @@ export const ProjectManager = () => {
         // Se mudou para um slot que já tem dono, avisar ou trocar?
         // Vamos permitir salvar, mas o ideal seria o sistema de "swap" da lista
         await updateProject(editingProject.id, editingProject);
+        console.log("Projeto atualizado com sucesso:", editingProject.id);
+        alert(`Projeto "${editingProject.title}" atualizado com sucesso!`);
       } else {
         // Encontra o primeiro slot vago se não especificado
         let finalOrder = editingProject.order;
@@ -59,6 +61,7 @@ export const ProjectManager = () => {
           feed: editingProject.feed || [],
           mediaItems: editingProject.mediaItems || []
         });
+        alert(`Novo projeto "${editingProject.title}" criado com sucesso!`);
       }
       setEditingProject(null);
       setIsAdding(false);

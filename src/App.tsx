@@ -50,6 +50,8 @@ const Layout = ({ settings }: { settings: { global: SiteSettings | null, sobre: 
   }, []);
 
   const handleSelectProject = (project: Project) => {
+    // Se o projeto estiver trancado e o usuário não for ADMIN, ou se for ADMIN mas quiser testar o fluxo de senha
+    // Aqui vamos simplificar: Visitors sempre vêem a senha. Admin pula a senha a menos que queira testar.
     if (project.isLocked && !user) {
       setLockedProject(project);
       return;

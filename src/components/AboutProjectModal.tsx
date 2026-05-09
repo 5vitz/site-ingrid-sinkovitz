@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { X, Play, Lock } from 'lucide-react';
+import { X, Play, Lock, ShieldCheck } from 'lucide-react';
 import { Project } from '../types';
 
 interface AboutProjectModalProps {
@@ -59,12 +59,16 @@ export const AboutProjectModal: React.FC<AboutProjectModalProps> = ({ project, o
                   <Lock size={64} className="text-white" />
                 </motion.div>
                 
-                <h2 className="text-xl md:text-2xl font-bold text-white tracking-tighter mb-12 not-italic">
+                <h2 className="text-xl md:text-2xl font-bold text-white tracking-tighter mb-4 not-italic">
                   Em Construção
                 </h2>
+
+                <p className="text-zinc-500 text-[10px] uppercase font-black tracking-widest text-center mb-12">
+                  Prepare-se. Grandes ideias tomam tempo.
+                </p>
                 
                 {/* Atalho administrativo */}
-                <div className="pt-8 border-t border-white/5 w-full">
+                <div className="pt-8 border-t border-white/5 w-full grid grid-cols-2 gap-4">
                   <button 
                     onClick={() => {
                       onClose();
@@ -72,13 +76,27 @@ export const AboutProjectModal: React.FC<AboutProjectModalProps> = ({ project, o
                         window.dispatchEvent(new CustomEvent('open-admin-login'));
                       }, 200);
                     }}
-                    className="group flex flex-col items-center gap-4 transition-all opacity-40 hover:opacity-100 w-full"
+                    className="group flex flex-col items-center gap-4 transition-all opacity-40 hover:opacity-100"
                   >
-                    <div className="p-4 rounded-full bg-zinc-800 border border-white/5 group-hover:border-white/20 group-hover:text-white transition-all group-hover:scale-110">
+                    <div className="p-4 rounded-full bg-blue-600/10 border border-blue-500/20 text-blue-500 group-hover:bg-blue-600 group-hover:text-white transition-all group-hover:scale-110">
+                      <ShieldCheck size={18} />
+                    </div>
+                    <span className="text-[8px] font-black tracking-[0.2em] text-zinc-500 group-hover:text-white transition-colors uppercase text-center">
+                      Acesso Painel<br/>(Admin)
+                    </span>
+                  </button>
+
+                  <button 
+                    onClick={() => {
+                      onStart(); // Isso vai disparar o handleStartProject em App.tsx que checa o isLocked
+                    }}
+                    className="group flex flex-col items-center gap-4 transition-all opacity-40 hover:opacity-100"
+                  >
+                    <div className="p-4 rounded-full bg-accent/10 border border-accent/20 text-accent group-hover:bg-accent group-hover:text-black transition-all group-hover:scale-110">
                       <Lock size={18} />
                     </div>
-                    <span className="text-[10px] font-black tracking-[0.3em] text-zinc-500 group-hover:text-white transition-colors">
-                      Acesso Administrativo
+                    <span className="text-[8px] font-black tracking-[0.2em] text-zinc-500 group-hover:text-white transition-colors uppercase text-center">
+                      Senha do Projeto<br/>(Visitante)
                     </span>
                   </button>
                 </div>
