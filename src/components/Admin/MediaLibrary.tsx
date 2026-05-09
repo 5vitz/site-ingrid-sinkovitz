@@ -25,6 +25,7 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true }: MediaLibr
   const [filter, setFilter] = useState<'all' | 'image' | 'video' | 'audio'>('all');
   const [search, setSearch] = useState('');
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -112,12 +113,13 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true }: MediaLibr
   };
 
   const handleDelete = async (item: MediaLibraryItem) => {
-    if (!confirm(`Excluir "${item.name}"?`)) return;
     try {
       await deleteMedia(item);
       setItems(items.filter(i => i.id !== item.id));
+      setDeleteConfirmId(null);
     } catch (err) {
-      alert("Erro ao excluir.");
+      console.error("Erro ao excluir:", err);
+      alert("Erro ao excluir mídia. Verifique o console.");
     }
   };
 
@@ -165,31 +167,72 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true }: MediaLibr
         
         {/* Overlay Actions */}
         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-          {onSelect ? (
+          {onSelect && (
             <button 
               onClick={() => onSelect(item.url)}
-              className="bg-accent text-black px-4 py-2 rounded-[8px] font-bold text-xs uppercase"
+              className="bg-accent text-black px-4 py-2 rounded-[8px] font-bold text-xs uppercase hover:scale-105 transition shadow-lg shadow-accent/20"
             >
               Selecionar
             </button>
-          ) : (
-            <>
+          )}
+          
+          <div className="flex gap-2">
+            {!onSelect && (
               <button 
                 onClick={() => copyToClipboard(item.url, item.id)}
-                className="bg-white text-black p-2 rounded-[8px] hover:scale-110 transition"
+                className="bg-white text-black p-2 rounded-[8px] hover:scale-110 transition shadow-lg"
                 title="Copiar Link"
               >
                 {copiedId === item.id ? <Check size={18} /> : <Copy size={18} />}
               </button>
-              <button 
-                onClick={() => handleDelete(item)}
-                className="bg-red-600 text-white p-2 rounded-[8px] hover:scale-110 transition"
-                title="Excluir"
+            )}
+            
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                setDeleteConfirmId(item.id);
+              }}
+              className="bg-red-600 text-white p-2 rounded-[8px] hover:scale-110 transition shadow-lg"
+              title="Excluir Permanentemente"
+            >
+              <Trash2 size={18} />
+            </button>
+          </div>
+
+          {/* Delete Confirmation Overlay */}
+          <AnimatePresence>
+            {deleteConfirmId === item.id && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="absolute inset-0 bg-zinc-950/95 flex flex-col items-center justify-center p-4 text-center z-50"
               >
-                <Trash2 size={18} />
-              </button>
-            </>
-          )}
+                <Trash2 size={24} className="text-red-500 mb-2" />
+                <p className="text-[10px] font-black uppercase mb-3 text-white leading-tight">Confirmar exclusão?</p>
+                <div className="flex gap-2 w-full">
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(item);
+                    }}
+                    className="flex-1 bg-red-600 text-white py-2 rounded font-black text-[9px] uppercase hover:bg-red-700"
+                  >
+                    Sim
+                  </button>
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setDeleteConfirmId(null);
+                    }}
+                    className="flex-1 bg-white/10 text-white py-2 rounded font-black text-[9px] uppercase hover:bg-white/20"
+                  >
+                    Não
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
@@ -253,9 +296,9 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true }: MediaLibr
           {!standalone && (
             <button 
               onClick={onClose} 
-              className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white rounded-lg border border-white/5 transition font-black text-[10px] uppercase tracking-widest"
+              className="flex items-center gap-2 px-6 py-2 bg-accent/10 hover:bg-accent text-accent hover:text-black rounded-lg border border-accent/20 transition font-black text-[10px] uppercase tracking-widest group"
             >
-              <X size={14} /> Voltar ao Fluxo
+              <X size={14} className="group-hover:rotate-90 transition-transform" /> Voltar ao Flow
             </button>
           )}
         </div>
@@ -279,13 +322,29 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true }: MediaLibr
         {loading ? (
           <div className="flex flex-col items-center justify-center p-20 gap-4">
             <Loader2 className="animate-spin text-accent" size={40} />
-            <span className="text-[10px] uppercase font-black text-zinc-600 tracking-widest">Carregando Biblioteca...</span>
+            <span className="text-[10px] uppercase font-black text-zinc-600 tracking-widest">Sincronizando Biblioteca...</span>
+          </div>
+        ) : items.length === 0 ? (
+          <div className="p-20 text-center border-2 border-dashed border-white/5 rounded-[12px] flex flex-col items-center gap-4">
+             <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-2">
+                <ImageIcon size={32} className="text-zinc-700" />
+             </div>
+             <div className="space-y-1">
+               <h3 className="text-white font-bold text-lg">Sua Biblioteca está vazia</h3>
+               <p className="text-zinc-500 text-sm max-w-xs mx-auto">Comece fazendo o upload das suas mídias (fotos, vídeos ou áudios) para usá-las nos seus fluxos.</p>
+             </div>
+             <button 
+              onClick={() => fileInputRef.current?.click()} 
+              className="mt-4 bg-accent text-zinc-950 px-8 py-3 rounded-full text-xs font-black uppercase tracking-widest hover:scale-105 transition shadow-lg shadow-accent/20"
+             >
+               Fazer Primeiro Upload
+             </button>
           </div>
         ) : filteredItems.length === 0 ? (
-          <div className="p-20 text-center border-2 border-dashed border-white/5 rounded-[12px] flex flex-col items-center gap-4">
-             <ImageIcon size={48} className="text-zinc-800" />
-             <span className="text-zinc-600 font-bold">Nenhum arquivo encontrado.</span>
-             <button onClick={() => fileInputRef.current?.click()} className="text-accent text-xs font-black uppercase tracking-widest hover:underline">Fazer primeiro upload</button>
+          <div className="p-20 text-center border border-white/5 rounded-[12px] flex flex-col items-center gap-4">
+             <Search size={48} className="text-zinc-800" />
+             <span className="text-zinc-600 font-bold italic">Nenhum resultado para "{search || filter}"</span>
+             <button onClick={() => { setSearch(''); setFilter('all'); }} className="text-accent text-xs font-black uppercase tracking-widest hover:underline">Limpar filtros</button>
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 pb-10">

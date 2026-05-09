@@ -6,6 +6,7 @@ import { AudioPlayer } from './AudioPlayer';
 import { MediaRenderer } from './MediaRenderer';
 import { VerticalLayout } from './layouts/VerticalLayout';
 import { HorizontalLayout } from './layouts/HorizontalLayout';
+import { ProjectModalFlow } from './ProjectModalFlow';
 
 interface ProjectModalProps {
   project: Project | null;
@@ -430,6 +431,17 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   };
 
   const renderLayout = () => {
+    if (isFlow) {
+      return (
+        <ProjectModalFlow 
+          project={project}
+          onClose={onClose}
+          isMuted={isMuted}
+          audioVolume={audioVolume}
+        />
+      );
+    }
+
     const layoutProps = {
       project,
       feedIndex,
@@ -449,6 +461,42 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
 
     return <VerticalLayout {...layoutProps} />;
   };
+
+  if (isFlow) {
+    return (
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="fixed inset-0 z-[9999] bg-[#000000] flex items-center justify-center select-none overflow-hidden"
+      >
+        <ProjectModalFlow 
+          project={project}
+          onClose={onClose}
+          isMuted={isMuted}
+          audioVolume={audioVolume}
+        />
+        
+        {project.audioUrl && (
+          <>
+            <audio 
+              ref={audioRef} 
+              src={project.audioUrl}
+              loop 
+              playsInline 
+              preload="auto" 
+            />
+            {/* O AudioPlayer opcionalmente pode ser renderizado aqui ou dentro do Flow */}
+            <AudioPlayer 
+              isMuted={isMuted}
+              onToggleMute={handleToggleMute}
+              volume={audioVolume}
+              onVolumeChange={setAudioVolume}
+            />
+          </>
+        )}
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div 

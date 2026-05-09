@@ -192,6 +192,7 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
   const [edges, setEdges] = useState<Edge[]>(initialData?.edges || []);
   const [projectName, setProjectName] = useState(initialData?.projectName || 'Novo Projeto');
   const [selectingNodeId, setSelectingNodeId] = useState<string | null>(null);
+  const [isLibraryOpen, setIsLibraryOpen] = useState(false);
   
   const [isSaving, setIsSaving] = useState(false);
   
@@ -377,6 +378,14 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
 
           <div className="flex items-center gap-2">
             <button 
+              onClick={() => setIsLibraryOpen(true)}
+              className="px-4 py-2 text-[10px] font-black uppercase text-accent hover:text-white transition flex items-center gap-2"
+              title="Acessar biblioteca de arquivos"
+            >
+              <ImageIcon size={14} /> Biblioteca
+            </button>
+            <div className="w-px h-4 bg-white/10 mx-2" />
+            <button 
               onClick={onCancel}
               className="px-4 py-2 text-[10px] font-black uppercase text-zinc-500 hover:text-white transition"
             >
@@ -449,12 +458,18 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
       </main>
 
       {/* Seletor de Mídia Modal */}
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {selectingNodeId && (
           <MediaLibrary 
             standalone={false} 
             onClose={() => setSelectingNodeId(null)} 
             onSelect={handleMediaSelect} 
+          />
+        )}
+        {isLibraryOpen && (
+          <MediaLibrary 
+            standalone={false} 
+            onClose={() => setIsLibraryOpen(false)} 
           />
         )}
       </AnimatePresence>
