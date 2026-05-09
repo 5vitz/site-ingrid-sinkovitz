@@ -22,8 +22,8 @@ export const MaintenanceGuard: React.FC<MaintenanceGuardProps> = ({ children, se
     localStorage.setItem('maintenance_bypassed', 'true');
   };
 
-  // DESCONECTADO TEMPORARIAMENTE PARA TESTES
-  const isMaintenanceActive = false;
+  // CONECTADO ÀS CONFIGURAÇÕES DO BANCO DE DADOS
+  const isMaintenanceActive = settings?.maintenanceMode === true;
 
   if (loading) {
     return <MaintenanceMode title={settings?.maintenanceTitle} isLoading={true} />;

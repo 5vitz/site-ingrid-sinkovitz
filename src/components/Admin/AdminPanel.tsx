@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import { 
   LayoutGrid, MessageSquare, Mail, Play, Menu, 
   ShieldCheck, Plus, Share2, Image as ImageIcon,
-  ChevronRight
+  ChevronRight, ChevronDown
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../../hooks/useAuth';
 import { ProjectManager } from './ProjectManager';
 import { MediaLibrary } from './MediaLibrary';
@@ -12,6 +13,7 @@ import { FlowConstructor } from './FlowConstructor';
 import { ServiceManager } from './ServiceManager';
 import { TestimonialManager } from './TestimonialManager';
 import { AboutManager } from './AboutManager';
+import { ContactManager } from './ContactManager';
 import { GlobalSettingsManager } from './GlobalSettingsManager';
 import { UserManagement } from './UserManagement';
 import { DatabaseControlCenter } from './DatabaseControlCenter';
@@ -20,10 +22,10 @@ import { updateProject } from '../../services/dataService';
 import { useCollection } from '../../hooks/useCollection';
 import { Project, FeedItem } from '../../types';
 
-const AdminNavItem = ({ active, onClick, icon, label }: { active: boolean, onClick: () => void, icon: React.ReactNode, label: string }) => (
+const AdminNavItem = ({ active, onClick, icon, label, className = "", isSubItem = false }: { active: boolean, onClick: () => void, icon: React.ReactNode, label: string, className?: string, isSubItem?: boolean }) => (
   <button 
     onClick={onClick}
-    className={`w-full flex items-center gap-4 px-6 py-4 rounded-[8px] font-semibold transition ${active ? 'bg-accent text-black shadow-lg shadow-accent/20' : 'text-zinc-500 hover:text-white hover:bg-white/5'}`}
+    className={`w-full flex items-center gap-4 px-6 py-4 rounded-[8px] font-semibold transition ${isSubItem ? 'pl-10' : ''} ${active ? 'bg-white/10 text-white shadow-lg shadow-white/5' : 'text-zinc-500 hover:text-white hover:bg-white/5'} ${className}`}
   >
     {icon} {label}
   </button>
@@ -31,51 +33,106 @@ const AdminNavItem = ({ active, onClick, icon, label }: { active: boolean, onCli
 
 export const AdminPanel: React.FC = () => {
   const { logout, role } = useAuth();
-  const [activeTab, setActiveTab] = useState<'projects' | 'services' | 'testimonials' | 'about' | 'users' | 'settings' | 'media' | 'flow'>('projects');
+  const [activeTab, setActiveTab] = useState<'projects' | 'services' | 'testimonials' | 'about' | 'contact' | 'users' | 'settings' | 'media' | 'flow'>('projects');
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [frontendOpen, setFrontendOpen] = useState(false);
 
   // Resetar seleção ao trocar de aba para evitar estados inconsistentes
   useEffect(() => {
-    setSelectedProjectId(null);
+    if (activeTab !== 'projects' && activeTab !== 'flow' && activeTab !== 'media') {
+      setSelectedProjectId(null);
+    }
   }, [activeTab]);
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white flex flex-col md:flex-row">
-      <aside className="w-full md:w-80 bg-zinc-900 border-r border-white/5 p-8 flex flex-col gap-12 shrink-0">
+      <aside className="w-full md:w-80 bg-zinc-900 border-r border-white/5 p-8 flex flex-col gap-10 shrink-0">
         <div>
           <Link to="/" className="text-2xl font-bold tracking-tighter">Ingrid <span className="text-accent">Sinkovitz</span></Link>
-          <div className="text-[10px] tracking-widest text-zinc-500 mt-1 font-bold">Admin Dashboard</div>
+          <div className="text-[10px] tracking-widest text-zinc-500 mt-1 font-bold">Painel Administrativo</div>
         </div>
 
-        <nav className="flex-1 space-y-2">
-          <AdminNavItem active={activeTab === 'projects'} onClick={() => setActiveTab('projects')} icon={<LayoutGrid size={20}/>} label="Editor de Projetos" />
-          <AdminNavItem active={activeTab === 'flow'} onClick={() => setActiveTab('flow')} icon={<Share2 size={20}/>} label="Construtor de Flow" />
-          <AdminNavItem active={activeTab === 'media'} onClick={() => setActiveTab('media')} icon={<ImageIcon size={20}/>} label="Biblioteca de Mídia" />
-          <AdminNavItem active={activeTab === 'services'} onClick={() => setActiveTab('services')} icon={<MessageSquare size={20}/>} label="Serviços" />
-          <AdminNavItem active={activeTab === 'testimonials'} onClick={() => setActiveTab('testimonials')} icon={<Mail size={20}/>} label="Depoimentos" />
-          <AdminNavItem active={activeTab === 'about'} onClick={() => setActiveTab('about')} icon={<Play size={20}/>} label="Sobre Mim" />
-          <AdminNavItem active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} icon={<Menu size={20}/>} label="Configurações" />
-          {role === 'super' && <AdminNavItem active={activeTab === 'users'} onClick={() => setActiveTab('users')} icon={<ShieldCheck size={20}/>} label="ACL / Usuários" />}
+        <nav className="flex-1 space-y-6 overflow-y-auto custom-scrollbar">
+          {/* CATEGORIA: PROJETOS */}
+          <div className="space-y-2">
+            <div className="px-6 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600 mb-4">Central de Projetos</div>
+            <AdminNavItem 
+              active={selectedProjectId === 'new'} 
+              onClick={() => {
+                setActiveTab('projects');
+                setSelectedProjectId('new');
+              }} 
+              icon={<Plus size={20} />} 
+              label="Novo Projeto"
+              className={selectedProjectId === 'new' ? "!bg-accent !text-black shadow-xl shadow-accent/20 !opacity-100" : ""}
+            />
+            <AdminNavItem 
+              active={activeTab === 'projects' && selectedProjectId !== 'new'} 
+              onClick={() => {
+                setActiveTab('projects');
+                setSelectedProjectId(null);
+              }} 
+              icon={<LayoutGrid size={20}/>} 
+              label="Editor de Projetos" 
+            />
+            <AdminNavItem active={activeTab === 'flow'} onClick={() => setActiveTab('flow')} icon={<Share2 size={20}/>} label="Construtor de Flow" />
+            <AdminNavItem active={activeTab === 'media'} onClick={() => setActiveTab('media')} icon={<ImageIcon size={20}/>} label="Biblioteca de Mídia" />
+          </div>
+
+          {/* SISTEMA (Sem Título agora) */}
+          <div className="space-y-2 pt-4 border-t border-white/5">
+            <AdminNavItem active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} icon={<Menu size={20}/>} label="Configurações" />
+            {role === 'super' && <AdminNavItem active={activeTab === 'users'} onClick={() => setActiveTab('users')} icon={<ShieldCheck size={20}/>} label="ACL / Usuários" />}
+          </div>
+
+          {/* CATEGORIA: FRONTEND (ÚLTIMO) */}
+          <div className="space-y-1 pt-4 border-t border-white/5">
+            <button 
+              onMouseEnter={() => setFrontendOpen(true)}
+              onClick={() => setFrontendOpen(!frontendOpen)}
+              className="w-full flex items-center justify-between px-6 py-4 rounded-[8px] font-semibold text-zinc-500 hover:text-white hover:bg-white/5 transition group"
+            >
+              <div className="flex items-center gap-4">
+                <Menu size={20} />
+                <span>Frontend</span>
+              </div>
+              <ChevronDown size={16} className={`transition-transform duration-300 ${frontendOpen ? 'rotate-180' : ''} text-zinc-600 group-hover:text-white`} />
+            </button>
+            <AnimatePresence>
+              {frontendOpen && (
+                <motion.div 
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="space-y-1 overflow-hidden"
+                >
+                  <AdminNavItem active={activeTab === 'services'} onClick={() => setActiveTab('services')} icon={<MessageSquare size={18}/>} label="Serviços" isSubItem />
+                  <AdminNavItem active={activeTab === 'testimonials'} onClick={() => setActiveTab('testimonials')} icon={<Mail size={18}/>} label="Depoimentos" isSubItem />
+                  <AdminNavItem active={activeTab === 'about'} onClick={() => setActiveTab('about')} icon={<Play size={18}/>} label="Sobre Mim" isSubItem />
+                  <AdminNavItem active={activeTab === 'contact'} onClick={() => setActiveTab('contact')} icon={<Mail size={18}/>} label="Contato" isSubItem />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          <div className="flex-1" />
         </nav>
 
         <div className="pt-8 border-t border-white/5 space-y-4">
           <DatabaseControlCenter seedAll={seedAll} />
-          <button onClick={logout} className="w-full py-4 bg-red-600/10 text-red-500 font-bold rounded-[8px] hover:bg-red-600 hover:text-white transition">Sair da Conta</button>
+          <button onClick={logout} className="w-full py-4 bg-red-600/10 text-red-500 font-bold rounded-[8px] hover:bg-red-600 hover:text-white transition text-xs uppercase tracking-widest">Sair da Conta</button>
         </div>
       </aside>
 
-      <main className="flex-1 p-8 md:p-16 overflow-y-auto max-h-screen">
+      <main className="flex-1 px-6 pt-4 pb-10 md:px-10 md:pt-8 md:pb-16 overflow-y-auto max-h-screen">
         <div className="max-w-5xl mx-auto">
           {activeTab === 'projects' && (
             <StructuralCenter 
-              key={`projects-center-${selectedProjectId}`}
-              title="Editor de Projetos" 
-              description="Gerencie as configurações básicas, temas e estilos visuais do seu portfólio."
+              title={selectedProjectId === 'new' ? "Criar Novo Projeto" : "Central de Projetos"} 
+              description={selectedProjectId === 'new' ? "Configure o nome e as definições básicas do seu novo projeto." : "Gerencie as configurações básicas, temas e estilos visuais do seu portfólio."}
               selectedId={selectedProjectId}
               onSelect={setSelectedProjectId}
-              onNew={() => {
-                setSelectedProjectId('new');
-              }}
+              onNew={null}
               renderTool={() => (
                 <ProjectManager 
                   initialProjectId={selectedProjectId === 'new' ? null : selectedProjectId} 
@@ -87,7 +144,6 @@ export const AdminPanel: React.FC = () => {
           )}
           {activeTab === 'flow' && (
             <StructuralCenter 
-              key={`flow-center-${selectedProjectId}`}
               title="Construtor de Flow" 
               description="Selecione um projeto para editar sua árvore lógica de tópicos e stories."
               selectedId={selectedProjectId}
@@ -221,7 +277,7 @@ export const AdminPanel: React.FC = () => {
 
                         const storyNodeId = story.id || `${mainNodeId}-story-${storyIdx}`;
                         const storyUrl = getStoryMedia(story);
-                        const storyMediaType = detectMediaType(story.media || story);
+                        const storyMediaType = detectMediaType(story);
 
                         initialNodes.push({
                           id: storyNodeId,
@@ -364,17 +420,17 @@ export const AdminPanel: React.FC = () => {
           )}
           {activeTab === 'media' && (
             <StructuralCenter 
-              key={`media-center-${selectedProjectId}`}
               title="Biblioteca de Mídia" 
               description="Gerencie arquivos, uploads e pastas vinculadas à estrutura visual."
               selectedId={selectedProjectId}
               onSelect={setSelectedProjectId}
-              renderTool={() => <MediaLibrary key={`media-lib-${selectedProjectId}`} standalone={false} onClose={() => setSelectedProjectId(null)} closeLabel="Trocar Projeto" />}
+              renderTool={() => <MediaLibrary standalone={false} onClose={() => setSelectedProjectId(null)} closeLabel="Trocar Projeto" />}
             />
           )}
           {activeTab === 'services' && <ServiceManager />}
           {activeTab === 'testimonials' && <TestimonialManager />}
           {activeTab === 'about' && <AboutManager />}
+          {activeTab === 'contact' && <ContactManager />}
           {activeTab === 'settings' && <GlobalSettingsManager />}
           {activeTab === 'users' && <UserManagement />}
         </div>
@@ -388,7 +444,7 @@ const StructuralCenter = ({ title, description, selectedId, onSelect, onNew, ren
   description: string, 
   selectedId: string | null,
   onSelect: (id: string | null) => void,
-  onNew?: () => void,
+  onNew?: (() => void) | null,
   renderTool: (p: Project) => React.ReactNode 
 }) => {
   const { data: projects, loading } = useCollection<Project>('projects');
@@ -405,11 +461,10 @@ const StructuralCenter = ({ title, description, selectedId, onSelect, onNew, ren
   }
 
   return (
-    <div className="space-y-8">
-      <div className="flex justify-between items-center bg-zinc-900/50 p-8 rounded-[12px] border border-white/5">
+    <div className="space-y-4">
+      <div className="flex justify-between items-center bg-zinc-900/50 py-3 px-8 rounded-[12px] border border-white/5">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">{title}</h2>
-          <p className="text-zinc-500 mt-2">{description}</p>
+          <h2 className="text-xl font-bold tracking-tight">{title}</h2>
         </div>
         {onNew && (
           <button 
@@ -430,18 +485,18 @@ const StructuralCenter = ({ title, description, selectedId, onSelect, onNew, ren
             <button 
               key={p.id}
               onClick={() => onSelect(p.id)}
-              className="w-full bg-zinc-900/30 p-5 rounded-[8px] border border-white/5 hover:border-accent/40 hover:bg-zinc-900/50 transition-all flex items-center justify-between group"
+              className="w-full bg-zinc-900/30 py-2 px-4 rounded-[8px] border border-white/5 hover:border-accent/40 hover:bg-zinc-900/50 transition-all flex items-center justify-between group"
             >
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-zinc-800 rounded-[6px] overflow-hidden border border-white/10 shrink-0">
+                <div className="w-10 h-10 bg-zinc-800 rounded-[6px] overflow-hidden border border-white/10 shrink-0">
                   {p.galleryThumbnail && <img src={p.galleryThumbnail} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" alt="" />}
                 </div>
                 <div className="text-left">
                   <span className="text-[9px] font-black uppercase text-zinc-600 tracking-tighter">Projeto</span>
-                  <h3 className="font-bold text-lg leading-none">{p.title}</h3>
+                  <h3 className="font-normal text-base leading-none text-zinc-200">{p.title}</h3>
                 </div>
               </div>
-              <ChevronRight className="text-zinc-700 group-hover:text-accent transition-colors" />
+              <ChevronRight size={18} className="text-zinc-700 group-hover:text-accent transition-colors" />
             </button>
           ))
         )}

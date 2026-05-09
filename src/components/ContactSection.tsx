@@ -1,8 +1,41 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Mail, Instagram, Linkedin, Send, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { getSettings } from '../services/dataService';
+import { SiteSettings } from '../types';
 
 export const ContactSection: React.FC = () => {
+  const [settings, setSettings] = useState<SiteSettings | null>(null);
+
+  useEffect(() => {
+    getSettings().then(data => {
+      if (data.global) setSettings(data.global);
+    });
+  }, []);
+
+  const socialLinks = [
+    { 
+      icon: <MessageCircle size={20} />, 
+      label: "WhatsApp", 
+      link: settings?.whatsappNumber ? `https://wa.me/${settings.whatsappNumber}` : "https://wa.me/5527999193525" 
+    },
+    { 
+      icon: <Linkedin size={20} />, 
+      label: "LinkedIn", 
+      link: settings?.linkedinUrl || "https://www.linkedin.com/in/ingridsinkovitz/" 
+    },
+    { 
+      icon: <Instagram size={20} />, 
+      label: "Instagram", 
+      link: settings?.instagramUrl || "#" 
+    },
+    { 
+      icon: null, 
+      label: settings?.emailContact || "ingridsinkovitz@gmail.com", 
+      link: `mailto:${settings?.emailContact || "ingridsinkovitz@gmail.com"}` 
+    }
+  ];
+
   return (
     <footer id="contato" className="section-container scroll-mt-20 !pt-0">
       <div className="section-card p-5 md:p-10 flex flex-col items-center">
@@ -28,18 +61,14 @@ export const ContactSection: React.FC = () => {
           {/* Card 2: Conecte-se */}
           <div className="bg-white/[0.03] backdrop-blur-sm p-10 rounded-[8px] border border-white/5 flex flex-col items-center md:items-start justify-start space-y-8">
             <span className="text-white/20 font-sans tracking-widest text-xs font-bold uppercase">Conecte-se</span>
-            <div className="flex flex-col gap-5 items-center md:items-start">
-              {[
-                { icon: <MessageCircle size={20} />, label: "WhatsApp", link: "https://wa.me/5527999193525" },
-                { icon: <Linkedin size={20} />, label: "LinkedIn", link: "https://www.linkedin.com/in/ingridsinkovitz/" },
-                { icon: null, label: "ingridsinkovitz@gmail.com", link: "mailto:ingridsinkovitz@gmail.com" }
-              ].map((social, i) => (
+            <div className="flex flex-col gap-5 items-center md:items-start w-full">
+              {socialLinks.filter(s => s.link && s.link !== '#').map((social, i) => (
                 <a 
                   key={i} 
                   href={social.link} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="flex items-center gap-4 text-sm font-medium text-zinc-400 hover:text-white transition group"
+                  className="flex items-center gap-4 text-sm font-medium text-zinc-400 hover:text-white transition group w-full"
                 >
                   {social.icon && (
                     <span className="p-3 rounded-full bg-white/5 group-hover:bg-accent group-hover:text-black transition-all duration-300">

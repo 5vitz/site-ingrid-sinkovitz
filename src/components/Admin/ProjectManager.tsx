@@ -344,17 +344,17 @@ export const ProjectManager = ({ initialProjectId, onClose, isStartingNew }: { i
               );
             } else if (item.type === 'empty') {
               return (
-                <div key={`empty-${item.slot}`} className="bg-zinc-900/10 p-4 rounded-[8px] flex items-center justify-between border border-dashed border-white/5 opacity-40 hover:opacity-100 transition-opacity">
-                  <div className="flex items-center gap-6 text-zinc-500">
-                    <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-[10px] font-black">
+                <div key={`empty-${item.slot}`} className="bg-zinc-900/10 py-0.5 px-4 rounded-[8px] flex items-center justify-between border border-dashed border-white/5 opacity-40 hover:opacity-100 transition-opacity">
+                  <div className="flex items-center gap-3 text-zinc-500">
+                    <div className="w-5 h-5 rounded-full border border-white/10 flex items-center justify-center text-[8px] font-black">
                       -
                     </div>
-                    <div className="w-16 h-20 bg-zinc-800/30 rounded-[8px] border border-dashed border-white/5 shrink-0 flex items-center justify-center">
-                      <Plus size={24} />
+                    <div className="w-8 h-8 bg-zinc-800/30 rounded-[4px] border border-dashed border-white/5 shrink-0 flex items-center justify-center text-zinc-600">
+                      <Plus size={14} />
                     </div>
                     <div>
-                      <span className="text-[10px] font-black uppercase tracking-tighter">Slot {item.slot}</span>
-                      <h3 className="font-bold text-lg">Disponível</h3>
+                      <span className="text-[9px] font-black uppercase tracking-tighter block leading-none">Slot {item.slot}</span>
+                      <h3 className="font-normal text-xs leading-tight">Disponível</h3>
                     </div>
                   </div>
                   <button 
@@ -362,9 +362,9 @@ export const ProjectManager = ({ initialProjectId, onClose, isStartingNew }: { i
                       setEditingProject({ order: item.slot, title: '', layoutType: '2d', status: 'draft' });
                       setIsAdding(true);
                     }}
-                    className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 text-zinc-500 hover:text-white rounded-[8px] text-[10px] font-black uppercase tracking-widest transition"
+                    className="flex items-center gap-2 px-2 py-0.5 bg-white/5 hover:bg-white/10 text-zinc-500 hover:text-white rounded-[4px] text-[9px] font-black uppercase tracking-widest transition"
                   >
-                    Ocupar Slot
+                    Ocupar
                   </button>
                 </div>
               );
@@ -397,12 +397,13 @@ const ProjectRow = ({
   isDuplicate?: boolean,
   onEdit: (p: Project) => void,
   onDelete: () => void,
-  onFlowEdit: () => void
+  onFlowEdit: () => void,
+  key?: any
 }) => {
   return (
-    <div className={`bg-zinc-900/40 p-4 rounded-[8px] flex items-center justify-between group border transition-all ${isDuplicate ? 'border-amber-500/30 bg-amber-500/5 shadow-[0_0_15px_rgba(245,158,11,0.05)]' : 'border-white/5 hover:border-accent/20'}`}>
-      <div className="flex items-center gap-6">
-        <div className="flex flex-col items-center gap-1 min-w-[40px]">
+    <div className={`bg-zinc-900/40 py-0.5 px-4 rounded-[8px] flex items-center justify-between group border transition-all ${isDuplicate ? 'border-amber-500/30 bg-amber-500/5' : 'border-white/5 hover:border-accent/20'}`}>
+      <div className="flex items-center gap-4">
+        <div className="flex flex-col items-center gap-0 min-w-[28px]">
           <button 
             onClick={() => {
               const sortedProjects = [...projects].sort((a, b) => (a.order || 0) - (b.order || 0));
@@ -414,11 +415,11 @@ const ProjectRow = ({
                 updateProject(prev.id, { order: tempOrder });
               }
             }}
-            className="text-zinc-600 hover:text-accent disabled:opacity-0 transition-colors"
+            className="text-zinc-700 hover:text-accent disabled:opacity-0 transition-colors"
           >
-            <MoveUp size={16} />
+            <MoveUp size={10} />
           </button>
-          <div className={`w-10 h-10 rounded-full ${isOrphan ? 'bg-zinc-700' : 'bg-accent'} text-zinc-950 text-[11px] font-black flex items-center justify-center shadow-lg`}>
+          <div className={`w-5 h-5 rounded-full ${isOrphan ? 'bg-zinc-700' : 'bg-accent'} text-zinc-950 text-[8px] font-black flex items-center justify-center shadow-lg`}>
             {visualNumber}
           </div>
           <button 
@@ -432,72 +433,73 @@ const ProjectRow = ({
                 updateProject(next.id, { order: tempOrder });
               }
             }}
-            className="text-zinc-600 hover:text-accent disabled:opacity-0 transition-colors"
+            className="text-zinc-700 hover:text-accent disabled:opacity-0 transition-colors"
           >
-            <MoveDown size={16} />
+            <MoveDown size={10} />
           </button>
         </div>
 
-        <div className="w-16 h-20 bg-zinc-800 rounded-[8px] overflow-hidden border border-white/10 shrink-0 shadow-xl group-hover:scale-105 transition-transform">
+
+        <div className="w-8 h-8 bg-zinc-800 rounded-[4px] overflow-hidden border border-white/10 shrink-0 shadow-xl group-hover:scale-105 transition-transform">
           {p.galleryThumbnail ? (
             <img src={p.galleryThumbnail} className="w-full h-full object-cover" alt="" />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-zinc-700">
-              <LayoutGrid size={24} />
+              <LayoutGrid size={14} />
             </div>
           )}
         </div>
         <div>
           <div className="flex items-center gap-3">
-            <span className="text-[10px] font-black uppercase text-zinc-500 tracking-tighter">
+            <span className="text-[8px] font-black uppercase text-zinc-600 tracking-tighter">
               {isOrphan ? 'Sem Slot' : `Slot ${slotNumber}`}
             </span>
-            <span className="text-[10px] font-mono text-zinc-700">ID: ...{p.id?.slice(-4)}</span>
-            <h3 className="font-bold text-lg leading-tight">{p.title}</h3>
+            <span className="text-[8px] font-mono text-zinc-800">ID: ...{p.id?.slice(-4)}</span>
+            <h3 className="font-normal text-sm leading-tight text-zinc-200">{p.title}</h3>
             {isDuplicate && (
-              <span className="text-[8px] bg-amber-500/20 text-amber-500 px-2 py-0.5 rounded-full font-black uppercase tracking-tighter animate-pulse">
-                Conflito de Slot
+              <span className="text-[7px] text-amber-500 font-bold uppercase tracking-tighter">
+                Conflito
               </span>
             )}
             {p.status === 'draft' && (
-              <span className="flex items-center gap-1 text-[8px] bg-amber-500/10 text-amber-500 px-1.5 py-0.5 rounded font-black uppercase tracking-tighter border border-amber-500/20">
-                <LockKeyhole size={10} /> Em Construção
+              <span className="flex items-center gap-0.5 text-[7px] bg-amber-500/10 text-amber-500 px-1 py-0.2 rounded font-black uppercase tracking-tighter border border-amber-500/20">
+                <LockKeyhole size={7} /> Construção
               </span>
             )}
             {p.isLocked && (
-              <span className="flex items-center gap-1 text-[8px] bg-red-500/10 text-red-500 px-1.5 py-0.5 rounded font-black uppercase tracking-tighter border border-red-500/20">
-                <Lock size={10} /> Trancado
+              <span className="flex items-center gap-0.5 text-[7px] bg-red-500/10 text-red-500 px-1 py-0.2 rounded font-black uppercase tracking-tighter border border-red-500/20">
+                <Lock size={7} /> Trancado
               </span>
             )}
           </div>
-          <div className="flex items-center gap-3 mt-1">
-            <span className="text-[10px] uppercase font-black text-accent bg-accent/10 px-2 py-0.5 rounded-full">{p.layoutType}</span>
-            <span className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">
-              {p.feed?.length || 0} Tópicos • {p.feed?.reduce((acc, curr) => acc + (curr.stories?.length || 0), 0) || 0} Stories
+          <div className="flex items-center gap-3">
+            <span className="text-[8px] uppercase font-black text-accent/80">{p.layoutType}</span>
+            <span className="text-[8px] uppercase font-bold text-zinc-600 tracking-wider">
+              {p.feed?.length || 0} Tópicos
             </span>
           </div>
         </div>
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         <button 
           onClick={onFlowEdit}
-          className="p-3 bg-blue-600/10 text-blue-500 hover:bg-blue-600 hover:text-white rounded-[8px] transition-all"
+          className="p-2 bg-blue-600/5 text-blue-500/80 hover:bg-blue-600 hover:text-white rounded-[6px] transition-all"
           title="Abrir Construtor de Flow"
         >
-          <Share2 size={16} />
+          <Share2 size={12} />
         </button>
         <button 
           onClick={() => onEdit(p)} 
-          className="p-3 bg-white/5 hover:bg-zinc-700 rounded-[8px] transition-all flex items-center gap-2 font-bold text-xs uppercase tracking-widest text-zinc-300"
+          className="py-1 px-3 bg-white/5 hover:bg-zinc-700 rounded-[6px] transition-all flex items-center gap-2 font-bold text-[10px] uppercase tracking-widest text-zinc-400"
         >
-          <Edit2 size={16} /> <span className="hidden md:inline">Editar</span>
+          <Edit2 size={12} /> <span className="hidden md:inline">Editar</span>
         </button>
         <button 
           onClick={onDelete} 
-          className="p-3 bg-red-600/5 hover:bg-red-600 hover:text-white rounded-[8px] transition-all text-red-500 hover:text-white"
+          className="p-2 bg-red-600/5 text-red-500/80 hover:bg-red-600 hover:text-white rounded-[6px] transition-all"
           title="Excluir Projeto"
         >
-          <Trash2 size={16} />
+          <Trash2 size={12} />
         </button>
       </div>
     </div>

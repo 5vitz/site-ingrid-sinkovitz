@@ -247,6 +247,7 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
   const [edges, setEdges] = useState<Edge[]>(initialData?.edges || []);
   const [projectName, setProjectName] = useState(initialData?.projectName || 'Novo Projeto');
   const [selectingNodeId, setSelectingNodeId] = useState<string | null>(null);
+  const [lastSelectedId, setLastSelectedId] = useState<string | null>(null);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
   
   const [isSaving, setIsSaving] = useState(false);
@@ -314,6 +315,48 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
     (params: Connection) => setEdges((eds) => addEdge({ ...params, type: 'button', animated: true, style: { stroke: '#FEF200', strokeWidth: 2 } }, eds)),
     [setEdges]
   );
+
+  const onNodeClick = useCallback((event: React.MouseEvent, node: Node) => {
+    const isShift = event.shiftKey;
+    const isCtrl = event.ctrlKey || event.metaKey;
+
+    if (isShift && lastSelectedId) {
+      const startIndex = nodes.findIndex(n => n.id === lastSelectedId);
+      const endIndex = nodes.findIndex(n => n.id === node.id);
+      
+      if (startIndex !== -1 && endIndex !== -1) {
+        const start = Math.min(startIndex, endIndex);
+        const end = Math.max(startIndex, endIndex);
+        
+        setNodes(nds => nds.map((n, idx) => {
+          if (idx >= start && idx <= end) {
+            return { ...n, selected: true };
+          }
+          return n;
+        }));
+      }
+    } else if (isCtrl) {
+      setNodes(nds => nds.map(n => n.id === node.id ? { ...n, selected: !n.selected } : n));
+    }
+    
+    setLastSelectedId(node.id);
+  }, [nodes, lastSelectedId]);
+
+  const alignHorizontal = () => {
+    const selectedNodes = nodes.filter(n => n.selected);
+    if (selectedNodes.length < 2) return;
+    
+    const targetY = selectedNodes[0].position.y;
+    setNodes(nds => nds.map(n => n.selected ? { ...n, position: { ...n.position, y: targetY } } : n));
+  };
+
+  const alignVertical = () => {
+    const selectedNodes = nodes.filter(n => n.selected);
+    if (selectedNodes.length < 2) return;
+    
+    const targetX = selectedNodes[0].position.x;
+    setNodes(nds => nds.map(n => n.selected ? { ...n, position: { ...n.position, x: targetX } } : n));
+  };
 
   const addNode = () => {
     const id = `node-${Date.now()}`;
@@ -483,6 +526,7 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
+          onNodeClick={onNodeClick}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
           connectionMode={ConnectionMode.Loose}
@@ -514,6 +558,40 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
           </Panel>
           
           <Controls showInteractive={false} className="!bg-zinc-900 !border-white/10 !rounded-lg !overflow-hidden !shadow-xl !m-6" />
+
+          {/* Botões de Alinhamento (Apenas quando múltiplos selecionados) */}
+          <AnimatePresence>
+            {nodes.filter(n => n.selected).length > 1 && (
+              <Panel position="top-center" className="mt-6">
+                <motion.div 
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="flex items-center gap-2 bg-zinc-900 p-1.5 rounded-xl border border-accent/20 shadow-2xl backdrop-blur-md"
+                >
+                  <button 
+                    onClick={alignHorizontal}
+                    className="flex items-center gap-2 px-3 py-1.5 hover:bg-white/5 rounded-lg text-zinc-400 hover:text-accent transition group"
+                    title="Alinhar Horizontalmente"
+                  >
+                    <Layout className="w-4 h-4" />
+                    <span className="text-[10px] font-black uppercase tracking-widest">Alinhar Horiz.</span>
+                  </button>
+                  <div className="w-px h-4 bg-white/10" />
+                  <button 
+                    onClick={alignVertical}
+                    className="flex items-center gap-2 px-3 py-1.5 hover:bg-white/5 rounded-lg text-zinc-400 hover:text-accent transition group"
+                    title="Alinhar Verticalmente"
+                  >
+                    <div className="rotate-90">
+                      <Layout className="w-4 h-4" />
+                    </div>
+                    <span className="text-[10px] font-black uppercase tracking-widest">Alinhar Vert.</span>
+                  </button>
+                </motion.div>
+              </Panel>
+            )}
+          </AnimatePresence>
         </ReactFlow>
       </main>
 

@@ -131,6 +131,9 @@ export interface Testimonial {
 
 export interface SiteSettings {
   whatsappNumber: string;
+  linkedinUrl?: string;
+  instagramUrl?: string;
+  emailContact?: string;
   accentColor: string;
   maintenanceMode?: boolean;
   maintenanceTitle?: string;

@@ -14,11 +14,17 @@ export const UserManagement = () => {
   const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     const q = query(collection(db, 'users_roles'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const items = snapshot.docs.map(doc => doc.data() as UserRoleDoc);
       setUsers(items);
       setLoading(false);
+    }, (error) => {
+      console.error("Erro ao carregar usuários:", error);
+      setLoading(false);
+      // Se der erro de permissão (Missing or insufficient permissions), 
+      // pelo menos mostramos a interface vazia ou uma mensagem.
     });
     return () => unsubscribe();
   }, []);

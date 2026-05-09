@@ -63,7 +63,7 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true, closeLabel 
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    const fileList = Array.from(files);
+    const fileList = Array.from(files) as File[];
     setUploading(true);
     setTotalUploads(fileList.length);
     setCurrentUploadIdx(0);

@@ -49,6 +49,24 @@ export const GlobalSettingsManager = () => {
     }
   };
 
+  const toggleMaintenance = async () => {
+    const newMode = !settings.maintenanceMode;
+    // Update local state first for instant UI feedback
+    setSettings(prev => ({ ...prev, maintenanceMode: newMode }));
+    
+    try {
+      // Save to database immediately
+      await updateSettings('global', { ...settings, maintenanceMode: newMode });
+      // We don't need a loud alert here, just a subtle console log or nothing
+      console.log(`Modo manutenção: ${newMode ? 'Ativado' : 'Desativado'}`);
+    } catch (err) {
+      console.error("Erro ao salvar modo manutenção:", err);
+      // Revert state if save fails
+      setSettings(prev => ({ ...prev, maintenanceMode: !newMode }));
+      alert('Falha ao alterar modo manutenção no servidor.');
+    }
+  };
+
   const ColorInput = ({ label, value, onChange, id }: { label: string, value: string, onChange: (val: string) => void, id: string }) => (
     <div className="space-y-2">
       <label className="flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold text-zinc-500">
@@ -100,7 +118,7 @@ export const GlobalSettingsManager = () => {
             <div className="flex items-center justify-between p-4 bg-zinc-950 rounded-[8px] border border-white/5">
               <span className="text-xs font-bold uppercase tracking-widest text-zinc-400">Ativar Modo</span>
               <button 
-                onClick={() => setSettings({ ...settings, maintenanceMode: !settings.maintenanceMode })}
+                onClick={toggleMaintenance}
                 className={`w-12 h-6 rounded-full p-1 transition-colors duration-300 ${settings.maintenanceMode ? 'bg-accent' : 'bg-white/10'}`}
               >
                 <div className={`w-4 h-4 bg-white rounded-full transition-transform duration-300 ${settings.maintenanceMode ? 'translate-x-6' : 'translate-x-0'}`} />
