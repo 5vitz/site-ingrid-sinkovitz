@@ -67,24 +67,24 @@
 
 /* Estilo Exclusivo apenas para elementos com a classe .custom-scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 14px !important;
-  height: 14px !important;
+  width: 4px !important;
+  height: 4px !important;
   display: block !important;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #000000 !important;
+  background: transparent !important;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #ffffff !important;
-  border-radius: 4px !important;
-  border: 3px solid #000000 !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 10px !important;
+  border: none !important;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #f0f0f0 !important;
+  background: rgba(255, 255, 255, 0.2) !important;
 }
 .custom-scrollbar {
-  scrollbar-width: auto !important;
-  scrollbar-color: #ffffff #000000 !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent !important;
   overflow-y: auto !important;
   -webkit-overflow-scrolling: touch !important;
 }

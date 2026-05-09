@@ -183,22 +183,24 @@ export const ProjectModalFlow: React.FC<ProjectModalFlowProps> = ({
           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
           className="relative z-10 w-full max-w-4xl aspect-[4/5] md:aspect-[16/9] flex items-center justify-center p-4"
         >
-          <div className="w-full h-full rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/5 relative bg-zinc-900">
-            <MediaRenderer 
-              media={currentMedia}
-              isActive={true}
-              isPlaying={true}
-              isMuted={isMuted}
-              theme={theme}
-            />
+          <div className="w-full h-full rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/5 relative bg-zinc-900 flex flex-col">
+            <div className="flex-1 w-full overflow-y-auto overflow-x-hidden scrollbar-hide custom-scrollbar">
+              <MediaRenderer 
+                media={currentMedia}
+                isActive={true}
+                isPlaying={true}
+                isMuted={isMuted}
+                theme={theme}
+              />
+            </div>
 
             {/* Title / Label Overlay */}
-            <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
-              <h2 className="text-white text-xl md:text-2xl font-black uppercase tracking-widest drop-shadow-lg">
+            <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none">
+              <h2 className="text-white text-xl md:text-2xl font-black uppercase tracking-widest drop-shadow-lg pointer-events-auto">
                 {currentMedia.title}
               </h2>
               {/* Progresso do Block/Carousel */}
-              <div className="flex gap-1.5 mt-4 max-w-md mx-auto">
+              <div className="flex gap-1.5 mt-4 max-w-md mx-auto pointer-events-auto">
                 {rowNodes.map(n => (
                   <div 
                     key={n.id} 
