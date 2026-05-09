@@ -24,6 +24,11 @@ export const uploadMedia = (
   onProgress: (progress: number) => void
 ): Promise<MediaLibraryItem> => {
   return new Promise((resolve, reject) => {
+    // Timeout de 2 minutos para evitar promessas penduradas
+    const timeout = setTimeout(() => {
+      reject(new Error("Timeout: O upload demorou mais que o esperado."));
+    }, 120000);
+
     const fileName = `${Date.now()}_${file.name}`;
     const storageRef = ref(storage, `media/${fileName}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
@@ -34,26 +39,35 @@ export const uploadMedia = (
         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         onProgress(progress);
       },
-      (error) => reject(error),
+      (error) => {
+        clearTimeout(timeout);
+        reject(error);
+      },
       async () => {
-        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-        
-        let category: MediaLibraryItem['category'] = 'other';
-        if (file.type.startsWith('image/')) category = 'image';
-        else if (file.type.startsWith('video/')) category = 'video';
-        else if (file.type.startsWith('audio/')) category = 'audio';
+        try {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          
+          let category: MediaLibraryItem['category'] = 'other';
+          if (file.type.startsWith('image/')) category = 'image';
+          else if (file.type.startsWith('video/')) category = 'video';
+          else if (file.type.startsWith('audio/')) category = 'audio';
 
-        const mediaItem: Omit<MediaLibraryItem, 'id'> = {
-          name: file.name,
-          url: downloadURL,
-          type: file.type,
-          size: file.size,
-          category,
-          createdAt: Date.now()
-        };
+          const mediaItem: Omit<MediaLibraryItem, 'id'> = {
+            name: file.name,
+            url: downloadURL,
+            type: file.type,
+            size: file.size,
+            category,
+            createdAt: Date.now()
+          };
 
-        const docRef = await addDoc(collection(db, 'media_library'), mediaItem);
-        resolve({ id: docRef.id, ...mediaItem });
+          const docRef = await addDoc(collection(db, 'media_library'), mediaItem);
+          clearTimeout(timeout);
+          resolve({ id: docRef.id, ...mediaItem });
+        } catch (err) {
+          clearTimeout(timeout);
+          reject(err);
+        }
       }
     );
   });

@@ -67,34 +67,48 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true }: MediaLibr
     setCurrentUploadIdx(0);
     setProgress(0);
 
+    // Controle de progresso individual para calcular o progresso total
+    const progressMap: { [key: number]: number } = {};
+    const updateGlobalProgress = (index: number, p: number) => {
+      progressMap[index] = p;
+      const totalP = Object.values(progressMap).reduce((acc, curr) => acc + curr, 0);
+      setProgress(totalP / fileList.length);
+    };
+
+    let completedCount = 0;
     let errorCount = 0;
 
-    for (let i = 0; i < fileList.length; i++) {
-      setCurrentUploadIdx(i + 1);
-      setProgress(0);
+    // Função para executar upload com atualização de estado
+    const runUpload = async (file: File, index: number) => {
       try {
-        await uploadMedia(fileList[i], (p) => setProgress(p));
+        await uploadMedia(file, (p) => updateGlobalProgress(index, p));
+        completedCount++;
+        setCurrentUploadIdx(prev => Math.min(fileList.length, prev + 1));
       } catch (err) {
-        console.error(`Upload falhou para o arquivo ${fileList[i].name}:`, err);
+        console.error(`Upload falhou para o arquivo ${file.name}:`, err);
         errorCount++;
+        updateGlobalProgress(index, 100); // Marca como "concluído" (mesmo que erro) para a barra de progresso não travar
       }
+    };
+
+    // Processar em lotes de 3 para não sobrecarregar a conexão
+    const batchSize = 3;
+    for (let i = 0; i < fileList.length; i += batchSize) {
+      const batch = fileList.slice(i, i + batchSize).map((file, idx) => runUpload(file, i + idx));
+      await Promise.all(batch);
+      // Atualiza a lista após cada lote para dar feedback imediato
+      await fetchItems();
     }
 
     if (errorCount > 0) {
       alert(`${errorCount} arquivo(s) falharam no upload. Verifique o console.`);
     }
 
-    try {
-      await fetchItems();
-    } catch (err) {
-      console.error("Erro ao atualizar lista após upload:", err);
-    } finally {
-      setUploading(false);
-      setProgress(0);
-      setTotalUploads(0);
-      setCurrentUploadIdx(0);
-      if (fileInputRef.current) fileInputRef.current.value = '';
-    }
+    setUploading(false);
+    setProgress(0);
+    setTotalUploads(0);
+    setCurrentUploadIdx(0);
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handleDelete = async (item: MediaLibraryItem) => {
