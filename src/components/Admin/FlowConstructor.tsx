@@ -557,11 +557,15 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
         .react-flow__edge-path {
           stroke: #FEF200;
           stroke-width: 2.5;
-          stroke-dasharray: 6;
+          transition: stroke-width 0.2s;
+        }
+        
+        .react-flow__edge-path[style*="stroke-dasharray"] {
           animation: flow-dash 1s linear infinite;
         }
+
         @keyframes flow-dash {
-          from { stroke-dashoffset: 10; }
+          from { stroke-dashoffset: 20; }
           to { stroke-dashoffset: 0; }
         }
         .react-flow__node.selected {

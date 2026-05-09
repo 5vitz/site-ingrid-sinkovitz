@@ -180,13 +180,26 @@ export const AdminPanel: React.FC = () => {
                       return node;
                     });
                     initialNodes.push(...repairedNodes);
-                    initialEdges.push(...(project.flowData.edges || []).filter(Boolean));
+
+                    // DEDUPLICAÇÃO DE ARESTAS: Limpeza profunda para evitar duplicidade visual
+                    const seenEdgeKeys = new Set();
+                    const cleanEdges = (project.flowData.edges || []).filter((edge: any) => {
+                      if (!edge || !edge.source || !edge.target) return false;
+                      // Criamos uma chave única baseada nos nós e handles (independente de quem é source ou target para evitar duplicidade invertida)
+                      const nodes = [edge.source, edge.target].sort();
+                      const edgeKey = `${nodes[0]}-${nodes[1]}-${edge.sourceHandle || ''}-${edge.targetHandle || ''}`;
+                      
+                      if (seenEdgeKeys.has(edgeKey)) return false;
+                      seenEdgeKeys.add(edgeKey);
+                      return true;
+                    });
+                    initialEdges.push(...cleanEdges);
                   } else if (project.feed?.length) {
                     project.feed.forEach((item, itemIdx) => {
                       if (!item) return;
 
                       const mainNodeId = item.id || `item-${itemIdx}`;
-                      const baseY = 100 + (itemIdx * 1000); // Mais espaço vertical
+                      const baseY = 100 + (itemIdx * 600); // Ajustado para 600 para igualar o ritmo horizontal
                       const itemMediaType = detectMediaType(item.media);
                       const itemUrl = getMediaUrl(item.media);
 
@@ -242,6 +255,7 @@ export const AdminPanel: React.FC = () => {
                       if (itemIdx < project.feed.length - 1) {
                         const nextItem = project.feed[itemIdx + 1];
                         if (nextItem && nextItem.id) {
+                          // Garante que o ID da aresta vertical seja único por direção
                           initialEdges.push({
                             id: `e-v-${mainNodeId}-${nextItem.id}`,
                             source: mainNodeId,
