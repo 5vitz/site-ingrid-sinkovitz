@@ -45,6 +45,19 @@ export const ProjectModalFlow: React.FC<ProjectModalFlowProps> = ({
     };
   }, [currentNode]);
 
+  // Agrupar nodes por linha (Y) para identificar blocos/carrosséis
+  const rowNodes = useMemo(() => {
+    if (!currentNode) return [];
+    // Consideramos no mesmo bloco nodes com diferença de Y menor que 100px
+    return nodes
+      .filter(n => Math.abs(n.position.y - currentNode.position.y) < 100)
+      .sort((a, b) => a.position.x - b.position.x);
+  }, [nodes, currentNode]);
+
+  const currentNodeIndexInRow = useMemo(() => {
+    return rowNodes.findIndex(n => n.id === currentNodeId);
+  }, [rowNodes, currentNodeId]);
+
   // Detectar conexões disponíveis para o node atual
   const availableDirections = useMemo(() => {
     const directions = {
@@ -54,62 +67,49 @@ export const ProjectModalFlow: React.FC<ProjectModalFlowProps> = ({
       right: false
     };
 
-    if (!currentNodeId) return directions;
+    if (!currentNodeId || !currentNode) return directions;
 
-    // Verificar Edges (Conexões explícitas)
+    // 1. Verificar Edges (Conexões explícitas - Amarelas)
     edges.forEach(edge => {
       if (edge.source === currentNodeId) {
         if (edge.sourceHandle === 'bottom') directions.down = true;
-        if (edge.sourceHandle === 'right') directions.right = true;
+        if (edge.sourceHandle === 'right' || !edge.sourceHandle) directions.right = true;
         if (edge.sourceHandle === 'top') directions.up = true;
         if (edge.sourceHandle === 'left') directions.left = true;
-        // Se não tiver handle específico, assume baseado na posição relativa do target
-        if (!edge.sourceHandle) {
-          const target = nodes.find(n => n.id === edge.target);
-          if (target && currentNode) {
-            const dx = target.position.x - currentNode.position.x;
-            const dy = target.position.y - currentNode.position.y;
-            if (Math.abs(dx) > Math.abs(dy)) {
-              if (dx > 0) directions.right = true;
-              else directions.left = true;
-            } else {
-              if (dy > 0) directions.down = true;
-              else directions.up = true;
-            }
-          }
-        }
       }
       if (edge.target === currentNodeId) {
         if (edge.targetHandle === 'top') directions.up = true;
-        if (edge.targetHandle === 'left') directions.left = true;
+        if (edge.targetHandle === 'left' || !edge.targetHandle) directions.left = true;
         if (edge.targetHandle === 'bottom') directions.down = true;
         if (edge.targetHandle === 'right') directions.right = true;
       }
     });
 
-    // Fallback: Verificar proximidade se não houver conexões (Garante que nenhum card fique órfão na navegação)
-    if (Object.values(directions).every(v => v === false)) {
-      if (currentNode) {
-         const others = nodes.filter(n => n.id !== currentNode.id);
-         directions.down = others.some(n => n.position.y > currentNode.position.y + 100);
-         directions.up = others.some(n => n.position.y < currentNode.position.y - 100);
-         directions.right = others.some(n => n.position.x > currentNode.position.x + 100 && Math.abs(n.position.y - currentNode.position.y) < 200);
-         directions.left = others.some(n => n.position.x < currentNode.position.x - 100 && Math.abs(n.position.y - currentNode.position.y) < 200);
-      }
+    // 2. Lógica Constante (Blocos): Se não houver conexão explícita, verifica se existe bloco acima/abaixo/lados
+    const others = nodes.filter(n => n.id !== currentNode.id);
+    
+    if (!directions.left && currentNodeIndexInRow > 0) directions.left = true;
+    if (!directions.right && currentNodeIndexInRow < rowNodes.length - 1) directions.right = true;
+    
+    if (!directions.down) {
+      directions.down = others.some(n => n.position.y > currentNode.position.y + 150);
+    }
+    if (!directions.up) {
+      directions.up = others.some(n => n.position.y < currentNode.position.y - 150);
     }
 
     return directions;
-  }, [currentNodeId, edges, nodes, currentNode]);
+  }, [currentNodeId, edges, nodes, currentNode, rowNodes, currentNodeIndexInRow]);
 
   const navigate = useCallback((direction: 'up' | 'down' | 'left' | 'right') => {
     if (!currentNodeId || !currentNode) return;
 
-    // 1. Tentar encontrar via Edge (Conexão explícita)
+    // 1. Tentar encontrar via Edge (Conexão explícita/Amarela) - PRIORIDADE 1
     const edge = edges.find(e => {
       if (direction === 'down') return (e.source === currentNodeId && e.sourceHandle === 'bottom') || (e.target === currentNodeId && e.targetHandle === 'bottom');
       if (direction === 'up') return (e.source === currentNodeId && e.sourceHandle === 'top') || (e.target === currentNodeId && e.targetHandle === 'top');
-      if (direction === 'right') return (e.source === currentNodeId && e.sourceHandle === 'right') || (e.target === currentNodeId && e.targetHandle === 'right');
-      if (direction === 'left') return (e.source === currentNodeId && e.sourceHandle === 'left') || (e.target === currentNodeId && e.targetHandle === 'left');
+      if (direction === 'right') return (e.source === currentNodeId && (e.sourceHandle === 'right' || !e.sourceHandle)) || (e.target === currentNodeId && e.targetHandle === 'right');
+      if (direction === 'left') return (e.source === currentNodeId && e.sourceHandle === 'left') || (e.target === currentNodeId && (e.targetHandle === 'left' || !e.targetHandle));
       return false;
     });
 
@@ -119,26 +119,40 @@ export const ProjectModalFlow: React.FC<ProjectModalFlowProps> = ({
       return;
     }
 
-    // 2. Fallback: Navegação Geográfica
-    const others = nodes.filter(n => n.id !== currentNodeId);
-    let target: any = null;
-
-    if (direction === 'down') {
-      const below = others.filter(n => n.position.y > currentNode.position.y + 50);
-      target = [...below].sort((a, b) => a.position.y - b.position.y || a.position.x - b.position.x)[0];
-    } else if (direction === 'up') {
-      const above = others.filter(n => n.position.y < currentNode.position.y - 50);
-      target = [...above].sort((a, b) => b.position.y - a.position.y || a.position.x - b.position.x)[0];
-    } else if (direction === 'right') {
-      const toRight = others.filter(n => n.position.x > currentNode.position.x + 50 && Math.abs(n.position.y - currentNode.position.y) < 200);
-      target = [...toRight].sort((a, b) => a.position.x - b.position.x)[0];
-    } else if (direction === 'left') {
-      const toLeft = others.filter(n => n.position.x < currentNode.position.x - 50 && Math.abs(n.position.y - currentNode.position.y) < 200);
-      target = [...toLeft].sort((a, b) => b.position.x - a.position.x)[0];
+    // 2. Lógica Constante (Estrutura de Blocos) - PRIORIDADE 2
+    if (direction === 'right' && currentNodeIndexInRow < rowNodes.length - 1) {
+      setCurrentNodeId(rowNodes[currentNodeIndexInRow + 1].id);
+      return;
+    }
+    if (direction === 'left' && currentNodeIndexInRow > 0) {
+      setCurrentNodeId(rowNodes[currentNodeIndexInRow - 1].id);
+      return;
     }
 
-    if (target) setCurrentNodeId(target.id);
-  }, [currentNodeId, currentNode, edges, nodes]);
+    // 3. Navegação Vertical Estrutural (Sempre volta para o INÍCIO do próximo bloco)
+    const others = nodes.filter(n => n.id !== currentNodeId);
+    if (direction === 'down') {
+      const below = others.filter(n => n.position.y > currentNode.position.y + 100);
+      if (below.length > 0) {
+        // Encontra a linha mais próxima abaixo
+        const nextY = Math.min(...below.map(n => n.position.y));
+        const nextRow = below.filter(n => Math.abs(n.position.y - nextY) < 50);
+        // Pega o primeiro card dessa linha (mais à esquerda)
+        const target = nextRow.sort((a, b) => a.position.x - b.position.x)[0];
+        setCurrentNodeId(target.id);
+      }
+    } else if (direction === 'up') {
+      const above = others.filter(n => n.position.y < currentNode.position.y - 100);
+      if (above.length > 0) {
+        // Encontra a linha mais próxima acima
+        const prevY = Math.max(...above.map(n => n.position.y));
+        const prevRow = above.filter(n => Math.abs(n.position.y - prevY) < 50);
+        // Pega o primeiro card dessa linha (mais à esquerda)
+        const target = prevRow.sort((a, b) => a.position.x - b.position.x)[0];
+        setCurrentNodeId(target.id);
+      }
+    }
+  }, [currentNodeId, currentNode, edges, nodes, rowNodes, currentNodeIndexInRow]);
 
   // Teclas de atalho
   useEffect(() => {
@@ -183,13 +197,16 @@ export const ProjectModalFlow: React.FC<ProjectModalFlowProps> = ({
               <h2 className="text-white text-xl md:text-2xl font-black uppercase tracking-widest drop-shadow-lg">
                 {currentMedia.title}
               </h2>
-              {/* Progresso do Flow */}
-              <div className="flex gap-1 mt-4">
-                {nodes.map(n => (
+              {/* Progresso do Block/Carousel */}
+              <div className="flex gap-1.5 mt-4 max-w-md mx-auto">
+                {rowNodes.map(n => (
                   <div 
                     key={n.id} 
-                    className={`h-1 flex-1 rounded-full transition-all duration-500 ${n.id === currentNodeId ? 'bg-accent' : 'bg-white/20'}`}
-                    style={{ backgroundColor: n.id === currentNodeId ? theme.accentColor : undefined }}
+                    className={`h-1 flex-1 rounded-full transition-all duration-500 ${n.id === currentNodeId ? 'bg-accent opacity-100 scale-y-125' : 'bg-white/20 opacity-50'}`}
+                    style={{ 
+                      backgroundColor: n.id === currentNodeId ? theme.accentColor : undefined,
+                      boxShadow: n.id === currentNodeId ? `0 0 10px ${theme.accentColor}40` : 'none'
+                    }}
                   />
                 ))}
               </div>

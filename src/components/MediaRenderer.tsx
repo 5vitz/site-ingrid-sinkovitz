@@ -1,5 +1,5 @@
 import React from 'react';
-import { ExternalLink, FileText, Smartphone } from 'lucide-react';
+import { ExternalLink, FileText, Smartphone, LayoutGrid } from 'lucide-react';
 import { MediaItem } from '../types';
 
 import { PDFViewer } from './PDFViewer';

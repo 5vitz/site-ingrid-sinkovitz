@@ -430,38 +430,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
     setIsMuted(!isMuted);
   };
 
-  const renderLayout = () => {
-    if (isFlow) {
-      return (
-        <ProjectModalFlow 
-          project={project}
-          onClose={onClose}
-          isMuted={isMuted}
-          audioVolume={audioVolume}
-        />
-      );
-    }
-
-    const layoutProps = {
-      project,
-      feedIndex,
-      storyIndex,
-      navigateFeed,
-      navigateStory,
-      isMuted,
-      isPlaying,
-      theme,
-      playerWidth,
-      playerHeight
-    };
-
-    if (project.layoutType === 'horizontal') {
-      return <HorizontalLayout {...layoutProps} />;
-    }
-
-    return <VerticalLayout {...layoutProps} />;
-  };
-
   if (isFlow) {
     return (
       <motion.div 
@@ -485,7 +453,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
               playsInline 
               preload="auto" 
             />
-            {/* O AudioPlayer opcionalmente pode ser renderizado aqui ou dentro do Flow */}
             <AudioPlayer 
               isMuted={isMuted}
               onToggleMute={handleToggleMute}
@@ -497,6 +464,27 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       </motion.div>
     );
   }
+
+  const getLayout = () => {
+    const layoutProps = {
+      project,
+      feedIndex,
+      storyIndex,
+      navigateFeed,
+      navigateStory,
+      isMuted,
+      isPlaying,
+      theme,
+      playerWidth,
+      playerHeight
+    };
+
+    if (project.layoutType === 'horizontal') {
+      return <HorizontalLayout {...layoutProps} />;
+    }
+
+    return <VerticalLayout {...layoutProps} />;
+  };
 
   return (
     <motion.div 
@@ -518,7 +506,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
             style={{ width: playerWidth, height: playerHeight }}
             onClick={(e) => { e.stopPropagation(); togglePlay(); }}
           >
-            {renderLayout()}
+            {getLayout()}
 
             {!isPlaying && (
               <div className="absolute inset-0 flex items-center justify-center z-[10030] pointer-events-none">
