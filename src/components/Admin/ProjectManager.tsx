@@ -176,6 +176,7 @@ export const ProjectManager = ({ initialProjectId, onClose, isStartingNew }: { i
 
       {showFlowConstructor && (
         <FlowConstructor 
+          projectId={editingProject?.id}
           initialData={editingProject ? { 
             nodes: editingProject.flowData?.nodes || [], 
             edges: editingProject.flowData?.edges || [],
@@ -842,6 +843,7 @@ const ProjectForm = ({ project, onSave, onCancel, onChange, onFlowOpen }: {
       {pickerConfig?.isOpen && (
         <MediaLibrary 
           standalone={false} 
+          projectId={project.id}
           onClose={() => setPickerConfig(null)}
           onSelect={(url) => {
             pickerConfig.onSelect(url);

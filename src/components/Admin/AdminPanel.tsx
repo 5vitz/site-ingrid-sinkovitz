@@ -55,7 +55,6 @@ export const AdminPanel: React.FC = () => {
         <nav className="flex-1 space-y-6 overflow-y-auto custom-scrollbar">
           {/* CATEGORIA: PROJETOS */}
           <div className="space-y-2">
-            <div className="px-6 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600 mb-4">Central de Projetos</div>
             <AdminNavItem 
               active={selectedProjectId === 'new'} 
               onClick={() => {
@@ -462,9 +461,9 @@ const StructuralCenter = ({ title, description, selectedId, onSelect, onNew, ren
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center bg-zinc-900/50 py-3 px-8 rounded-[12px] border border-white/5">
+      <div className="flex justify-between items-center bg-zinc-900/50 py-3 px-8 rounded-[12px] border border-white/5 mb-8">
         <div>
-          <h2 className="text-xl font-bold tracking-tight">{title}</h2>
+          <h2 className="text-xl font-bold tracking-tight text-[#f2bb32]">{title}</h2>
         </div>
         {onNew && (
           <button 
@@ -477,7 +476,6 @@ const StructuralCenter = ({ title, description, selectedId, onSelect, onNew, ren
       </div>
 
       <div className="grid gap-3">
-        <div className="text-[10px] font-black uppercase tracking-widest text-zinc-600 mb-2">Selecione uma Estrutura</div>
         {loading ? (
           <div className="p-12 text-center text-zinc-600 animate-pulse">Carregando projetos...</div>
         ) : (

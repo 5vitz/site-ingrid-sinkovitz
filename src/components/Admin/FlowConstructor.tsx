@@ -240,9 +240,10 @@ interface FlowConstructorProps {
   onCancel: () => void;
   onSave: (data: { nodes: any[], edges: any[], projectName: string }) => void;
   cancelLabel?: string;
+  projectId?: string;
 }
 
-const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onSave, cancelLabel }) => {
+const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onSave, cancelLabel, projectId }) => {
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>(initialData?.edges || []);
   const [projectName, setProjectName] = useState(initialData?.projectName || 'Novo Projeto');
@@ -250,6 +251,13 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
   const [lastSelectedId, setLastSelectedId] = useState<string | null>(null);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [pendingConfig, setPendingConfig] = useState<{ 
+    id: string; 
+    type: 'aspectRatio' | 'delete'; 
+    value?: any; 
+    title: string;
+    message: string;
+  } | null>(null);
   
   const [isSaving, setIsSaving] = useState(false);
   
@@ -277,13 +285,44 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
   }, []);
 
   const onAspectRatioChange = useCallback((id: string, ratio: number) => {
-    setNodes((nds) => nds.map(n => n.id === id ? { ...n, data: { ...n.data, aspectRatio: ratio } } : n));
+    const ratioLabels: Record<number, string> = {
+      0.56: '9:16',
+      0.8: '4:5',
+      1.0: '1:1',
+      0.75: '3:4',
+      1.77: '16:9'
+    };
+    
+    setPendingConfig({
+      id,
+      type: 'aspectRatio',
+      value: ratio,
+      title: 'Confirmar Alteração de Formato',
+      message: `Você deseja mesmo alterar o aspecto deste card para ${ratioLabels[ratio] || ratio}? Isso pode afetar como a mídia é exibida.`
+    });
   }, []);
 
   const onDeleteNode = useCallback((id: string) => {
-    setNodes((nds) => nds.filter(n => n.id !== id));
-    setEdges((eds) => eds.filter(e => e.source !== id && e.target !== id));
+    setPendingConfig({
+      id,
+      type: 'delete',
+      title: 'Excluir Card',
+      message: 'Esta ação é irreversível. Todas as conexões deste card também serão removidas. Deseja continuar?'
+    });
   }, []);
+
+  const confirmPendingAction = () => {
+    if (!pendingConfig) return;
+
+    if (pendingConfig.type === 'aspectRatio') {
+      setNodes((nds) => nds.map(n => n.id === pendingConfig.id ? { ...n, data: { ...n.data, aspectRatio: pendingConfig.value } } : n));
+    } else if (pendingConfig.type === 'delete') {
+      setNodes((nds) => nds.filter(n => n.id !== pendingConfig.id));
+      setEdges((eds) => eds.filter(e => e.source !== pendingConfig.id && e.target !== pendingConfig.id));
+    }
+
+    setPendingConfig(null);
+  };
 
   // Inicializar nós e conexões
   useEffect(() => {
@@ -635,6 +674,7 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
         {selectingNodeId && (
           <MediaLibrary 
             standalone={false} 
+            projectId={projectId}
             onClose={() => setSelectingNodeId(null)} 
             onSelect={handleMediaSelect} 
           />
@@ -642,8 +682,49 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
         {isLibraryOpen && (
           <MediaLibrary 
             standalone={false} 
+            projectId={projectId}
             onClose={() => setIsLibraryOpen(false)} 
           />
+        )}
+      </AnimatePresence>
+
+      {/* Modal de Confirmação de Configuração */}
+      <AnimatePresence>
+        {pendingConfig && (
+          <div className="fixed inset-0 z-[3000] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="w-full max-w-md bg-zinc-900 border border-white/10 rounded-2xl p-8 shadow-2xl"
+            >
+              <h3 className="text-xl font-bold mb-2 flex items-center gap-3">
+                {pendingConfig.type === 'delete' ? <X className="text-red-500" /> : <Layout className="text-accent" />}
+                {pendingConfig.title}
+              </h3>
+              <p className="text-zinc-400 text-sm leading-relaxed mb-8">
+                {pendingConfig.message}
+              </p>
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => setPendingConfig(null)}
+                  className="flex-1 px-6 py-3 bg-white/5 hover:bg-white/10 text-white rounded-xl transition font-bold uppercase text-[10px] tracking-widest"
+                >
+                  Cancelar
+                </button>
+                <button 
+                  onClick={confirmPendingAction}
+                  className={`flex-1 px-6 py-3 rounded-xl transition font-bold uppercase text-[10px] tracking-widest ${
+                    pendingConfig.type === 'delete' 
+                      ? 'bg-red-600 hover:bg-red-700 text-white' 
+                      : 'bg-accent hover:bg-accent/80 text-black'
+                  }`}
+                >
+                  Confirmar
+                </button>
+              </div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
 

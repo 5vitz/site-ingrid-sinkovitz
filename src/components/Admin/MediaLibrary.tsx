@@ -13,9 +13,10 @@ interface MediaLibraryProps {
   onClose?: () => void;
   standalone?: boolean;
   closeLabel?: string;
+  projectId?: string;
 }
 
-export const MediaLibrary = ({ onSelect, onClose, standalone = true, closeLabel }: MediaLibraryProps) => {
+export const MediaLibrary = ({ onSelect, onClose, standalone = true, closeLabel, projectId }: MediaLibraryProps) => {
   const [items, setItems] = useState<MediaLibraryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -31,12 +32,12 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true, closeLabel 
 
   useEffect(() => {
     fetchItems();
-  }, []);
+  }, [projectId]);
 
   const fetchItems = async () => {
     setLoading(true);
     try {
-      const data = await getMediaLibrary();
+      const data = await getMediaLibrary(projectId);
       setItems(data);
     } catch (err) {
       console.error("Erro ao carregar biblioteca:", err);
@@ -83,7 +84,11 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true, closeLabel 
     // Função para executar upload com atualização de estado
     const runUpload = async (file: File, index: number) => {
       try {
-        await uploadMedia(file, (p) => updateGlobalProgress(index, p));
+        if (!projectId) {
+          alert("Erro: ID do projeto não identificado para o upload.");
+          return;
+        }
+        await uploadMedia(file, projectId, (p) => updateGlobalProgress(index, p));
         completedCount++;
         setCurrentUploadIdx(prev => Math.min(fileList.length, prev + 1));
       } catch (err) {

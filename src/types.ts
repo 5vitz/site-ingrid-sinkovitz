@@ -166,4 +166,5 @@ export interface MediaLibraryItem {
   size: number;
   createdAt: number;
   category: 'image' | 'video' | 'audio' | 'other';
+  projectId?: string;
 }

@@ -21,6 +21,7 @@ import { MediaLibraryItem } from '../types';
 
 export const uploadMedia = (
   file: File, 
+  projectId: string,
   onProgress: (progress: number) => void
 ): Promise<MediaLibraryItem> => {
   return new Promise((resolve, reject) => {
@@ -30,7 +31,7 @@ export const uploadMedia = (
     }, 120000);
 
     const fileName = `${Date.now()}_${file.name}`;
-    const storageRef = ref(storage, `media/${fileName}`);
+    const storageRef = ref(storage, `media/${projectId}/${fileName}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
 
     uploadTask.on(
@@ -58,6 +59,7 @@ export const uploadMedia = (
             type: file.type,
             size: file.size,
             category,
+            projectId,
             createdAt: Date.now()
           };
 
@@ -73,10 +75,19 @@ export const uploadMedia = (
   });
 };
 
-export const getMediaLibrary = async (): Promise<MediaLibraryItem[]> => {
-  const q = query(collection(db, 'media_library'), orderBy('createdAt', 'desc'));
+export const getMediaLibrary = async (projectId?: string): Promise<MediaLibraryItem[]> => {
+  let q;
+  if (projectId) {
+    q = query(
+      collection(db, 'media_library'), 
+      where('projectId', '==', projectId),
+      orderBy('createdAt', 'desc')
+    );
+  } else {
+    q = query(collection(db, 'media_library'), orderBy('createdAt', 'desc'));
+  }
   const snapshot = await getDocs(q);
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as MediaLibraryItem));
+  return snapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as object) } as MediaLibraryItem));
 };
 
 export const syncStorageWithFirestore = async (path: string = 'media') => {
@@ -110,7 +121,7 @@ export const syncStorageWithFirestore = async (path: string = 'media') => {
       };
 
       const docRef = await addDoc(collection(db, 'media_library'), newItem);
-      itemsAdded.push({ id: docRef.id, ...newItem });
+      itemsAdded.push({ id: docRef.id, ...(newItem as object) } as MediaLibraryItem);
     }
   }
 
