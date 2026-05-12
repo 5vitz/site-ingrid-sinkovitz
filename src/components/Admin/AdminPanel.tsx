@@ -333,6 +333,7 @@ export const AdminPanel: React.FC = () => {
                   <div className="fixed inset-0 z-50 bg-black">
                     <FlowConstructor 
                       key={`flow-editor-${project.id}`}
+                      projectId={project.id}
                       initialData={{ 
                         nodes: initialNodes, 
                         edges: initialEdges,
@@ -423,7 +424,7 @@ export const AdminPanel: React.FC = () => {
               description="Gerencie arquivos, uploads e pastas vinculadas à estrutura visual."
               selectedId={selectedProjectId}
               onSelect={setSelectedProjectId}
-              renderTool={() => <MediaLibrary standalone={false} onClose={() => setSelectedProjectId(null)} closeLabel="Trocar Projeto" />}
+              renderTool={(project) => <MediaLibrary standalone={false} projectId={project.id} projectName={project.title} onClose={() => setSelectedProjectId(null)} closeLabel="Trocar Projeto" />}
             />
           )}
           {activeTab === 'services' && <ServiceManager />}

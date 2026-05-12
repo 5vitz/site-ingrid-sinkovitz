@@ -14,9 +14,10 @@ interface MediaLibraryProps {
   standalone?: boolean;
   closeLabel?: string;
   projectId?: string;
+  projectName?: string;
 }
 
-export const MediaLibrary = ({ onSelect, onClose, standalone = true, closeLabel, projectId }: MediaLibraryProps) => {
+export const MediaLibrary = ({ onSelect, onClose, standalone = true, closeLabel, projectId, projectName }: MediaLibraryProps) => {
   const [items, setItems] = useState<MediaLibraryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -30,9 +31,55 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true, closeLabel,
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const [usedUrls, setUsedUrls] = useState<Set<string>>(new Set());
+
   useEffect(() => {
     fetchItems();
+    fetchUsedUrls();
   }, [projectId]);
+
+  const fetchUsedUrls = async () => {
+    try {
+      const { getDocs, collection } = await import('firebase/firestore');
+      const { db } = await import('../../services/storageService');
+      const projectsSnap = await getDocs(collection(db, 'projects'));
+      const urls = new Set<string>();
+      
+      projectsSnap.forEach(doc => {
+        const p = doc.data();
+        // Coletar todas as URLs possíveis de um projeto
+        if (p.backgroundImage) urls.add(p.backgroundImage);
+        if (p.logoUrl) urls.add(p.logoUrl);
+        if (p.coverImage) urls.add(p.coverImage);
+        
+        if (p.mediaItems) {
+          p.mediaItems.forEach((m: any) => {
+            if (m.url) urls.add(m.url);
+            if (m.thumbnail) urls.add(m.thumbnail);
+            if (m.images) m.images.forEach((img: string) => urls.add(img));
+          });
+        }
+        
+        if (p.feed) {
+          p.feed.forEach((f: any) => {
+            if (f.media?.url) urls.add(f.media.url);
+            if (f.media?.thumbnail) urls.add(f.media.thumbnail);
+            if (f.media?.images) f.media.images.forEach((img: string) => urls.add(img));
+            if (f.stories) {
+              f.stories.forEach((s: any) => {
+                if (s.url) urls.add(s.url);
+                if (s.thumbnail) urls.add(s.thumbnail);
+                if (s.images) s.images.forEach((img: string) => urls.add(img));
+              });
+            }
+          });
+        }
+      });
+      setUsedUrls(urls);
+    } catch (e) {
+      console.error("Erro ao mapear URLs usadas:", e);
+    }
+  };
 
   const fetchItems = async () => {
     setLoading(true);
@@ -49,9 +96,12 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true, closeLabel,
   const handleSync = async () => {
     setSyncing(true);
     try {
-      await syncStorageWithFirestore();
+      // Usar a mesma lógica de progressão para feedback
+      await syncStorageWithFirestore('media', undefined, undefined, (msg) => {
+        console.log(`[MEDIA_LIB_SYNC] ${msg}`);
+      });
       await fetchItems();
-      alert("Sincronização concluída! Arquivos encontrados no Storage foram adicionados.");
+      alert("Sincronização concluída! A biblioteca foi atualizada com os arquivos do Storage.");
     } catch (err) {
       console.error("Erro na sincronização:", err);
       alert("Erro ao sincronizar arquivos. Verifique se as permissões do Storage estão corretas.");
@@ -147,29 +197,47 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true, closeLabel,
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
-  const renderItem = (item: MediaLibraryItem) => (
-    <motion.div 
-      layout
-      key={item.id}
-      className="group relative bg-zinc-900 border border-white/5 rounded-[8px] overflow-hidden hover:border-accent/50 transition-all flex flex-col"
-    >
-      {/* Preview Area */}
-      <div className="aspect-square w-full bg-black flex items-center justify-center relative overflow-hidden">
-        {item.category === 'image' && (
-          <img src={item.url} className="w-full h-full object-cover" alt={item.name} />
-        )}
-        {item.category === 'video' && (
-          <div className="flex flex-col items-center gap-2">
-            <Video size={40} className="text-accent/50" />
-            <span className="text-[10px] uppercase font-bold text-zinc-500">Vídeo</span>
+  const renderItem = (item: MediaLibraryItem) => {
+    const isUsed = usedUrls.has(item.url);
+
+    return (
+      <motion.div 
+        layout
+        key={item.id}
+        className={`group relative bg-zinc-900 border ${isUsed ? 'border-white/5' : 'border-red-500/20'} rounded-[8px] overflow-hidden hover:border-accent/50 transition-all flex flex-col`}
+      >
+        {!isUsed && (
+          <div className="absolute top-2 left-2 z-10 px-2 py-0.5 bg-red-600 text-white text-[8px] font-black rounded shadow-lg">
+            NÃO UTILIZADO
           </div>
         )}
-        {item.category === 'audio' && (
-          <div className="flex flex-col items-center gap-2">
-            <Music size={40} className="text-zinc-500" />
-            <span className="text-[10px] uppercase font-bold text-zinc-500">Áudio</span>
-          </div>
-        )}
+
+        {/* Preview Area */}
+        <div className="aspect-square w-full bg-black flex items-center justify-center relative overflow-hidden">
+          {item.category === 'image' && (
+            <img src={item.url} className="w-full h-full object-cover" alt={item.name} />
+          )}
+          {item.category === 'video' && (
+            <video 
+              src={`${item.url}#t=0.5`} 
+              className="w-full h-full object-cover"
+              muted
+              playsInline
+              preload="metadata"
+            />
+          )}
+          {item.category === 'audio' && (
+            <div className="flex flex-col items-center gap-2">
+              <Music size={40} className="text-zinc-500" />
+              <span className="text-[10px] uppercase font-bold text-zinc-500">Áudio</span>
+            </div>
+          )}
+          {item.category === 'other' && (
+            <div className="flex flex-col items-center gap-2">
+              <FileIcon size={40} className="text-zinc-500" />
+              <span className="text-[10px] uppercase font-bold text-zinc-500">Arquivo</span>
+            </div>
+          )}
         
         {/* Overlay Actions */}
         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
@@ -216,15 +284,15 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true, closeLabel,
               >
                 <Trash2 size={24} className="text-red-500 mb-2" />
                 <p className="text-[10px] font-black uppercase mb-3 text-white leading-tight">Confirmar exclusão?</p>
-                <div className="flex gap-2 w-full">
+              <div className="flex gap-2 w-full">
                   <button 
                     onClick={(e) => {
                       e.stopPropagation();
                       handleDelete(item);
                     }}
-                    className="flex-1 bg-red-600 text-white py-2 rounded font-black text-[9px] uppercase hover:bg-red-700"
+                    className="flex-1 bg-red-600 text-white py-2 rounded font-black text-[9px] uppercase hover:bg-red-700 shadow-lg"
                   >
-                    Sim
+                    Excluir
                   </button>
                   <button 
                     onClick={(e) => {
@@ -233,7 +301,7 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true, closeLabel,
                     }}
                     className="flex-1 bg-white/10 text-white py-2 rounded font-black text-[9px] uppercase hover:bg-white/20"
                   >
-                    Não
+                    Cancelar
                   </button>
                 </div>
               </motion.div>
@@ -251,22 +319,26 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true, closeLabel,
         </div>
       </div>
     </motion.div>
-  );
+    );
+  };
 
   const containerClasses = standalone 
-    ? "bg-black min-h-screen text-white p-6 md:p-10"
+    ? "bg-black h-screen text-white p-6 md:p-10 flex flex-col overflow-hidden"
     : "fixed inset-0 z-[2000] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4";
 
   const content = (
-    <div className={`w-full max-w-7xl mx-auto flex flex-col gap-6 ${!standalone ? 'h-[90vh] bg-zinc-950 border border-white/10 rounded-[12px] shadow-2xl p-6 overflow-hidden' : ''}`}>
+    <div className={`w-full max-w-7xl mx-auto flex flex-col gap-6 h-full ${!standalone ? 'h-[90vh] bg-zinc-950 border border-white/10 rounded-[12px] shadow-2xl p-6 overflow-hidden' : ''}`}>
       
       {/* Header */}
       <div className="flex flex-col md:flex-row gap-6 justify-between items-start md:items-center">
         <div>
           <h2 className="text-2xl font-black uppercase tracking-tighter flex items-center gap-3">
-             <Filter className="text-accent" /> Biblioteca de Mídia
+             <Filter className="text-accent" /> 
+             {projectName ? `Biblioteca: ${projectName}` : 'Biblioteca de Mídia'}
           </h2>
-          <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest mt-1">Gerencie seus arquivos do Storage aqui</p>
+          <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest mt-1">
+            {projectId ? `Arquivos vinculados ao projeto ${projectId}` : 'Gerencie seus arquivos do Storage aqui'}
+          </p>
         </div>
 
         <div className="flex flex-wrap gap-3 w-full md:w-auto">
@@ -324,7 +396,7 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true, closeLabel,
       </div>
 
       {/* Grid */}
-      <div className="flex-1 overflow-y-auto scrollbar-hide">
+      <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
         {loading ? (
           <div className="flex flex-col items-center justify-center p-20 gap-4">
             <Loader2 className="animate-spin text-accent" size={40} />

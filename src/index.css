@@ -67,20 +67,21 @@
 
 /* Estilo Exclusivo apenas para elementos com a classe .custom-scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 4px !important;
-  height: 4px !important;
+  width: 6px !important;
+  height: 6px !important;
   display: block !important;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent !important;
+  background: rgba(0, 0, 0, 0.2) !important;
+  border-radius: 10px !important;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1) !important;
+  background: rgba(242, 187, 50, 0.3) !important; /* Usando cor Accent transparente */
   border-radius: 10px !important;
-  border: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2) !important;
+  background: rgba(242, 187, 50, 0.6) !important;
 }
 .custom-scrollbar {
   scrollbar-width: thin !important;

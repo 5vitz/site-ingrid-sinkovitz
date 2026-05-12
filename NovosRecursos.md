@@ -31,5 +31,13 @@ Este documento serve como backlog técnico para futuras implementações visando
 - **Fade de Áudio (Ducking):** Implementar lógica para detectar quando um vídeo inicia a reprodução. O sistema deve aplicar um fade-out (redução gradual de volume ou pausa inteligente) na música ambiente milissegundos antes do áudio do vídeo atingir o pico, e um fade-in gradual para retomar a música quando o vídeo for interrompido ou terminar.
 - **Controle Unificado de Volume:** O slider de volume global deve ser sincronizado para controlar tanto a trilha sonora ambiente (audioUrl) quanto o volume dos elementos de vídeo (`<video>`). Atualmente, o controle afeta apenas a música de fundo inserida manualmente.
 
+## 4. Sincronização Granular de Mídias
+**Objetivo:** Permitir que o administrador atualize a biblioteca de mídias de um projeto específico sem a necessidade de um escaneamento global, economizando recursos e tempo.
+
+### Especificação Técnica:
+- **Botão de Ação por Projeto:** Adicionar um botão "Sincronizar Mídias" na tela de edição de cada projeto (ProjectEditor).
+- **Lógica de Escopo:** O comando deve disparar a função `syncStorageWithFirestore` passando especificamente o path da pasta desse projeto (ex: `media/projeto-xyz/`), garantindo que apenas as mídias daquela pasta sejam processadas.
+- **Feedback Visual:** Mostrar o progresso e o número de novas imagens detectadas exclusivamente para aquele contexto.
+
 ---
 *Documento criado em 09/05/2026 como base para o próximo ciclo de desenvolvimento.*

@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { getSettings, updateSettings } from '../../services/dataService';
-import { SiteSettings } from '../../types';
-import { Save, Settings2, Phone, Layout, Palette, Type, ShieldCheck } from 'lucide-react';
+import { migrateLegacyMedia, syncStorageWithFirestore, repairProjectLinks } from '../../services/storageService';
+import { useCollection } from '../../hooks/useCollection';
+import { SiteSettings, Project } from '../../types';
+import { Save, Settings2, Phone, Layout, Palette, Type, ShieldCheck, Database, Zap, RefreshCw } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export const GlobalSettingsManager = () => {
+  const { data: projects } = useCollection<Project>('projects');
   const [settings, setSettings] = useState<SiteSettings>({ 
     whatsappNumber: '', 
     accentColor: '#f2bb32',
@@ -27,6 +30,12 @@ export const GlobalSettingsManager = () => {
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [migrating, setMigrating] = useState(false);
+  const [syncing, setSyncing] = useState(false);
+  const [repairing, setRepairing] = useState(false);
+  const [syncLogs, setSyncLogs] = useState<string[]>([]);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [migrationProjectId, setMigrationProjectId] = useState('');
 
   useEffect(() => {
     getSettings().then(data => {
@@ -36,6 +45,67 @@ export const GlobalSettingsManager = () => {
       setLoading(false);
     });
   }, []);
+
+  const handleMigrate = async () => {
+    if (!migrationProjectId) {
+      alert('Selecione um projeto de destino para as mídias.');
+      return;
+    }
+
+    if (!confirm('Esta ação vinculará todas as mídias sem projeto ao projeto selecionado. Deseja continuar?')) return;
+
+    setMigrating(true);
+    try {
+      const count = await migrateLegacyMedia(migrationProjectId);
+      alert(`${count} mídias foram vinculadas com sucesso ao projeto.`);
+    } catch (err) {
+      console.error(err);
+      alert('Erro durante a migração.');
+    } finally {
+      setMigrating(false);
+    }
+  };
+
+  const handleFullSync = async () => {
+    console.log("[DEBUG] Iniciando sincronização via UI");
+    setSyncing(true);
+    setSyncLogs(['Iniciando varredura global...']);
+    setShowConfirm(false);
+
+    try {
+      const items = await syncStorageWithFirestore('media', undefined, undefined, (msg) => {
+        setSyncLogs(prev => [...prev, msg].slice(-40)); // Aumentado para 40 linhas
+      });
+      setSyncLogs(prev => [...prev, `✅ Sincronização concluída! ${items.length} novos itens.`]);
+      
+      // Oferecer reparo automático após sincronizar novos arquivos
+      if (items.length > 0) {
+        if (confirm(`Encontrei ${items.length} novos arquivos. Deseja tentar reparar automaticamente os links quebrados nos projetos que usam esses nomes de arquivo?`)) {
+          handleRepair();
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      setSyncLogs(prev => [...prev, `❌ Erro: ${err instanceof Error ? err.message : 'Falha desconhecida'}`]);
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  const handleRepair = async () => {
+    setRepairing(true);
+    setSyncLogs(prev => [...prev, 'Iniciando reparo de links...']);
+    try {
+      const count = await repairProjectLinks((msg) => {
+        setSyncLogs(prev => [...prev, msg].slice(-40));
+      });
+      console.log(`Reparo concluído em ${count} projetos`);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setRepairing(false);
+    }
+  };
 
   const handleSave = async () => {
     setSaving(true);
@@ -137,6 +207,95 @@ export const GlobalSettingsManager = () => {
             
             <p className="text-[10px] text-zinc-500 leading-relaxed italic">
               * Quando ativo, visitantes verão apenas a tela de manutenção. Administradores logados continuam tendo acesso ao site.
+            </p>
+          </div>
+
+          {/* MANUTENÇÃO DE BANCO DE DADOS */}
+          <div className="glass-morphism p-8 rounded-[8px] border border-white/5 space-y-6 bg-red-500/[0.02]">
+            <h3 className="font-bold flex items-center gap-2 mb-2 text-red-500/50 text-xs uppercase tracking-widest">
+              <Database size={14} /> Banco de Dados
+            </h3>
+            
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-500">Projeto Alvo (Migração)</label>
+                <select 
+                  className="w-full bg-zinc-950 border border-white/5 rounded-[8px] px-5 py-3 focus:outline-none focus:border-accent text-zinc-400 text-xs"
+                  value={migrationProjectId}
+                  onChange={e => setMigrationProjectId(e.target.value)}
+                >
+                  <option value="">Selecione um projeto...</option>
+                  {(projects || []).map(p => (
+                    <option key={p.id} value={p.id}>{p.title}</option>
+                  ))}
+                </select>
+              </div>
+
+              <button 
+                onClick={handleMigrate}
+                disabled={migrating || !migrationProjectId}
+                className="w-full py-4 bg-zinc-900 border border-white/5 text-zinc-300 hover:bg-accent hover:text-black font-black uppercase text-[10px] tracking-widest rounded-lg transition flex items-center justify-center gap-2 disabled:opacity-30"
+              >
+                {migrating ? 'Processando...' : <><Zap size={14} /> Corrigir Mídias Órfãs</>}
+              </button>
+
+              <div className="pt-4 border-t border-white/5 space-y-4">
+                {!showConfirm ? (
+                  <button 
+                    onClick={() => setShowConfirm(true)}
+                    disabled={syncing}
+                    className="w-full py-4 bg-accent text-black font-black uppercase text-[10px] tracking-widest rounded-lg transition flex items-center justify-center gap-2 disabled:opacity-30 shadow-lg shadow-accent/20"
+                  >
+                    {syncing ? <RefreshCw size={14} className="animate-spin" /> : <><RefreshCw size={14} /> Sincronizar Tudo do Storage</>}
+                  </button>
+                ) : (
+                  <div className="p-4 bg-zinc-950 border border-accent/20 rounded-lg space-y-3">
+                    <p className="text-[10px] text-zinc-400 uppercase tracking-widest font-bold text-center">Confirmar varredura total?</p>
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={handleFullSync}
+                        className="flex-1 py-3 bg-accent text-black font-black uppercase text-[10px] rounded-md shadow-lg shadow-accent/20"
+                      >
+                        Sim, Iniciar
+                      </button>
+                      <button 
+                        onClick={() => setShowConfirm(false)}
+                        className="flex-1 py-3 bg-zinc-900 text-zinc-400 font-black uppercase text-[10px] rounded-md"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                <button 
+                  onClick={handleRepair}
+                  disabled={repairing || syncing}
+                  className="w-full py-4 bg-zinc-900 border border-white/5 text-zinc-400 hover:text-white font-black uppercase text-[10px] tracking-widest rounded-lg transition flex items-center justify-center gap-2 disabled:opacity-30"
+                >
+                  {repairing ? <RefreshCw size={14} className="animate-spin" /> : <><RefreshCw size={14} /> Reparar Links de Projetos</>}
+                </button>
+
+                {/* AREA DE LOGS EM TEMPO REAL */}
+                {(syncLogs.length > 0 || syncing) && (
+                  <div className="p-3 bg-black rounded border border-white/5 font-mono text-[9px] text-zinc-500 max-h-32 overflow-y-auto space-y-1">
+                    {syncLogs.map((log, i) => (
+                      <div key={i} className={log.startsWith('✅') ? 'text-green-500' : log.startsWith('❌') ? 'text-red-500' : ''}>
+                        {log}
+                      </div>
+                    ))}
+                    {syncing && <div className="animate-pulse">Varrendo pastas...</div>}
+                  </div>
+                )}
+
+                <p className="text-[9px] text-zinc-500 uppercase tracking-tighter text-center">
+                  Varre as pastas: <b>media/projeto-nome/</b>
+                </p>
+              </div>
+            </div>
+            
+            <p className="text-[9px] text-zinc-600 leading-relaxed">
+              Vincule imagens antigas (sem ID de projeto) ao projeto selecionado para que apareçam na biblioteca correta.
             </p>
           </div>
 

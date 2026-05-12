@@ -7,6 +7,11 @@ Este arquivo contém as regras fundamentais para o desenvolvimento deste projeto
 - Antes de qualquer edição de código, o agente deve analisar o impacto global e garantir que partes não relacionadas do sistema permaneçam intactas.
 - O foco deve ser a preservação da formatação, estilo e funcionalidades já validadas.
 
+## Regra de Ouro (Comunicação e Planejamento)
+- **Responder às perguntas no chat é mais importante que programar.** Responder é a prioridade; programar é secundário.
+- **Planear é mais importante que executar.** A estratégia deve ser validada antes de qualquer alteração física nos arquivos.
+- **Não é vergonhoso pedir ajuda.** Se houver dúvida ou necessidade de verificação manual no banco de dados, o agente deve solicitar ao usuário.
+
 ## Metodologia de Trabalho (Método Lincoln)
 1. **Planejamento Extremo (Afiar o Machado):** Antes de tocar em qualquer arquivo, o agente deve propor o que irá fazer, quais arquivos serão afetados e como garantirá a integridade do restante do site.
 2. **Estado "Em Planejamento":** Sempre que o usuário digitar "Em Planejamento", o agente entra em um estado estrito de diálogo e análise. Neste estado, o agente **NÃO deve programar nem realizar alterações em arquivos de código**, focando exclusivamente na especificação técnica, planejamento e troca de ideias.

@@ -167,4 +167,5 @@ export interface MediaLibraryItem {
   createdAt: number;
   category: 'image' | 'video' | 'audio' | 'other';
   projectId?: string;
+  fullPath?: string;
 }

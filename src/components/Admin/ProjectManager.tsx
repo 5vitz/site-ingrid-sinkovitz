@@ -610,7 +610,7 @@ const ProjectForm = ({ project, onSave, onCancel, onChange, onFlowOpen }: {
       </div>
 
       {/* Conteúdo das Abas */}
-      <div className="flex-1 overflow-y-auto p-8 space-y-8 scrollbar-hide">
+      <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
         
         {activeTab === 'info' && (
           <div className="grid md:grid-cols-2 gap-10">

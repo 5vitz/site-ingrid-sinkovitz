@@ -675,6 +675,7 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
           <MediaLibrary 
             standalone={false} 
             projectId={projectId}
+            projectName={projectName}
             onClose={() => setSelectingNodeId(null)} 
             onSelect={handleMediaSelect} 
           />
@@ -683,6 +684,7 @@ const FlowEngine: React.FC<FlowConstructorProps> = ({ initialData, onCancel, onS
           <MediaLibrary 
             standalone={false} 
             projectId={projectId}
+            projectName={projectName}
             onClose={() => setIsLibraryOpen(false)} 
           />
         )}

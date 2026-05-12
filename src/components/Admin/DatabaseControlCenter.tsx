@@ -150,11 +150,22 @@ export const DatabaseControlCenter: React.FC<DatabaseControlCenterProps> = ({ se
         onClick={async () => {
           if(!confirm('Sincronizar TODOS?')) return;
           setLoading(true);
+          setProgress('Iniciando sincronização...');
+          
+          const syncTimeout = setTimeout(() => {
+            if (loading) {
+              setLoading(false);
+              setError('A sincronização geral excedeu o tempo limite. Verifique sua conexão.');
+            }
+          }, 45000); // 45 segundos de timeout para o geral
+
           try {
             await seedAll((msg: string) => setProgress(msg));
+            clearTimeout(syncTimeout);
             alert('Sucesso!');
             window.location.reload();
           } catch(e: any) {
+            clearTimeout(syncTimeout);
             setError(e.message);
             setLoading(false);
           }
