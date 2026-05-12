@@ -31,53 +31,124 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true, closeLabel,
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [usedUrls, setUsedUrls] = useState<Set<string>>(new Set());
+  const [usedIdentities, setUsedIdentities] = useState<Set<string>>(new Set());
+  const [usedFilenames, setUsedFilenames] = useState<Set<string>>(new Set());
+  const [showOnlyUsed, setShowOnlyUsed] = useState(false);
+  const [isScanning, setIsScanning] = useState(true);
 
   useEffect(() => {
     fetchItems();
     fetchUsedUrls();
   }, [projectId]);
 
+  // Função auxiliar para identificar o caminho real do arquivo no Storage
+  const getFileIdentity = (item: MediaLibraryItem | string) => {
+    try {
+      let path = "";
+      if (typeof item !== 'string') {
+        // Se temos o fullPath do storage, usamos ele como identidade principal
+        if (item.fullPath) path = item.fullPath;
+        else path = item.url;
+      } else {
+        path = item;
+      }
+      
+      if (!path || typeof path !== 'string') return { full: '', filename: '' };
+      
+      let fullMatch = path;
+      
+      // Se for uma URL do Firebase, extraímos o path entre /o/ e ?
+      if (path.includes('/o/')) {
+        const parts = path.split('/o/');
+        const afterO = parts[1].split('?')[0];
+        fullMatch = decodeURIComponent(afterO);
+      } else if (path.includes('firebasestorage.googleapis.com')) {
+         const parts = path.split('/o/');
+         if (parts[1]) {
+           fullMatch = decodeURIComponent(parts[1].split('?')[0]);
+         }
+      }
+      
+      // Normalização: remover barras duplas, iniciais e converter para minúsculo
+      const normalizedFull = fullMatch.replace(/\/+/g, '/').replace(/^\/+/, '').trim().toLowerCase();
+      const filename = normalizedFull.split('/').pop() || '';
+      
+      return { 
+        full: normalizedFull, 
+        filename: filename.toLowerCase() 
+      };
+    } catch (e) {
+      return { full: '', filename: '' };
+    }
+  };
+
   const fetchUsedUrls = async () => {
+    setIsScanning(true);
     try {
       const { getDocs, collection } = await import('firebase/firestore');
-      const { db } = await import('../../services/storageService');
-      const projectsSnap = await getDocs(collection(db, 'projects'));
-      const urls = new Set<string>();
+      const firebaseInstance = await import('../../lib/firebase');
+      const db = firebaseInstance.db;
+
+      if (!db) {
+        console.error("[MEDIA SCAN] Firestore db instance not found");
+        return;
+      }
       
-      projectsSnap.forEach(doc => {
-        const p = doc.data();
-        // Coletar todas as URLs possíveis de um projeto
-        if (p.backgroundImage) urls.add(p.backgroundImage);
-        if (p.logoUrl) urls.add(p.logoUrl);
-        if (p.coverImage) urls.add(p.coverImage);
+      const identities = new Set<string>();
+      const filenames = new Set<string>();
+      
+      const extractFromValue = (val: any) => {
+        if (val === null || val === undefined) return;
         
-        if (p.mediaItems) {
-          p.mediaItems.forEach((m: any) => {
-            if (m.url) urls.add(m.url);
-            if (m.thumbnail) urls.add(m.thumbnail);
-            if (m.images) m.images.forEach((img: string) => urls.add(img));
-          });
-        }
-        
-        if (p.feed) {
-          p.feed.forEach((f: any) => {
-            if (f.media?.url) urls.add(f.media.url);
-            if (f.media?.thumbnail) urls.add(f.media.thumbnail);
-            if (f.media?.images) f.media.images.forEach((img: string) => urls.add(img));
-            if (f.stories) {
-              f.stories.forEach((s: any) => {
-                if (s.url) urls.add(s.url);
-                if (s.thumbnail) urls.add(s.thumbnail);
-                if (s.images) s.images.forEach((img: string) => urls.add(img));
-              });
+        if (typeof val === 'string') {
+          const s = val.trim();
+          if (s.length < 5) return; // Strings muito curtas não são URLs/Paths significativos
+
+          // Focamos em URLs ou strings que pareçam caminhos/arquivos
+          const isUrl = s.startsWith('http');
+          const isFile = !!s.match(/\.(jpg|jpeg|png|gif|mp4|mov|mp3|wav|webp|pdf)$/i);
+          
+          if (isUrl || isFile) {
+            const { full, filename } = getFileIdentity(s);
+            if (full) identities.add(full);
+            if (filename) filenames.add(filename);
+          }
+        } else if (Array.isArray(val)) {
+          val.forEach(v => extractFromValue(v));
+        } else if (typeof val === 'object') {
+          // Scanner profundo para objetos (nós do FlowConstructor, etc)
+          try {
+            // Evitar objetos do sistema ou muito grandes
+            if (val.constructor === Object) {
+              Object.values(val).forEach(v => extractFromValue(v));
             }
-          });
+          } catch (e) { }
         }
-      });
-      setUsedUrls(urls);
+      };
+
+      // 1. Scan Projects (Principal fonte de mídia do FlowConstructor)
+      const projectsSnap = await getDocs(collection(db, 'projects'));
+      projectsSnap.forEach(doc => extractFromValue(doc.data()));
+
+      // 2. Scan outras coleções para cobertura global
+      const collectionsToScan = ['about_content', 'testimonials', 'services', 'contact_info'];
+      for (const colName of collectionsToScan) {
+        try {
+          const snap = await getDocs(collection(db, colName));
+          snap.forEach(doc => extractFromValue(doc.data()));
+        } catch (e) { }
+      }
+
+      console.log(`[MEDIA SCAN] Scanner finalizado.`);
+      console.log(`- Caminhos Únicos (Identidades): ${identities.size}`);
+      console.log(`- Nomes de Arquivo: ${filenames.size}`);
+      
+      setUsedIdentities(identities);
+      setUsedFilenames(filenames);
     } catch (e) {
-      console.error("Erro ao mapear URLs usadas:", e);
+      console.error("Erro ao mapear mídia em uso:", e);
+    } finally {
+      setIsScanning(false);
     }
   };
 
@@ -185,8 +256,27 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true, closeLabel,
     setTimeout(() => setCopiedId(null), 2000);
   };
 
+  const isItemUsed = (item: MediaLibraryItem) => {
+    const { full, filename } = getFileIdentity(item);
+    
+    // 1. Checagem por identidade completa (caminho no storage: media/projeto/arquivo.jpg)
+    // É a forma mais segura pois ignora tokens da URL
+    if (usedIdentities.has(full)) return { used: true, type: 'exact' as const };
+    
+    // 2. Checagem por nome de arquivo (flexível para casos onde o path no BD está inconsistente)
+    if (usedFilenames.has(filename)) return { used: true, type: 'filename' as const };
+    
+    return { used: false, type: null };
+  };
+
   const filteredItems = items
     .filter(i => filter === 'all' || i.category === filter)
+    .filter(i => {
+      if (showOnlyUsed) {
+        return isItemUsed(i).used;
+      }
+      return true;
+    })
     .filter(i => i.name.toLowerCase().includes(search.toLowerCase()));
 
   const formatSize = (bytes: number) => {
@@ -198,33 +288,46 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true, closeLabel,
   };
 
   const renderItem = (item: MediaLibraryItem) => {
-    const isUsed = usedUrls.has(item.url);
+    const { used, type } = isItemUsed(item);
 
     return (
       <motion.div 
         layout
         key={item.id}
-        className={`group relative bg-zinc-900 border ${isUsed ? 'border-white/5' : 'border-red-500/20'} rounded-[8px] overflow-hidden hover:border-accent/50 transition-all flex flex-col`}
+        className={`group relative bg-zinc-900 border ${used ? 'border-accent shadow-lg shadow-accent/10' : 'border-white/5 opacity-70 hover:opacity-100'} rounded-[8px] overflow-hidden hover:border-accent/50 transition-all flex flex-col`}
       >
-        {!isUsed && (
-          <div className="absolute top-2 left-2 z-10 px-2 py-0.5 bg-red-600 text-white text-[8px] font-black rounded shadow-lg">
-            NÃO UTILIZADO
+        {isScanning && (
+          <div className="absolute top-2 left-2 z-10 px-2 py-0.5 bg-zinc-800 text-zinc-400 text-[8px] font-black rounded animate-pulse">
+            ESCANEAR...
           </div>
         )}
 
         {/* Preview Area */}
         <div className="aspect-square w-full bg-black flex items-center justify-center relative overflow-hidden">
           {item.category === 'image' && (
-            <img src={item.url} className="w-full h-full object-cover" alt={item.name} />
+            <img src={item.url} className="w-full h-full object-cover" alt={item.name} loading="lazy" />
           )}
           {item.category === 'video' && (
-            <video 
-              src={`${item.url}#t=0.5`} 
-              className="w-full h-full object-cover"
-              muted
-              playsInline
-              preload="metadata"
-            />
+            <div className="w-full h-full relative group/video bg-zinc-950">
+              <video 
+                src={item.url} 
+                className="w-full h-full object-cover pointer-events-none"
+                preload="metadata"
+                muted
+                playsInline
+                onLoadedMetadata={(e) => {
+                  e.currentTarget.currentTime = 0.5;
+                }}
+              />
+              <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/0 transition-colors">
+                <div className="bg-black/60 p-3 rounded-full backdrop-blur-sm group-hover:bg-accent group-hover:text-black transition-all">
+                  <Video size={24} className="group-hover:scale-110 transition-transform" />
+                </div>
+              </div>
+              <div className="absolute bottom-2 right-2 px-2 py-0.5 bg-black/80 text-[8px] font-black text-white rounded-[4px] uppercase tracking-widest border border-white/10 backdrop-blur-sm">
+                VÍDEO
+              </div>
+            </div>
           )}
           {item.category === 'audio' && (
             <div className="flex flex-col items-center gap-2">
@@ -336,63 +439,79 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true, closeLabel,
              <Filter className="text-accent" /> 
              {projectName ? `Biblioteca: ${projectName}` : 'Biblioteca de Mídia'}
           </h2>
-          <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest mt-1">
-            {projectId ? `Arquivos vinculados ao projeto ${projectId}` : 'Gerencie seus arquivos do Storage aqui'}
-          </p>
+          <div className="flex items-center gap-4 mt-1">
+            <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest">
+              {projectId ? `Projeto: ${projectId}` : 'Global'}
+            </p>
+            <div className="h-1 w-1 rounded-full bg-zinc-800" />
+            <p className="text-accent text-[10px] font-black uppercase tracking-widest">
+              {items.length} Arquivos total
+            </p>
+            <div className="h-1 w-1 rounded-full bg-zinc-800" />
+            <p className="text-green-500 text-[10px] font-black uppercase tracking-widest">
+              {items.filter(i => isItemUsed(i).used).length} Usados
+            </p>
+          </div>
         </div>
 
-        <div className="flex flex-wrap gap-3 w-full md:w-auto">
-          <div className="relative flex-1 md:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" size={16} />
-            <input 
-              className="w-full bg-zinc-900 border border-white/5 rounded-[8px] pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-accent/40"
-              placeholder="Buscar arquivo..."
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-            />
-          </div>
-          
+        <div className="flex flex-wrap gap-3 w-full md:w-auto ml-auto">
           <button 
             onClick={handleSync}
             disabled={syncing || uploading}
-            className="bg-white/5 border border-white/10 text-white px-4 py-2 rounded-[8px] font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:bg-white/10 transition disabled:opacity-50"
+            className="bg-accent text-zinc-950 px-8 py-2.5 rounded-[8px] font-black text-xs uppercase tracking-widest flex items-center gap-2 hover:bg-accent/80 transition disabled:opacity-50 shadow-xl shadow-accent/20"
             title="Sincroniza os arquivos com o banco de dados"
           >
-            {syncing ? <RefreshCw size={14} className="animate-spin" /> : <RefreshCw size={14} />}
-            {syncing ? 'Salvando...' : 'Salvar Alterações'}
+            {syncing ? <RefreshCw size={16} className="animate-spin" /> : <RefreshCw size={16} />}
+            {syncing ? 'Sincronizando...' : 'Salvar Alterações'}
+          </button>
+        </div>
+      </div>
+
+      {/* Main Navigation Menu */}
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between border-b border-white/5 pb-6">
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => setShowOnlyUsed(false)}
+            className={`px-8 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition ${!showOnlyUsed ? 'bg-white text-black border-white' : 'bg-transparent border-white/10 text-zinc-500 hover:text-white'}`}
+          >
+            Disponíveis
+          </button>
+          
+          <button
+            onClick={() => setShowOnlyUsed(true)}
+            className={`px-8 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition ${showOnlyUsed ? 'bg-accent text-black border-accent' : 'bg-transparent border-white/10 text-zinc-500 hover:text-white'}`}
+          >
+            Usadas no Flow
           </button>
 
           <button 
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading || syncing}
-            className="bg-accent text-black px-6 py-2 rounded-[8px] font-black text-xs uppercase tracking-widest flex items-center gap-2 hover:bg-accent/80 transition disabled:opacity-50"
+            className="px-8 py-2.5 rounded-full bg-white/5 border border-white/10 text-white font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:bg-white/10 transition disabled:opacity-50"
           >
-            {uploading ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
-            {uploading ? `${currentUploadIdx}/${totalUploads} (${Math.round(progress)}%)` : 'Novo Upload'}
+            {uploading ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
+            {uploading ? `${currentUploadIdx}/${totalUploads}` : 'Novo Upload'}
           </button>
-          
+
           {!standalone && (
             <button 
-              onClick={onClose} 
-              className="flex items-center gap-2 px-6 py-2 bg-accent/10 hover:bg-accent text-accent hover:text-black rounded-lg border border-accent/20 transition font-black text-[10px] uppercase tracking-widest group"
+              onClick={onClose}
+              className="px-8 py-2.5 rounded-full bg-white/5 border border-white/10 text-white font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:bg-red-500/20 hover:text-red-500 hover:border-red-500/30 transition group"
             >
               <X size={14} className="group-hover:rotate-90 transition-transform" /> {closeLabel || 'Voltar'}
             </button>
           )}
         </div>
-      </div>
 
-      {/* Filters */}
-      <div className="flex gap-2 border-b border-white/5 pb-4">
-        {(['all', 'image', 'video', 'audio'] as const).map(type => (
-          <button
-            key={type}
-            onClick={() => setFilter(type)}
-            className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition ${filter === type ? 'bg-white text-black border-white' : 'bg-transparent border-white/10 text-zinc-500 hover:text-white'}`}
-          >
-            {type === 'all' ? 'Todos' : type === 'image' ? 'Imagens' : type === 'video' ? 'Vídeos' : 'Áudio'}
-          </button>
-        ))}
+        <div className="relative w-full md:w-64">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" size={16} />
+          <input 
+            className="w-full bg-zinc-900/50 border border-white/5 rounded-full pl-10 pr-4 py-2 text-[10px] font-black uppercase tracking-widest focus:outline-none focus:border-accent/40"
+            placeholder="Buscar..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+        </div>
       </div>
 
       {/* Grid */}
@@ -421,8 +540,18 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true, closeLabel,
         ) : filteredItems.length === 0 ? (
           <div className="p-20 text-center border border-white/5 rounded-[12px] flex flex-col items-center gap-4">
              <Search size={48} className="text-zinc-800" />
-             <span className="text-zinc-600 font-bold italic">Nenhum resultado para "{search || filter}"</span>
-             <button onClick={() => { setSearch(''); setFilter('all'); }} className="text-accent text-xs font-black uppercase tracking-widest hover:underline">Limpar filtros</button>
+             <div className="space-y-1">
+               <span className="text-white font-bold block">Nenhum resultado encontrado</span>
+               <span className="text-zinc-600 text-xs uppercase font-black tracking-widest block">
+                 {showOnlyUsed ? 'Nenhum dos arquivos visíveis está sendo usado no projeto' : `Filtro atual: "${filter}"`}
+               </span>
+             </div>
+             <button 
+               onClick={() => { setSearch(''); setFilter('all'); setShowOnlyUsed(false); }} 
+               className="mt-4 bg-white/5 px-6 py-2 rounded-full text-accent text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition border border-accent/20"
+             >
+               Limpar todos os filtros
+             </button>
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 pb-10">
