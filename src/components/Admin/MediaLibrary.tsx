@@ -294,7 +294,7 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true, closeLabel,
       <motion.div 
         layout
         key={item.id}
-        className={`group relative bg-zinc-900 border ${used ? 'border-accent shadow-lg shadow-accent/10' : 'border-white/5 opacity-70 hover:opacity-100'} rounded-[8px] overflow-hidden hover:border-accent/50 transition-all flex flex-col`}
+        className={`group relative bg-zinc-900 border border-white/5 opacity-70 hover:opacity-100 rounded-[8px] overflow-hidden hover:border-accent/50 transition-all flex flex-col`}
       >
         {isScanning && (
           <div className="absolute top-2 left-2 z-10 px-2 py-0.5 bg-zinc-800 text-zinc-400 text-[8px] font-black rounded animate-pulse">
@@ -303,7 +303,7 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true, closeLabel,
         )}
 
         {/* Preview Area */}
-        <div className="aspect-square w-full bg-black flex items-center justify-center relative overflow-hidden">
+        <div className="aspect-[4/5] w-full bg-black flex items-center justify-center relative overflow-hidden">
           {item.category === 'image' && (
             <img src={item.url} className="w-full h-full object-cover" alt={item.name} loading="lazy" />
           )}
@@ -319,13 +319,10 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true, closeLabel,
                   e.currentTarget.currentTime = 0.5;
                 }}
               />
-              <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/0 transition-colors">
-                <div className="bg-black/60 p-3 rounded-full backdrop-blur-sm group-hover:bg-accent group-hover:text-black transition-all">
-                  <Video size={24} className="group-hover:scale-110 transition-transform" />
+              <div className="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-black/0 transition-colors">
+                <div className="bg-white/5 p-3 rounded-full backdrop-blur-sm group-hover:bg-accent group-hover:text-black transition-all">
+                  <Video size={20} className="opacity-30 group-hover:opacity-100 group-hover:scale-110 transition-all" />
                 </div>
-              </div>
-              <div className="absolute bottom-2 right-2 px-2 py-0.5 bg-black/80 text-[8px] font-black text-white rounded-[4px] uppercase tracking-widest border border-white/10 backdrop-blur-sm">
-                VÍDEO
               </div>
             </div>
           )}
@@ -413,14 +410,6 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true, closeLabel,
         </div>
       </div>
 
-      {/* Info Area */}
-      <div className="p-3">
-        <h4 className="text-[11px] font-bold truncate text-zinc-300 mb-1" title={item.name}>{item.name}</h4>
-        <div className="flex justify-between items-center text-[9px] text-zinc-500 uppercase font-black">
-          <span>{formatSize(item.size)}</span>
-          <span>{new Date(item.createdAt).toLocaleDateString()}</span>
-        </div>
-      </div>
     </motion.div>
     );
   };
@@ -434,16 +423,11 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true, closeLabel,
       
       {/* Header */}
       <div className="flex flex-col md:flex-row gap-6 justify-between items-start md:items-center">
-        <div>
-          <h2 className="text-2xl font-black uppercase tracking-tighter flex items-center gap-3">
-             <Filter className="text-accent" /> 
+        <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-6">
+          <h2 className="text-2xl font-black uppercase tracking-tighter flex items-center gap-3 md:-translate-y-[12px]">
              {projectName ? `Biblioteca: ${projectName}` : 'Biblioteca de Mídia'}
           </h2>
-          <div className="flex items-center gap-4 mt-1">
-            <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest">
-              {projectId ? `Projeto: ${projectId}` : 'Global'}
-            </p>
-            <div className="h-1 w-1 rounded-full bg-zinc-800" />
+          <div className="flex items-center gap-4 md:-translate-y-[11px]">
             <p className="text-accent text-[10px] font-black uppercase tracking-widest">
               {items.length} Arquivos total
             </p>
@@ -472,14 +456,14 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true, closeLabel,
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setShowOnlyUsed(false)}
-            className={`px-8 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition ${!showOnlyUsed ? 'bg-white text-black border-white' : 'bg-transparent border-white/10 text-zinc-500 hover:text-white'}`}
+            className={`px-8 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition flex items-center justify-center ${!showOnlyUsed ? 'bg-white text-black border-white shadow-lg shadow-white/10' : 'bg-white/5 border-white/10 text-white hover:bg-white/10'}`}
           >
             Disponíveis
           </button>
           
           <button
             onClick={() => setShowOnlyUsed(true)}
-            className={`px-8 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition ${showOnlyUsed ? 'bg-accent text-black border-accent' : 'bg-transparent border-white/10 text-zinc-500 hover:text-white'}`}
+            className={`px-8 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition flex items-center justify-center ${showOnlyUsed ? 'bg-accent text-black border-accent shadow-lg shadow-accent/10' : 'bg-white/5 border-white/10 text-white hover:bg-white/10'}`}
           >
             Usadas no Flow
           </button>
@@ -487,7 +471,7 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true, closeLabel,
           <button 
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading || syncing}
-            className="px-8 py-2.5 rounded-full bg-white/5 border border-white/10 text-white font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:bg-white/10 transition disabled:opacity-50"
+            className="px-8 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest border bg-white/5 border-white/10 text-white transition flex items-center justify-center gap-2 hover:bg-white/10 disabled:opacity-50"
           >
             {uploading ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
             {uploading ? `${currentUploadIdx}/${totalUploads}` : 'Novo Upload'}
@@ -496,9 +480,9 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true, closeLabel,
           {!standalone && (
             <button 
               onClick={onClose}
-              className="px-8 py-2.5 rounded-full bg-white/5 border border-white/10 text-white font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:bg-red-500/20 hover:text-red-500 hover:border-red-500/30 transition group"
+              className="px-8 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest border bg-white/5 border-white/10 text-white transition flex items-center justify-center gap-2 hover:bg-red-500/20 hover:text-red-500 hover:border-red-500/30 transition group"
             >
-              <X size={14} className="group-hover:rotate-90 transition-transform" /> {closeLabel || 'Voltar'}
+              <X size={14} className="group-hover:rotate-90 transition-transform" /> Construtor de Flow
             </button>
           )}
         </div>
@@ -523,9 +507,6 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true, closeLabel,
           </div>
         ) : items.length === 0 ? (
           <div className="p-20 text-center border-2 border-dashed border-white/5 rounded-[12px] flex flex-col items-center gap-4">
-             <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-2">
-                <ImageIcon size={32} className="text-zinc-700" />
-             </div>
              <div className="space-y-1">
                <h3 className="text-white font-bold text-lg">Sua Biblioteca está vazia</h3>
                <p className="text-zinc-500 text-sm max-w-xs mx-auto">Comece fazendo o upload das suas mídias (fotos, vídeos ou áudios) para usá-las nos seus fluxos.</p>
@@ -554,7 +535,7 @@ export const MediaLibrary = ({ onSelect, onClose, standalone = true, closeLabel,
              </button>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 pb-10">
+          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4 pb-10">
             {filteredItems.map(renderItem)}
           </div>
         )}

@@ -174,9 +174,8 @@ export const MediaRenderer: React.FC<MediaRendererProps> = ({
     }
     
     if (!renderUrl) return (
-      <div className="w-full h-full bg-zinc-950 flex flex-col items-center justify-center gap-3 border border-white/5">
-        <LayoutGrid size={32} className="text-zinc-800" />
-        <span className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-800">Conteúdo em breve</span>
+      <div className="w-full h-full bg-zinc-950 flex flex-col items-center justify-center gap-3 border border-white/5 opacity-20">
+        <span className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500">Conteúdo em breve</span>
       </div>
     );
     
