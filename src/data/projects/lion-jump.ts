@@ -81,7 +81,28 @@ Construção de visibilidade e posicionamento artístico por meio de comunicaç�
         url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F02-SobreBanda%2FCapaBanda.png?alt=media&token=77de858c-f5e1-4b8d-bb32-2eeb48cdc889',
       }
     },
+    {
+      id: 'lj-feed-02-gshow',
+      title: 'GShow 2',
+      aspectRatio: 1.77777777778,
+      media: {
+        type: 'image',
+        order: 4,
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/media%2Fprojeto-lion-jump%2F02-SobreBanda%2FGShow2%2FGShow2.png?alt=media&token=f46d84be-5ba6-4dae-b43c-c2f18bf7aaf5',
+        allowScroll: true
+      }
+    },
     // Seção 03: SuperStar
+    {
+      id: 'lj-feed-03',
+      title: 'SuperStar',
+      aspectRatio: 1.77777777778,
+      media: {
+        type: 'image',
+        order: 6,
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F03-SuperStar%2FCapaSuperStar.png?alt=media&token=4eb58609-525a-4e49-aaa6-ad046da90beb',
+      }
+    },
     {
       id: 'lj-feed-03-gshow',
       title: 'GShow 1',
@@ -106,6 +127,18 @@ Construção de visibilidade e posicionamento artístico por meio de comunicaç�
     },
     // Seção 04: África
     {
+      id: 'lj-feed-04',
+      title: 'África',
+      aspectRatio: 1.77777777778,
+      media: { 
+        type: 'image',
+        order: 9,
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F04-Africa%2FBanner_Lançamento_AFRICA_04.png?alt=media&token=0da585e6-641b-493e-ac1d-0a3d4d3ac928',
+        objectFit: 'cover',
+        objectPosition: 'right'
+      }
+    },
+    {
       id: 'lj-feed-04-video1',
       title: 'Clip África',
       aspectRatio: 1.77777777778,
@@ -128,18 +161,13 @@ Construção de visibilidade e posicionamento artístico por meio de comunicaç�
       }
     },
     {
-      id: 'lj-feed-04-pages',
-      title: 'Em Movimento África',
+      id: 'lj-feed-04-pdf',
+      title: 'PDF África',
       aspectRatio: 1.77777777778,
       media: {
-        type: 'image',
+        type: 'pdf',
         order: 12,
-        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F04-Africa%2FEmMovimentoAfrica_page-0001.jpg?alt=media&token=9045d6b8-dad6-4936-9867-3a97d2eed372',
-        images: [
-          'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F04-Africa%2FEmMovimentoAfrica_page-0001.jpg?alt=media&token=9045d6b8-dad6-4936-9867-3a97d2eed372',
-          'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F04-Africa%2FEmMovimentoAfrica_page-0002.jpg?alt=media&token=1a0c76e4-e880-4b9e-b7a1-11d0aa7dd328'
-        ],
-        allowScroll: true
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto4%2F04-Africa%2FEmMovimentoAfrica.pdf?alt=media&token=d63690d8-651a-4ebe-90bf-6ba337fbb5d2',
       }
     },
     // Seção 05: Itália

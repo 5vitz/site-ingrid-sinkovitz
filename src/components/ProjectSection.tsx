@@ -2,6 +2,7 @@ import React from 'react';
 import { Project } from '../types';
 import { useCollection } from '../hooks/useCollection';
 import { ProjectCard } from './ProjectCard';
+import { PROJECTS_LIST } from '../constants/projects';
 
 export const ProjectSection: React.FC<{ onSelectProject: (p: Project) => void }> = ({ onSelectProject }) => {
   const { data: dbProjects } = useCollection<Project>('projects');

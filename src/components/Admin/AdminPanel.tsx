@@ -464,7 +464,7 @@ const StructuralCenter = ({ title, description, selectedId, onSelect, onNew, ren
     <div className="space-y-4">
       <div className="flex justify-between items-center bg-zinc-900/50 py-3 px-8 rounded-[12px] border border-white/5 mb-8">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-[#f2bb32]">{title}</h2>
+          <h2 className="text-xl font-bold tracking-tight text-accent">{title}</h2>
         </div>
         {onNew && (
           <button 

@@ -332,14 +332,20 @@ export const syncStorageWithFirestore = async (
     const pathParts = path.split('/').filter(p => p !== '');
     let projectId: string | undefined = currentProjectId;
     
-    // Lógica robusta: se o path for 'media/xyz' ou 'media/xyz/'
-    if (!projectId && pathParts.length >= 2 && pathParts[0] === 'media') {
+    // Lógica robusta: se o path for 'media/xyz' ou 'Projetos/xyz'
+    if (!projectId && pathParts.length >= 2 && (pathParts[0] === 'media' || pathParts[0] === 'Projetos')) {
       projectId = pathParts[1];
       // Tratamento especial para o erro comum do usuário (Audar vs Auddar)
       if (projectId === 'projeto-audar') {
         projectId = 'projeto-auddar';
         if (onProgress) onProgress(`💡 Notei "projeto-audar", corrigindo para "projeto-auddar"...`);
       }
+      
+      // Mapeamento extra para nomes de pastas numéricas (ex: projeto4 -> projeto-lion-jump)
+      if (projectId === 'projeto4') projectId = 'projeto-lion-jump';
+      if (projectId === 'projeto1') projectId = 'projeto-metavix';
+      if (projectId === 'projeto2') projectId = 'projeto-elobike';
+      if (projectId === 'projeto3') projectId = 'projeto-good-storage';
     }
 
     // Cache inicial

@@ -34,7 +34,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
             step="0.01"
             value={volume}
             onChange={(e) => onVolumeChange(parseFloat(e.target.value))}
-            className="h-28 w-1.5 cursor-pointer accent-[#f2bb32]"
+            className="h-28 w-1.5 cursor-pointer accent-accent"
             style={{ 
               WebkitAppearance: 'slider-vertical',
               appearance: 'slider-vertical'
@@ -44,7 +44,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
       )}
       <button 
         onClick={onToggleMute}
-        className="w-10 h-10 bg-zinc-950/60 backdrop-blur-md rounded-full flex items-center justify-center text-[#f2bb32] border border-white/5 hover:bg-[#f2bb32] hover:text-black shadow-2xl active:scale-90 transition-all outline-none"
+        className="w-10 h-10 bg-zinc-950/60 backdrop-blur-md rounded-full flex items-center justify-center text-accent border border-white/5 hover:bg-accent hover:text-black shadow-2xl active:scale-90 transition-all outline-none"
         aria-label={isMuted ? "Ativar som" : "Desativar som"}
       >
         {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}

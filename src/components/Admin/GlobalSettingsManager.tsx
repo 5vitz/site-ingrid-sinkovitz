@@ -73,14 +73,23 @@ export const GlobalSettingsManager = () => {
     setShowConfirm(false);
 
     try {
-      const items = await syncStorageWithFirestore('media', undefined, undefined, (msg) => {
-        setSyncLogs(prev => [...prev, msg].slice(-40)); // Aumentado para 40 linhas
+      // Sincroniza pasta 'media'
+      const itemsMedia = await syncStorageWithFirestore('media', undefined, undefined, (msg) => {
+        setSyncLogs(prev => [...prev, msg].slice(-40));
       });
-      setSyncLogs(prev => [...prev, `✅ Sincronização concluída! ${items.length} novos itens.`]);
+      
+      // Sincroniza pasta 'Projetos'
+      setSyncLogs(prev => [...prev, '🔎 Varrendo pasta adicional: "Projetos"...']);
+      const itemsProjetos = await syncStorageWithFirestore('Projetos', undefined, undefined, (msg) => {
+        setSyncLogs(prev => [...prev, msg].slice(-40));
+      });
+
+      const totalItems = itemsMedia.length + itemsProjetos.length;
+      setSyncLogs(prev => [...prev, `✅ Sincronização concluída! ${totalItems} novos itens encontrados.`]);
       
       // Oferecer reparo automático após sincronizar novos arquivos
-      if (items.length > 0) {
-        if (confirm(`Encontrei ${items.length} novos arquivos. Deseja tentar reparar automaticamente os links quebrados nos projetos que usam esses nomes de arquivo?`)) {
+      if (totalItems > 0) {
+        if (confirm(`Encontrei ${totalItems} novos arquivos. Deseja tentar reparar automaticamente os links quebrados nos projetos que usam esses nomes de arquivo?`)) {
           handleRepair();
         }
       }
