@@ -303,7 +303,7 @@ export const AdminPanel: React.FC = () => {
                           targetHandle: 'left',
                           type: 'button',
                           animated: true,
-                          style: { stroke: '#FEF200', strokeWidth: 2 }
+                          style: { stroke: '#f29232', strokeWidth: 2 }
                         });
                       });
 
@@ -319,7 +319,7 @@ export const AdminPanel: React.FC = () => {
                             targetHandle: 'top',
                             type: 'button',
                             animated: true,
-                            style: { stroke: '#FEF200', strokeWidth: 2, strokeDasharray: '5,5' }
+                            style: { stroke: '#f29232', strokeWidth: 2, strokeDasharray: '5,5' }
                           });
                         }
                       }

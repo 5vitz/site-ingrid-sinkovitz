@@ -10,10 +10,10 @@ export const GlobalSettingsManager = () => {
   const { data: projects } = useCollection<Project>('projects');
   const [settings, setSettings] = useState<SiteSettings>({ 
     whatsappNumber: '', 
-    accentColor: '#f2bb32',
+    accentColor: '#f29232',
     maintenanceMode: false,
     maintenanceTitle: 'Sob manutenção, até breve!',
-    cor1: '#f2bb32',
+    cor1: '#f29232',
     cor2: '#203F44',
     cor3: '#BE735E',
     cor4: '#6B3028',

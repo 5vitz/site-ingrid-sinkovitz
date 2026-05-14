@@ -55,7 +55,7 @@ export const MaintenanceMode: React.FC<MaintenanceModeProps> = ({ title, isAdmin
             ) : isAdmin ? (
               <button 
                 onClick={onBypass}
-                className="px-6 py-3 bg-accent text-black font-black uppercase tracking-[0.2em] text-[10px] rounded-[8px] flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-[0_0_30px_rgba(242,187,50,0.3)]"
+                className="px-6 py-3 bg-accent text-black font-black uppercase tracking-[0.2em] text-[10px] rounded-[8px] flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-[0_0_30px_rgba(242,146,50,0.3)]"
               >
                 <LogIn size={14} /> Acesso Administrativo
               </button>
@@ -63,7 +63,7 @@ export const MaintenanceMode: React.FC<MaintenanceModeProps> = ({ title, isAdmin
               <button 
                 onClick={login}
                 disabled={loading}
-                className="px-6 py-3 bg-accent text-black font-black uppercase tracking-[0.2em] text-[10px] rounded-[8px] flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-[0_0_30px_rgba(242,187,50,0.3)] disabled:opacity-50"
+                className="px-6 py-3 bg-accent text-black font-black uppercase tracking-[0.2em] text-[10px] rounded-[8px] flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-[0_0_30px_rgba(242,146,50,0.3)] disabled:opacity-50"
               >
                 {loading ? (
                   <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />

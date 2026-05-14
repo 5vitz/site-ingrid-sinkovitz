@@ -9,7 +9,7 @@ export const ContactManager = () => {
     linkedinUrl: '',
     instagramUrl: '',
     emailContact: '',
-    accentColor: '#f2bb32'
+    accentColor: '#f29232'
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);

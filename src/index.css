@@ -12,7 +12,7 @@
   --color-cor3: var(--cor3, #BE735E);
   --color-cor4: var(--cor4, #6B3028);
   --color-cor5: var(--cor5, #B35227);
-  --color-cor6: var(--cor6, #C1908A);
+  --color-cor6: var(--color-cor6, #C1908A);
   --color-white: var(--white, #ffffff);
   --color-gray-light: var(--gray-light, #f8f9fa);
   --color-text-dark: var(--text-dark, #1a1a1a);
