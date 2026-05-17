@@ -236,7 +236,7 @@ export const ProjectModalFlow: React.FC<ProjectModalFlowProps> = ({
         {availableDirections.right && (
           <button 
             onClick={() => navigate('right')}
-            className="absolute right-6 md:right-12 p-4 bg-black/40 hover:bg-accent text-white hover:text-black rounded-full transition-all pointer-events-auto group/btn backdrop-blur-md"
+            className="hidden md:flex absolute right-6 md:right-12 p-4 bg-black/40 hover:bg-accent text-white hover:text-black rounded-full transition-all pointer-events-auto group/btn backdrop-blur-md"
           >
             <ChevronRight size={32} className="group-hover/btn:translate-x-1 transition-transform" />
           </button>
@@ -246,7 +246,7 @@ export const ProjectModalFlow: React.FC<ProjectModalFlowProps> = ({
         {availableDirections.left && (
           <button 
             onClick={() => navigate('left')}
-            className="absolute left-6 md:left-12 p-4 bg-black/40 hover:bg-accent text-white hover:text-black rounded-full transition-all pointer-events-auto group/btn backdrop-blur-md"
+            className="hidden md:flex absolute left-6 md:left-12 p-4 bg-black/40 hover:bg-accent text-white hover:text-black rounded-full transition-all pointer-events-auto group/btn backdrop-blur-md"
           >
             <ChevronLeft size={32} className="group-hover/btn:-translate-x-1 transition-transform" />
           </button>
@@ -256,7 +256,7 @@ export const ProjectModalFlow: React.FC<ProjectModalFlowProps> = ({
         {availableDirections.up && (
           <button 
             onClick={() => navigate('up')}
-            className="absolute top-12 p-4 bg-black/40 hover:bg-accent text-white hover:text-black rounded-full transition-all pointer-events-auto group/btn backdrop-blur-md"
+            className="absolute top-24 md:top-12 p-4 bg-black/40 hover:bg-accent text-white hover:text-black rounded-full transition-all pointer-events-auto group/btn backdrop-blur-md"
           >
             <ChevronUp size={24} className="group-hover/btn:-translate-y-1 transition-transform" />
           </button>
@@ -266,7 +266,7 @@ export const ProjectModalFlow: React.FC<ProjectModalFlowProps> = ({
         {availableDirections.down && (
           <button 
             onClick={() => navigate('down')}
-            className="absolute bottom-12 p-4 bg-black/40 hover:bg-accent text-white hover:text-black rounded-full transition-all pointer-events-auto group/btn backdrop-blur-md animate-bounce"
+            className="absolute bottom-28 md:bottom-12 p-4 bg-black/40 hover:bg-accent text-white hover:text-black rounded-full transition-all pointer-events-auto group/btn backdrop-blur-md animate-bounce"
           >
             <ChevronDown size={24} className="group-hover/btn:translate-y-1 transition-transform" />
           </button>
