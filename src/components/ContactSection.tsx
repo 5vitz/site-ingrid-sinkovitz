@@ -34,10 +34,10 @@ export const ContactSection: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch relative z-10 w-full mb-12">
           
           {/* Coluna 1: CONECTE-SE */}
-          <div className="bg-white/[0.03] backdrop-blur-sm p-6 md:p-10 rounded-[12px] border border-white/5 flex flex-col items-center justify-center">
+          <div className="bg-zinc-900/40 backdrop-blur-md p-6 md:p-10 rounded-[12px] border border-white/5 flex flex-col items-center justify-center">
             
             {/* Card Interno */}
-            <div className="bg-black/40 border border-accent/10 rounded-[8px] p-8 md:p-10 w-full h-full max-w-[320px] flex flex-col items-start space-y-8 shadow-inner">
+            <div className="bg-gradient-to-br from-zinc-800 to-zinc-950 border border-accent/10 rounded-[8px] p-8 md:p-10 w-full h-full max-w-[320px] flex flex-col items-start space-y-8 shadow-inner">
               <h4 className="text-lg md:text-xl font-light tracking-widest uppercase text-accent w-full text-left">
                 CONECTE-SE
               </h4>
@@ -85,10 +85,10 @@ export const ContactSection: React.FC = () => {
           </div>
 
           {/* Coluna 2: MENU */}
-          <div className="bg-white/[0.03] backdrop-blur-sm p-6 md:p-10 rounded-[12px] border border-white/5 flex flex-col items-center justify-center">
+          <div className="bg-zinc-900/40 backdrop-blur-md p-6 md:p-10 rounded-[12px] border border-white/5 flex flex-col items-center justify-center">
             
             {/* Card Interno */}
-            <div className="bg-black/40 border border-accent/10 rounded-[8px] p-8 md:p-10 w-full h-full max-w-[320px] flex flex-col items-start space-y-8 shadow-inner">
+            <div className="bg-gradient-to-br from-zinc-800 to-zinc-950 border border-accent/10 rounded-[8px] p-8 md:p-10 w-full h-full max-w-[320px] flex flex-col items-start space-y-8 shadow-inner">
               <h4 className="text-lg md:text-xl font-light tracking-widest uppercase text-accent w-full text-left">
                 MENU
               </h4>
