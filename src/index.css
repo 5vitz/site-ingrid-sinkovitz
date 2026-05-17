@@ -105,11 +105,11 @@
 }
 
 .card-vertical {
-  @apply relative overflow-hidden aspect-square w-full max-w-[280px] rounded-[8px] mx-auto;
+  @apply relative overflow-hidden aspect-[5/4] w-full max-w-[280px] rounded-[8px] mx-auto;
 }
 
 .card-horizontal {
-  @apply relative overflow-hidden aspect-square w-full max-w-[280px] rounded-[8px] mx-auto;
+  @apply relative overflow-hidden aspect-[5/4] w-full max-w-[280px] rounded-[8px] mx-auto;
 }
 
 .glass-morphism {

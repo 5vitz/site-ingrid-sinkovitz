@@ -38,7 +38,7 @@ export const ContactSection: React.FC = () => {
             
             {/* Card Interno */}
             <div className="bg-gradient-to-br from-zinc-800 to-zinc-950 border border-accent/10 rounded-[8px] p-8 md:p-10 w-full h-full max-w-[320px] flex flex-col items-start space-y-8 shadow-inner">
-              <h4 className="text-lg md:text-xl font-light tracking-widest uppercase text-accent w-full text-left">
+              <h4 className="text-[15px] md:text-base font-light tracking-widest uppercase text-accent w-full text-left">
                 CONECTE-SE
               </h4>
               <div className="flex flex-col gap-6 w-full">
@@ -89,7 +89,7 @@ export const ContactSection: React.FC = () => {
             
             {/* Card Interno */}
             <div className="bg-gradient-to-br from-zinc-800 to-zinc-950 border border-accent/10 rounded-[8px] p-8 md:p-10 w-full h-full max-w-[320px] flex flex-col items-start space-y-8 shadow-inner">
-              <h4 className="text-lg md:text-xl font-light tracking-widest uppercase text-accent w-full text-left">
+              <h4 className="text-[15px] md:text-base font-light tracking-widest uppercase text-accent w-full text-left">
                 MENU
               </h4>
               <nav className="flex flex-col gap-6 text-base font-light tracking-wide w-full">

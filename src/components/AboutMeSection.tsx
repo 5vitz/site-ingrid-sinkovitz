@@ -76,13 +76,8 @@ export const AboutMeSection: React.FC<AboutMeSectionProps> = ({ settings }) => {
             <div>
               <div className="flex flex-col gap-6 text-zinc-300 text-sm md:text-base leading-relaxed font-light">
                 <div className="relative">
-                  <p className={`whitespace-pre-line text-justify first-letter:text-5xl first-letter:font-black first-letter:text-accent first-letter:mr-4 first-letter:float-left transition-all duration-700 ${!isBioExpanded ? 'max-h-[320px] md:max-h-[220px] overflow-hidden' : 'max-h-[2000px]'}`}>
-                    {!isBioExpanded ? (
-                      <>
-                        {bioText.split('na operação, na estratégia.')[0]}
-                        {bioText.includes('na operação, na estratégia.') ? 'na operação, na estratégia...' : ''}
-                      </>
-                    ) : bioText}
+                  <p className={`whitespace-pre-line text-justify first-letter:text-5xl first-letter:font-black first-letter:text-accent first-letter:mr-4 first-letter:float-left transition-all duration-700 ${!isBioExpanded ? 'max-h-[320px] md:max-h-[360px] overflow-hidden' : 'max-h-[2000px]'}`}>
+                    {bioText}
                   </p>
                   
                   {!isBioExpanded && (
