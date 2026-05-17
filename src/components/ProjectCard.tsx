@@ -47,7 +47,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, hasR
       onClick={() => {
         onClick();
       }}
-      className={`${cardClass} cursor-pointer group rounded-[8px] snap-center bg-zinc-900 shadow-xl overflow-hidden relative flex items-center justify-center border border-white/5 transition-all duration-300`}
+      className={`${cardClass} cursor-pointer group rounded-[8px] snap-center bg-zinc-900 shadow-xl overflow-hidden relative flex items-center justify-center border border-accent/10 transition-all duration-300`}
     >
       {/* Fundo Simples com Degradê */}
       <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-950 z-0" />

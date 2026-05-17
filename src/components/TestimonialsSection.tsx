@@ -8,7 +8,7 @@ const TestimonialCard = ({ t, isWide }: { t: Testimonial, isWide: boolean, key?:
   
   return (
     <div 
-      className={`bg-zinc-900/40 backdrop-blur-md p-8 md:p-10 rounded-[8px] border border-white/5 flex flex-col ${isWide ? 'md:col-span-2 md:flex-row md:items-center gap-10' : 'justify-between'}`}
+      className={`bg-zinc-900/40 backdrop-blur-md p-8 md:p-10 rounded-[8px] border border-accent/10 flex flex-col ${isWide ? 'md:col-span-2 md:flex-row md:items-center gap-10' : 'justify-between'}`}
     >
       <div className={isWide ? 'flex-1' : ''}>
         <p className={`text-base text-zinc-400 font-light leading-relaxed text-justify transition-all duration-300 ${!isExpanded ? 'line-clamp-6 overflow-hidden' : ''}`}>

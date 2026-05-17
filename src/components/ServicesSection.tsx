@@ -11,7 +11,7 @@ const AccordionItem = ({ title, items }: { title: string, items: string[], key?:
     <div className="w-full">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between py-3 px-8 bg-zinc-900/40 backdrop-blur-md rounded-[8px] border border-white/5 hover:bg-white/5 transition-all group"
+        className="w-full flex items-center justify-between py-3 px-8 bg-zinc-900/40 backdrop-blur-md rounded-[8px] border border-accent/10 hover:bg-white/5 transition-all group"
       >
         <span className="text-base md:text-lg font-light tracking-tight text-left">{title}</span>
         <div className="bg-accent/10 p-1.5 rounded-full group-hover:bg-accent/20 transition-colors">
