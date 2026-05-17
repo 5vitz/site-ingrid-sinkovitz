@@ -66,10 +66,10 @@ const CommunicationNode = ({ id, data, selected }: NodeProps<CommunicationNodeDa
       {/* Botão de Excluir Node */}
       <button 
         onClick={(e) => { e.stopPropagation(); data.onDelete?.(id); }}
-        className="absolute -top-2 -right-2 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 border-2 border-black"
+        className={`absolute -top-3 -right-3 w-7 h-7 bg-red-600 hover:bg-red-500 text-white rounded-full flex items-center justify-center transition-all z-[50] border-[3px] border-zinc-950 shadow-xl ${selected ? 'opacity-100 scale-100' : 'opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100'}`}
         title="Excluir Card"
       >
-        <X size={12} />
+        <X size={14} className="font-black" />
       </button>
 
       {/* Header do Card */}
@@ -160,9 +160,14 @@ const CommunicationNode = ({ id, data, selected }: NodeProps<CommunicationNodeDa
               </button>
             ))}
           </div>
-          <div className="flex justify-between items-center">
-            <span className="text-[8px] text-zinc-600 font-bold uppercase tracking-widest">Aspect Ratio</span>
+          <div className="flex justify-between items-center mt-3 pt-3 border-t border-white/5">
             <span className="text-[8px] text-zinc-500 font-mono uppercase">#{data.id || '001'}</span>
+            <button 
+              onClick={(e) => { e.stopPropagation(); data.onDelete?.(id); }}
+              className="text-[8px] font-black uppercase text-red-500 hover:text-red-400 hover:underline flex items-center gap-1 transition-colors"
+            >
+              <X size={10} /> Excluir Card
+            </button>
           </div>
         </div>
       </div>

@@ -5,9 +5,9 @@
   --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
   
   --color-primary: var(--primary-color, #000000);
-  --color-accent: var(--accent-color, #f2bb32);
+  --color-accent: var(--accent-color, #F59E0B);
 
-  --color-cor1: var(--cor1, #f2bb32);
+  --color-cor1: var(--cor1, #F59E0B);
   --color-cor2: var(--cor2, #203F44);
   --color-cor3: var(--cor3, #BE735E);
   --color-cor4: var(--cor4, #6B3028);
@@ -76,12 +76,12 @@
   border-radius: 10px !important;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(242, 187, 50, 0.3) !important; /* Usando cor Accent transparente */
+  background: rgba(245, 158, 11, 0.3) !important; /* Usando cor Accent transparente */
   border-radius: 10px !important;
   border: 1px solid rgba(255, 255, 255, 0.05) !important;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(242, 187, 50, 0.6) !important;
+  background: rgba(245, 158, 11, 0.6) !important;
 }
 .custom-scrollbar {
   scrollbar-width: thin !important;
@@ -114,7 +114,9 @@
 }
 
 .glass-morphism {
-  @apply bg-black/40 backdrop-blur-md border border-white/10;
+  @apply bg-black/40 backdrop-blur-md border border-white/10 transform-gpu;
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 .card-player-vertical {

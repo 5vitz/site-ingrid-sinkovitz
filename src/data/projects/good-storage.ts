@@ -6,7 +6,7 @@ export const goodStorage: Project = {
   description: 'Uma série de Reels produzidos para a campanha de comunicação da Good Storage.',
   layoutType: 'vertical',
   galleryThumbnail: '',
-  coverImage: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto2%2FReels_Aline_SoulSmile.mp4?alt=media&token=0e21b470-de72-48be-95bc-935659fdcfca',
+  coverImage: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto2%2FReels_Aline_SoulSmile.mp4?alt=media',
   audioUrl: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Trilha%2FMetavix.mp3?alt=media&token=866a461d-6169-450f-90e9-74cb96e95b00',
   order: 3,
   mediaItems: [],
@@ -41,7 +41,8 @@ export const goodStorage: Project = {
       media: { 
         type: 'video', 
         order: 1, 
-        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto2%2FReels_Aline_SoulSmile.mp4?alt=media&token=0e21b470-de72-48be-95bc-935659fdcfca',
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto2%2FReels_Aline_SoulSmile.mp4?alt=media',
+        thumbnail: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/media%2Fprojeto-auddar%2F06.webp?alt=media',
         objectFit: 'contain'
       },
       stories: []
@@ -53,7 +54,8 @@ export const goodStorage: Project = {
       media: { 
         type: 'video', 
         order: 2, 
-        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto2%2FReels_DJDre.mp4?alt=media&token=5649c5f7-03ea-4d8b-a05c-fd889dbda36f',
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto2%2FReels_DJDre.mp4?alt=media',
+        thumbnail: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/media%2Fprojeto-auddar%2F06.webp?alt=media',
         objectFit: 'contain'
       },
       stories: []
@@ -65,7 +67,8 @@ export const goodStorage: Project = {
       media: { 
         type: 'video', 
         order: 3, 
-        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto2%2FReels_Lennon_BanhodeGato.mp4?alt=media&token=f2d22066-0327-4d67-99ef-9675899a0239',
+        url: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/Projetos%2Fprojeto2%2FReels_Lennon_BanhodeGato.mp4?alt=media',
+        thumbnail: 'https://firebasestorage.googleapis.com/v0/b/gen-lang-client-0706232208.firebasestorage.app/o/media%2Fprojeto-auddar%2F06.webp?alt=media',
         objectFit: 'contain'
       },
       stories: []

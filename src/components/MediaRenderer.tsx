@@ -100,7 +100,7 @@ export const MediaRenderer: React.FC<MediaRendererProps> = ({
           loop
           muted={isMuted}
           playsInline
-          preload="auto"
+          preload="metadata"
         />
       </div>
     );
