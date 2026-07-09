@@ -20,6 +20,13 @@ export default defineConfig(({mode}) => {
       host: '0.0.0.0',
       strictPort: true,
       hmr: process.env.DISABLE_HMR !== 'true',
+      proxy: {
+        '/storage-proxy': {
+          target: 'https://firebasestorage.googleapis.com',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/storage-proxy/, '')
+        }
+      }
     },
   };
 });

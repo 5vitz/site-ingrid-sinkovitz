@@ -1,0 +1,57 @@
+import React from 'react';
+import { servicesData } from '../data/servicesData';
+import { Check } from 'lucide-react';
+
+export const Services: React.FC = () => {
+  return (
+    <div className="animate-fade-in px-6 md:px-12 py-12 md:py-20 max-w-7xl mx-auto">
+      {/* PAGE HEADER */}
+      <section className="mb-16 md:mb-24 max-w-3xl">
+        <span className="text-xs font-semibold tracking-[0.2em] text-brand-blue uppercase">Expertise</span>
+        <h1 className="font-serif text-5xl md:text-8xl tracking-[0.05em] uppercase text-black leading-none mt-2 mb-6">
+          SERVIÇOS & ENTREGAS
+        </h1>
+        <p className="font-sans text-brand-charcoal text-base md:text-lg leading-relaxed">
+          Atuação estratégica e operacional para marcas e projetos se posicionarem com autenticidade, estruturando processos eficientes de produção e construindo comunidades engajadas.
+        </p>
+      </section>
+
+      {/* SERVICES GRID */}
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 border-t border-black/10 pt-12">
+        {servicesData.map((service, index) => (
+          <div 
+            key={service.title} 
+            className="flex flex-col border border-black/5 hover:border-black/10 bg-white/30 hover:bg-white/60 p-6 md:p-8 transition-all duration-300 rounded-lg"
+          >
+            {/* Number Indicator */}
+            <span className="font-serif text-3xl md:text-4xl text-brand-blue/30 font-medium mb-4">
+              {String(index + 1).padStart(2, '0')}
+            </span>
+
+            {/* Title & Description */}
+            <h2 className="font-serif text-2xl md:text-3xl text-black font-semibold mb-3">
+              {service.title}
+            </h2>
+            <p className="font-sans text-brand-charcoal text-sm leading-relaxed mb-8">
+              {service.description}
+            </p>
+
+            {/* Bullet Points */}
+            <ul className="space-y-3 mt-auto border-t border-black/5 pt-6">
+              {service.bullets.map((bullet) => (
+                <li key={bullet} className="flex items-start gap-3 text-xs md:text-sm text-brand-charcoal/90 leading-normal">
+                  <span className="mt-1 flex-shrink-0 text-brand-blue">
+                    <Check size={12} strokeWidth={3} />
+                  </span>
+                  <span>{bullet}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </section>
+    </div>
+  );
+};
+
+export default Services;

@@ -1,145 +1,55 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Outfit:wght@200;300;400;500;600;700&display=swap');
+
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Cormorant Garamond', serif;
+  --font-sans: 'Outfit', sans-serif;
   
-  --color-primary: var(--primary-color, #000000);
-  --color-accent: var(--accent-color, #D4AF37);
-
-  --color-cor1: var(--cor1, #D4AF37);
-  --color-cor2: var(--cor2, #203F44);
-  --color-cor3: var(--cor3, #BE735E);
-  --color-cor4: var(--cor4, #6B3028);
-  --color-cor5: var(--cor5, #B35227);
-  --color-cor6: var(--color-cor6, #C1908A);
-  --color-white: var(--white, #ffffff);
-  --color-gray-light: var(--gray-light, #f8f9fa);
-  --color-text-dark: var(--text-dark, #1a1a1a);
-  
-  --shadow: var(--shadow, 0 2px 8px rgba(0, 0, 0, 0.05));
-
-  --font-size-h1: var(--font-size-h1, 48px);
-  --font-size-h2: var(--font-size-h2, 36px);
-  --font-size-h3: var(--font-size-h3, 24px);
-  --font-size-h4: var(--font-size-h4, 20px);
-
-  @keyframes neon-glow {
-    0%, 100% { 
-      box-shadow: 0 0 15px -2px var(--glow-color, rgba(255,255,255,0.1));
-      border-color: var(--border-color, rgba(255,255,255,0.1));
-    }
-    50% { 
-      box-shadow: 0 0 35px 0px var(--glow-color, rgba(255,255,255,0.3));
-      border-color: var(--glow-color, rgba(255,255,255,0.4));
-    }
-  }
-}
-
-.animate-neon-pulse {
-  animation: neon-glow 4s ease-in-out infinite;
+  --color-brand-cream: #FEFCF5;
+  --color-brand-charcoal: #35291D;
+  --color-brand-blue: #3D54C8;
 }
 
 @layer base {
-  body {
-    @apply bg-zinc-950 text-white font-sans antialiased;
-    background-color: var(--bg-color, #09090b);
-  }
-
-  h1 { font-size: var(--font-size-h1); }
-  h2 { font-size: var(--font-size-h2); }
-  h3 { font-size: var(--font-size-h3); @apply leading-tight; }
-  h4 { font-size: var(--font-size-h4); }
-
-  /* Reset Scrollbar - Remove o branco global e mantém discreto */
-  /* Esconder barra de rolagem global do site para manter o design limpo */
   html, body {
-    overflow-x: hidden;
-    scrollbar-width: none !important; /* Firefox */
-    -ms-overflow-style: none !important;  /* IE and Edge */
+    background-color: var(--color-brand-cream);
+    color: #000000;
+    font-family: var(--font-sans);
+    margin: 0;
+    padding: 0;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   
-  html::-webkit-scrollbar, body::-webkit-scrollbar {
-    display: none !important; /* Chrome, Safari, Opera */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    font-weight: 500;
   }
 }
 
-/* Estilo Exclusivo apenas para elementos com a classe .custom-scrollbar */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px !important;
-  height: 6px !important;
-  display: block !important;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.2) !important;
-  border-radius: 10px !important;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(245, 158, 11, 0.3) !important; /* Usando cor Accent transparente */
-  border-radius: 10px !important;
-  border: 1px solid rgba(255, 255, 255, 0.05) !important;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(245, 158, 11, 0.6) !important;
-}
-.custom-scrollbar {
-  scrollbar-width: thin !important;
-  scrollbar-color: rgba(255, 255, 255, 0.1) transparent !important;
-  overflow-y: auto !important;
-  -webkit-overflow-scrolling: touch !important;
+/* Custom editorial animations & scrollbars */
+::selection {
+  background-color: var(--color-brand-blue);
+  color: #FEFCF5;
 }
 
-.scrollbar-visible {
-  overflow-y: auto !important;
-  display: block !important;
+/* Custom Scrollbar for premium feel */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-.section-container {
-  @apply flex items-center justify-center py-[10px] px-4 md:px-8;
+::-webkit-scrollbar-track {
+  background: #FEFCF5;
 }
 
-.section-card {
-  @apply w-full max-w-[1008px] bg-zinc-900/40 backdrop-blur-md rounded-[8px] border border-accent/10 overflow-hidden shadow-2xl;
-  display: flex;
-  flex-direction: column;
+::-webkit-scrollbar-thumb {
+  background: #35291D;
+  border-radius: 3px;
 }
 
-.card-vertical {
-  @apply relative overflow-hidden aspect-[5/4] w-full max-w-[280px] rounded-[8px] mx-auto;
-}
-
-.card-horizontal {
-  @apply relative overflow-hidden aspect-[5/4] w-full max-w-[280px] rounded-[8px] mx-auto;
-}
-
-.glass-morphism {
-  @apply bg-black/40 backdrop-blur-md border border-white/10 transform-gpu;
-  transform: translateZ(0);
-  will-change: transform;
-}
-
-.card-player-vertical {
-  @apply w-full max-w-[380px] mx-auto;
-  height: min(85vh, 660px);
-}
-
-.card-player-horizontal {
-  @apply w-full max-w-[800px] mx-auto aspect-[5/4];
-}
-
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
-/* Admin Styles */
-.admin-input {
-  @apply w-full bg-zinc-900 border border-white/10 rounded-[8px] px-4 py-3 focus:outline-none focus:border-accent transition-all text-sm;
-}
-
-.admin-input-small {
-  @apply w-full bg-zinc-900 border border-white/5 rounded-[6px] px-3 py-2 focus:outline-none focus:border-accent transition-all text-[11px];
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand-blue);
 }

@@ -1,0 +1,16 @@
+export const aboutData = {
+  title: "Sobre",
+  name: "Ingrid Sinkovitz",
+  role: "Creative Director & Brand Strategist",
+  tagline: "Comunicar não é apenas aparecer. É fazer com que as pessoas se lembrem de quem você é e do que a sua marca faz elas sentirem.",
+  paragraphs: [
+    "Minha história sempre foi movida pela curiosidade de entender pessoas, criar conexões e transformar ideias em experiências.",
+    "Comecei minha trajetória na comunicação como locutora e apresentadora de rádio. Trabalhei em duas grandes rádios do Espírito Santo, Jovem Pan Vitória e Rádio Cidade, onde nesta apresentei o programa de maior audiência na época, o Amnésia. Essa experiência me ensinou, no ao vivo, a construir conexão com a audiência, conduzir conversas espontâneas, comunicar com clareza e transformar informação em algo capaz de prender a atenção e gerar identificação.",
+    "Mais tarde, atuei como produtora de uma banda capixaba, onde mergulhei no universo da produção cultural. Tive a oportunidade de participar com a banda do SuperStar, reality show da TV Globo, vivendo de perto os bastidores da indústria criativa e do entretenimento, além de acompanhar e gerir turnês internacionais com o grupo. Como produtora cultural, aprendi a transformar ideias em experiências memoráveis. Atuei na gestão de projetos, produção de eventos, articulação de parcerias, coordenação de equipes e relacionamento com diferentes públicos, desenvolvendo uma visão estratégica, capacidade de adaptação e sensibilidade para criar conexões genuínas entre pessoas, marcas e comunidades.",
+    "Mas foi uma mudança de vida que transformou completamente a minha forma de enxergar o mundo. Durante um período, vivi em uma ecovila no sul da Bahia. Essa experiência me aproximou de novos modelos de vida, colaboração, propósito e relações humanas. Pouco depois, em plena pandemia, empreendi novamente criando um restaurante em formato delivery. Foi uma experiência intensa de empreendedorismo, aprendendo na prática a tirar uma ideia do papel, estruturar um negócio e lidar com os desafios reais de construir algo do zero.",
+    "Enquanto o mercado se transformava e as relações migravam cada vez mais para o ambiente digital, encontrei uma forma de unir toda essa bagagem. Passei a direcionar minha atuação para o marketing, ajudando empresas e projetos a se posicionarem de forma estratégica nas redes sociais, sem abrir mão da autenticidade e da conexão humana.",
+    "Hoje, reúno todas essas vivências em um trabalho que integra estratégia de conteúdo, branding, storytelling, posicionamento digital e construção de comunidades. Minha atuação é fortalecida por certificações em Social Media e Storytelling, além de uma pós-graduação em Comportamento, que amplia meu olhar sobre pessoas, tomada de decisão e comunicação.",
+    "Acredito que marcas fortes não são construídas apenas com boas estratégias ou conteúdos bonitos. Elas nascem de identidade, clareza e da capacidade de criar relações verdadeiras com as pessoas.",
+    "É por isso que meu trabalho vai além da comunicação. Meu objetivo é ajudar empresas, marcas e projetos a encontrarem uma voz própria, construindo posicionamentos consistentes, conteúdos relevantes e comunidades que geram confiança, pertencimento e crescimento sustentável."
+  ]
+};
