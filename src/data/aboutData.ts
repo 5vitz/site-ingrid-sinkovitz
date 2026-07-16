@@ -1,7 +1,7 @@
 export const aboutData = {
   title: "Sobre",
   name: "Ingrid Sinkovitz",
-  role: "Creative Director & Brand Strategist",
+  role: "Creative Director & Content Strategist",
   tagline: "Comunicar não é apenas aparecer. É fazer com que as pessoas se lembrem de quem você é e do que a sua marca faz elas sentirem.",
   paragraphs: [
     "Minha história sempre foi movida pela curiosidade de entender pessoas, criar conexões e transformar ideias em experiências.",

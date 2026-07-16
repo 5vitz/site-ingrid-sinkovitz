@@ -38,9 +38,16 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         <Link 
           to="/" 
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="font-serif text-2xl tracking-[0.1em] font-medium hover:opacity-80 transition-opacity"
+          className="flex flex-col items-start gap-1.5 hover:opacity-80 transition-opacity"
         >
-          INGRID SINKOVITZ
+          <img 
+            src="/logos/LogoCirculo.png" 
+            alt="Ingrid Sinkovitz Logo" 
+            className="w-10 h-10 object-contain"
+          />
+          <span className="font-serif text-base md:text-lg tracking-[0.15em] font-medium text-black">
+            INGRID SINKOVITZ
+          </span>
         </Link>
 
         {/* Desktop Nav */}
@@ -125,18 +132,26 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         </p>
 
         {/* Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-16 w-full sm:w-auto px-4">
+        <div className="flex flex-col md:flex-row gap-4 mb-16 w-full md:w-auto px-4 justify-center items-center">
           <a 
-            href="mailto:contato@ingridsinkovitz.com.br"
-            className="inline-flex justify-center items-center gap-2 bg-black text-brand-cream px-8 py-4 tracking-[0.15em] text-sm font-medium hover:bg-brand-blue hover:text-brand-cream transition-all duration-300 uppercase shadow-sm"
+            href="mailto:ingridsinkovitz@gmail.com"
+            className="w-full md:w-auto inline-flex justify-center items-center gap-2 bg-black text-brand-cream px-8 py-4 tracking-[0.15em] text-sm font-medium hover:bg-brand-blue hover:text-brand-cream transition-all duration-300 uppercase shadow-sm"
           >
-            Enviar E-mail <ArrowUpRight size={16} />
+            E-mail <ArrowUpRight size={16} />
           </a>
           <a 
-            href="https://www.linkedin.com/in/ingrid-sinkovitz-00507a22/"
+            href="https://wa.me/5527999193525"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex justify-center items-center gap-2 border border-black text-black px-8 py-4 tracking-[0.15em] text-sm font-medium hover:border-brand-blue hover:text-brand-blue transition-all duration-300 uppercase"
+            className="w-full md:w-auto inline-flex justify-center items-center gap-2 border border-black text-black px-8 py-4 tracking-[0.15em] text-sm font-medium hover:border-brand-blue hover:text-brand-blue transition-all duration-300 uppercase"
+          >
+            WhatsApp <ArrowUpRight size={16} />
+          </a>
+          <a 
+            href="https://www.linkedin.com/in/ingridsinkovitz/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full md:w-auto inline-flex justify-center items-center gap-2 border border-black text-black px-8 py-4 tracking-[0.15em] text-sm font-medium hover:border-brand-blue hover:text-brand-blue transition-all duration-300 uppercase"
           >
             LinkedIn <ArrowUpRight size={16} />
           </a>

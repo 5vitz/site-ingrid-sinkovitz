@@ -6,9 +6,18 @@
   --font-serif: 'Cormorant Garamond', serif;
   --font-sans: 'Outfit', sans-serif;
   
-  --color-brand-cream: #FEFCF5;
-  --color-brand-charcoal: #35291D;
-  --color-brand-blue: #3D54C8;
+  /* Paleta de Cores Oficial - Ingrid Sinkovitz */
+  --color-brand-blue: #B36A4C; /* Terracota da nova paleta (substitui o antigo azul) */
+  --color-brand-cream: #EDE6D6; /* Creme da nova paleta */
+  --color-brand-charcoal: #2E2E26; /* Carvão da nova paleta */
+  
+  /* Outras Cores da Paleta */
+  --color-palette-dusty-blue: #6F8FA3;
+  --color-palette-sage-green: #A3B18A;
+  --color-palette-terracotta: #B36A4C;
+  --color-palette-cream: #EDE6D6;
+  --color-palette-light-gray: #D8D8D2;
+  --color-palette-dark: #2E2E26;
 }
 
 @layer base {

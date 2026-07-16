@@ -270,8 +270,9 @@ export const AdminDashboard: React.FC = () => {
         name: aboutData.name,
         role: aboutData.role,
         tagline: aboutData.tagline,
-        email: 'contato@ingridsinkovitz.com.br',
-        linkedin: 'https://www.linkedin.com/in/ingrid-sinkovitz-00507a22/',
+        email: 'ingridsinkovitz@gmail.com',
+        linkedin: 'https://www.linkedin.com/in/ingridsinkovitz/',
+        whatsapp: 'https://wa.me/5527999193525',
         version: 3
       };
       

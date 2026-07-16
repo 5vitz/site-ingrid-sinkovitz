@@ -38,5 +38,6 @@ export interface SiteSettings {
   tagline: string;
   email: string;
   linkedin: string;
+  whatsapp?: string;
   instagram?: string;
 }

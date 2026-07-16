@@ -43,7 +43,7 @@ export const Home: React.FC = () => {
       {/* HERO SECTION */}
       <section className="mb-20 md:mb-32 max-w-4xl">
         <h1 className="font-serif text-5xl md:text-8xl tracking-[0.05em] uppercase text-black leading-none mb-6">
-          CREATIVE DIRECTOR & BRAND STRATEGIST
+          CREATIVE DIRECTOR & CONTENT STRATEGIST
         </h1>
         <p className="font-serif italic text-2xl md:text-3xl text-brand-charcoal font-light leading-relaxed max-w-3xl border-l-[3px] border-brand-blue pl-6 md:pl-8 py-2">
           Conecto ideias, narrativas e estratégia para construir marcas com significado e relevância.
