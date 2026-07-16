@@ -41,7 +41,7 @@ export const Services: React.FC = () => {
       {/* PAGE HEADER */}
       <section className="mb-16 md:mb-24">
         <span className="text-xs font-semibold tracking-[0.2em] text-brand-blue uppercase">Expertise</span>
-        <h1 className="font-serif text-4xl md:text-7xl tracking-[0.05em] uppercase text-black leading-none mt-2 mb-6 whitespace-nowrap lg:whitespace-normal">
+        <h1 className="font-serif text-4xl md:text-7xl tracking-[0.05em] uppercase text-black leading-none mt-2 mb-6 whitespace-normal lg:whitespace-nowrap">
           SERVIÇOS & ENTREGAS
         </h1>
         <p className="font-sans text-brand-charcoal text-base md:text-lg leading-relaxed max-w-3xl">
