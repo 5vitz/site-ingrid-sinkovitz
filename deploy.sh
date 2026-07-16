@@ -49,7 +49,7 @@ echo "✅ Alterações enviadas com sucesso ao GitHub."
 
 # 3. Deploy no Firebase Hosting
 echo "🔥 3. Publicando no Firebase Hosting..."
-npx firebase deploy --only hosting
+npx -y firebase-tools deploy --only hosting
 if [ $? -ne 0 ]; then
     echo "❌ ERRO: Falha no deploy para o Firebase Hosting."
     if command -v notify-send >/dev/null 2>&1; then
