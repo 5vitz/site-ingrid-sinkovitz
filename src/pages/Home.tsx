@@ -42,7 +42,7 @@ export const Home: React.FC = () => {
     <div className="animate-fade-in px-6 md:px-12 py-12 md:py-20 max-w-7xl mx-auto">
       {/* HERO SECTION */}
       <section className="mb-20 md:mb-32 max-w-4xl">
-        <h1 className="font-serif text-5xl md:text-8xl tracking-[0.05em] uppercase text-black leading-none mb-6">
+        <h1 className="font-serif text-4xl md:text-7xl tracking-[0.05em] uppercase text-black leading-none mb-6">
           CREATIVE DIRECTOR & CONTENT STRATEGIST
         </h1>
         <p className="font-serif italic text-2xl md:text-3xl text-brand-charcoal font-light leading-relaxed max-w-3xl border-l-[3px] border-brand-blue pl-6 md:pl-8 py-2">
