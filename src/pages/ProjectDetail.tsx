@@ -1,22 +1,60 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { getDocs, collection } from 'firebase/firestore';
+import { db } from '../firebase';
+import { Project } from '../types';
 import { projectsData } from '../data/projectsData';
 import { MediaRenderer } from '../components/MediaRenderer';
-import { ArrowLeft, ArrowRight, CornerDownLeft, BarChart2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CornerDownLeft, BarChart2, Loader2 } from 'lucide-react';
 
 export const ProjectDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'projects'));
+        const list: Project[] = [];
+        querySnapshot.forEach((doc) => {
+          list.push(doc.data() as Project);
+        });
+        
+        if (list.length > 0) {
+          setProjects(list.sort((a, b) => a.order - b.order));
+        } else {
+          setProjects([...projectsData].sort((a, b) => a.order - b.order));
+        }
+      } catch (err) {
+        console.error('Failed to fetch from Firestore, falling back to static:', err);
+        setProjects([...projectsData].sort((a, b) => a.order - b.order));
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProjects();
+  }, [id]);
 
   // Find current project
-  const projectIndex = projectsData.findIndex((p) => p.id === id);
-  const project = projectsData[projectIndex];
+  const projectIndex = projects.findIndex((p) => p.id === id);
+  const project = projects[projectIndex];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen w-full flex flex-col items-center justify-center bg-brand-cream text-brand-charcoal">
+        <Loader2 className="animate-spin text-brand-blue" size={32} />
+        <span className="text-xs uppercase font-bold tracking-widest text-brand-charcoal/40 mt-4">Carregando Detalhes...</span>
+      </div>
+    );
+  }
 
   if (!project) {
     return (
-      <div className="px-6 py-24 text-center">
+      <div className="px-6 py-24 text-center min-h-screen flex flex-col justify-center items-center">
         <h2 className="font-serif text-3xl mb-4">Projeto não encontrado</h2>
-        <Link to="/" className="text-brand-blue font-semibold tracking-wider hover:underline">
+        <Link to="/" className="text-brand-blue font-semibold tracking-wider hover:underline uppercase text-xs">
           Voltar para Home
         </Link>
       </div>
@@ -24,8 +62,8 @@ export const ProjectDetail: React.FC = () => {
   }
 
   // Next & Prev projects
-  const prevProject = projectsData[projectIndex === 0 ? projectsData.length - 1 : projectIndex - 1];
-  const nextProject = projectsData[projectIndex === projectsData.length - 1 ? 0 : projectIndex + 1];
+  const prevProject = projects[projectIndex === 0 ? projects.length - 1 : projectIndex - 1];
+  const nextProject = projects[projectIndex === projects.length - 1 ? 0 : projectIndex + 1];
 
   return (
     <div className="animate-fade-in px-6 md:px-12 py-12 md:py-20 max-w-7xl mx-auto">

@@ -12,7 +12,7 @@ export const AboutCarousel: React.FC = () => {
   // Generate paths to the 15 photos in the CARROSEL folder
   const photos = Array.from(
     { length: totalSlides }, 
-    (_, i) => `/fotos/CARROSEL CURIOSIDADES SOBRE MIM/${i + 1}.png`
+    (_, i) => `/fotos/CARROSEL CURIOSIDADES SOBRE MIM/${i + 1}.webp`
   );
 
   const prevSlide = () => {
@@ -74,6 +74,7 @@ export const AboutCarousel: React.FC = () => {
                 alt={`Curiosidade ${idx + 1}`}
                 className="w-full h-full object-contain pointer-events-none"
                 loading={idx === 0 ? 'eager' : 'lazy'}
+                {...(idx === 0 ? { fetchPriority: 'high' } : { fetchPriority: 'low' } as any)}
               />
             </div>
           ))}
