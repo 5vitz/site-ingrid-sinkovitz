@@ -82,7 +82,7 @@ export const Home: React.FC = () => {
                 <Link 
                   to={`/projeto/${project.id}`} 
                   onClick={() => window.scrollTo({ top: 0 })}
-                  className="block aspect-[16/10] overflow-hidden rounded mb-6 relative bg-brand-cream"
+                  className="block aspect-video overflow-hidden rounded mb-6 relative bg-brand-cream"
                 >
                   <img
                     src={project.coverImage}
