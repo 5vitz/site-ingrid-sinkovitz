@@ -13,7 +13,7 @@ export const servicesData: ServiceItem[] = [
     version: 3
   },
   {
-    title: "Planejamento & Execução",
+    title: "Planejamento & Conteúdo",
     description: "Organização tática e criação de orientações assertivas para a produção.",
     bullets: [
       "Planejamento e gestão de calendário editorial",
@@ -34,7 +34,7 @@ export const servicesData: ServiceItem[] = [
     version: 3
   },
   {
-    title: "Acompanhamento & Otimização",
+    title: "Métricas & Otimização",
     description: "Mensuração de impacto e ajustes estratégicos contínuos.",
     bullets: [
       "Acompanhamento de métricas e performance de conteúdo",
@@ -44,7 +44,7 @@ export const servicesData: ServiceItem[] = [
     version: 3
   },
   {
-    title: "Relacionamento & Gestão de Projetos",
+    title: "Projetos & Relacionamento",
     description: "Facilitação de processos e interface de comunicação entre as partes.",
     bullets: [
       "Condução de reuniões, alinhamentos e apresentações estratégicas",

@@ -45,7 +45,7 @@ export const Services: React.FC = () => {
           SERVIÇOS & ENTREGAS
         </h1>
         <p className="font-sans text-brand-charcoal text-base md:text-lg leading-relaxed">
-          Atuação estratégica e operacional para marcas e projetos se posicionarem com autenticidade, estruturando processos eficientes de produção e construindo comunidades engajadas.
+          Atuação estratégica em conteúdo, narrativa e gestão de processos, conectando posicionamento, execução e otimização contínua da comunicação.
         </p>
       </section>
 

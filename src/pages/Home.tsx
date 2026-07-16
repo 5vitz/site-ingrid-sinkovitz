@@ -52,14 +52,17 @@ export const Home: React.FC = () => {
 
       {/* PROJECTS GRID TITLE */}
       <section id="projects-grid" className="pt-8 border-t border-black/10">
-        <div className="flex justify-between items-end mb-12">
-          <div>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
+          <div className="max-w-2xl">
             <span className="text-xs font-semibold tracking-[0.2em] text-brand-blue uppercase">Projetos</span>
-            <h2 className="font-serif text-3xl md:text-5xl uppercase tracking-[0.05em] text-black mt-2">
-              Trabalhos Selecionados
+            <h2 className="font-serif text-3xl md:text-5xl uppercase tracking-[0.05em] text-black mt-2 mb-4">
+              Projetos em Destaque
             </h2>
+            <p className="font-sans text-brand-charcoal text-sm md:text-base leading-relaxed">
+              Uma seleção de projetos desenvolvidos nas áreas de estratégia, conteúdo, branding e direção criativa.
+            </p>
           </div>
-          <span className="hidden sm:inline text-xs text-brand-charcoal/60 tracking-wider">
+          <span className="hidden md:inline text-xs text-brand-charcoal/60 tracking-wider whitespace-nowrap">
             {projects.length} PROJETOS
           </span>
         </div>
