@@ -38,16 +38,13 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         <Link 
           to="/" 
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="flex flex-col items-start gap-1.5 hover:opacity-80 transition-opacity"
+          className="hover:opacity-80 transition-opacity flex items-center"
         >
           <img 
-            src="/logos/LogoCirculo.png" 
-            alt="Ingrid Sinkovitz Logo" 
+            src="/logos/LogoIn.png" 
+            alt="Logo Ingrid Sinkovitz" 
             className="w-30 h-30 object-contain"
           />
-          <span className="font-serif text-base md:text-lg tracking-[0.15em] font-medium text-black">
-            INGRID SINKOVITZ
-          </span>
         </Link>
 
         {/* Desktop Nav */}
