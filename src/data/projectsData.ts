@@ -15,7 +15,7 @@ export const projectsData: Project[] = [
       { label: 'Previsibilidade Operacional', value: '100%' },
       { label: 'Alcance Orgânico Mensal', value: '+120K' }
     ],
-    coverImage: '',
+    coverImage: '/imagens/capas_projetos/capa-1.svg',
     media: [],
     order: 1,
     version: 3
@@ -34,7 +34,7 @@ export const projectsData: Project[] = [
       { label: 'Conversão em Vendas', value: '+35%' },
       { label: 'Retenção em Stories', value: 'Consistente' }
     ],
-    coverImage: '',
+    coverImage: '/imagens/capas_projetos/capa-2.svg',
     media: [],
     order: 2,
     version: 3
@@ -53,7 +53,7 @@ export const projectsData: Project[] = [
       { label: 'Alcance da Campanha', value: '+80K' },
       { label: 'Engajamento Orgânico', value: '+5.8%' }
     ],
-    coverImage: '',
+    coverImage: '/imagens/capas_projetos/capa-3.svg',
     media: [],
     order: 3,
     version: 3
@@ -72,7 +72,7 @@ export const projectsData: Project[] = [
       { label: 'Canal de Destaque', value: 'TV Globo' },
       { label: 'Gestão de Turnê', value: 'Itália (100%)' }
     ],
-    coverImage: '',
+    coverImage: '/imagens/capas_projetos/capa-4.svg',
     media: [],
     order: 4,
     version: 3
