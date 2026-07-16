@@ -39,12 +39,19 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           <Link 
             to="/" 
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="hover:opacity-80 transition-opacity flex items-center"
+            className="relative group flex items-center w-12 h-12 md:w-14 md:h-14"
           >
+            {/* Logo Preta (Default) */}
             <img 
-              src="/logos/LogoIn.png" 
+              src="/logos/LogoCirculo.png" 
               alt="Logo Ingrid Sinkovitz" 
-              className="w-30 h-30 object-contain"
+              className="absolute inset-0 w-full h-full object-contain block group-hover:hidden"
+            />
+            {/* Logo Colorida (Hover) */}
+            <img 
+              src="/logos/20.png" 
+              alt="Logo Ingrid Sinkovitz Hover" 
+              className="absolute inset-0 w-full h-full object-contain hidden group-hover:block"
             />
           </Link>
 

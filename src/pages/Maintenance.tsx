@@ -59,9 +59,9 @@ export const Maintenance: React.FC = () => {
             alt="Ingrid Sinkovitz Logo" 
             className="absolute inset-0 w-full h-full object-contain filter drop-shadow-[0_4px_10px_rgba(0,0,0,0.05)] block group-hover:hidden"
           />
-          {/* Logo Marrom (Hover) */}
+          {/* Logo Colorida (Hover) */}
           <img 
-            src="/logos/LogoCirculoMarron.png" 
+            src="/logos/20.png" 
             alt="Ingrid Sinkovitz Logo Hover" 
             className="absolute inset-0 w-full h-full object-contain filter drop-shadow-[0_4px_10px_rgba(0,0,0,0.05)] hidden group-hover:block"
           />
