@@ -43,7 +43,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           <img 
             src="/logos/LogoCirculo.png" 
             alt="Ingrid Sinkovitz Logo" 
-            className="w-20 h-20 object-contain"
+            className="w-30 h-30 object-contain"
           />
           <span className="font-serif text-base md:text-lg tracking-[0.15em] font-medium text-black">
             INGRID SINKOVITZ
