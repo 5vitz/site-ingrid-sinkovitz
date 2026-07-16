@@ -15,7 +15,11 @@ export const Maintenance: React.FC = () => {
     setError('');
 
     const normalizedEmail = email.trim().toLowerCase();
-    const authorizedEmails = ['sinkando@gmail.com', 'ingridsinkovitz@gmail.com.br'];
+    const authorizedEmails = [
+      'sinkando@gmail.com', 
+      'ingridsinkovitz@gmail.com', 
+      'ingridsinkovitz@gmail.com.br'
+    ];
 
     if (!authorizedEmails.includes(normalizedEmail)) {
       setError('E-mail não autorizado para acesso restrito.');

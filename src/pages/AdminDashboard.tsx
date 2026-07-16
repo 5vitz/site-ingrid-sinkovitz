@@ -66,7 +66,11 @@ export const AdminDashboard: React.FC = () => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         const emailLower = currentUser.email?.toLowerCase();
-        const authorized = ['sinkando@gmail.com', 'ingridsinkovitz@gmail.com.br'];
+        const authorized = [
+          'sinkando@gmail.com', 
+          'ingridsinkovitz@gmail.com', 
+          'ingridsinkovitz@gmail.com.br'
+        ];
         
         if (authorized.includes(emailLower || '')) {
           setUser(currentUser);
