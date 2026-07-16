@@ -34,55 +34,57 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen flex flex-col bg-brand-cream text-black font-sans selection:bg-brand-blue selection:text-brand-cream">
       {/* HEADER */}
-      <header className="sticky top-0 z-50 bg-brand-cream/80 backdrop-blur-md border-b border-black/5 px-6 py-5 md:px-12 flex justify-between items-center transition-all duration-300">
-        <Link 
-          to="/" 
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="hover:opacity-80 transition-opacity flex items-center"
-        >
-          <img 
-            src="/logos/LogoIn.png" 
-            alt="Logo Ingrid Sinkovitz" 
-            className="w-30 h-30 object-contain"
-          />
-        </Link>
-
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex space-x-12 items-center">
-          {navLinks.map((link) => (
-            <NavLink
-              key={link.name}
-              to={link.path}
-              onClick={(e) => handleNavClick(link, e)}
-              className={({ isActive }) => 
-                `text-sm font-medium tracking-[0.15em] relative py-1 transition-all duration-300 hover:text-brand-blue after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1px] after:bg-brand-blue after:scale-x-0 after:origin-right hover:after:scale-x-100 hover:after:origin-left after:transition-transform after:duration-300 ${
-                  isActive && !link.isAnchor ? 'text-brand-blue after:scale-x-100' : 'text-brand-charcoal'
-                }`
-              }
-            >
-              {link.name}
-            </NavLink>
-          ))}
-          <a
-            href="#contato"
-            onClick={(e) => {
-              e.preventDefault();
-              document.getElementById('footer-cta')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className="text-sm font-medium tracking-[0.15em] text-brand-charcoal hover:text-brand-blue py-1 transition-all duration-300"
+      <header className="sticky top-0 z-50 bg-brand-cream/80 backdrop-blur-md border-b border-black/5 transition-all duration-300">
+        <div className="max-w-7xl mx-auto w-full px-6 py-5 md:px-12 flex justify-between items-center">
+          <Link 
+            to="/" 
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="hover:opacity-80 transition-opacity flex items-center"
           >
-            CONTATO
-          </a>
-        </nav>
+            <img 
+              src="/logos/LogoIn.png" 
+              alt="Logo Ingrid Sinkovitz" 
+              className="w-30 h-30 object-contain"
+            />
+          </Link>
 
-        {/* Mobile Menu Button */}
-        <button 
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden text-black hover:text-brand-blue transition-colors p-1"
-          aria-label="Toggle menu"
-        >
-          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+          {/* Desktop Nav */}
+          <nav className="hidden md:flex space-x-12 items-center">
+            {navLinks.map((link) => (
+              <NavLink
+                key={link.name}
+                to={link.path}
+                onClick={(e) => handleNavClick(link, e)}
+                className={({ isActive }) => 
+                  `text-sm font-medium tracking-[0.15em] relative py-1 transition-all duration-300 hover:text-brand-blue after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1px] after:bg-brand-blue after:scale-x-0 after:origin-right hover:after:scale-x-100 hover:after:origin-left after:transition-transform after:duration-300 ${
+                    isActive && !link.isAnchor ? 'text-brand-blue after:scale-x-100' : 'text-brand-charcoal'
+                  }`
+                }
+              >
+                {link.name}
+              </NavLink>
+            ))}
+            <a
+              href="#contato"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById('footer-cta')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="text-sm font-medium tracking-[0.15em] text-brand-charcoal hover:text-brand-blue py-1 transition-all duration-300"
+            >
+              CONTATO
+            </a>
+          </nav>
+
+          {/* Mobile Menu Button */}
+          <button 
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden text-black hover:text-brand-blue transition-colors p-1"
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </header>
 
       {/* Mobile Drawer Menu */}
