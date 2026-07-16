@@ -8,16 +8,17 @@
   
   /* Paleta de Cores Oficial - Ingrid Sinkovitz */
   --color-brand-blue: #B36A4C; /* Terracota da nova paleta (substitui o antigo azul) */
-  --color-brand-cream: #EDE6D6; /* Creme da nova paleta */
+  --color-brand-cream: #FEFCF5; /* Retornado para o Creme Claro original aprovado pela Ingrid */
   --color-brand-charcoal: #2E2E26; /* Carvão da nova paleta */
   
   /* Outras Cores da Paleta */
   --color-palette-dusty-blue: #6F8FA3;
   --color-palette-sage-green: #A3B18A;
   --color-palette-terracotta: #B36A4C;
-  --color-palette-cream: #EDE6D6;
+  --color-palette-cream-dark: #EDE6D6; /* Creme mais escuro da paleta */
   --color-palette-light-gray: #D8D8D2;
   --color-palette-dark: #2E2E26;
+  --color-palette-cream-light: #FEFCF5;
 }
 
 @layer base {
