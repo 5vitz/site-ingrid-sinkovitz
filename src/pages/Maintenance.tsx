@@ -72,9 +72,7 @@ export const Maintenance: React.FC = () => {
         <p className="font-serif italic text-2xl md:text-3xl text-brand-charcoal font-light leading-relaxed mb-2">
           Renovando... até breve!
         </p>
-        <p className="font-sans text-xs tracking-[0.1em] text-brand-charcoal/60 uppercase">
-          Estamos preparando novidades estratégicas.
-        </p>
+
       </div>
 
       {/* Footer / Access Button */}
