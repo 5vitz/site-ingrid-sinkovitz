@@ -9,6 +9,7 @@ export const About: React.FC = () => {
     tagline: aboutData.tagline,
     paragraphs: aboutData.paragraphs
   });
+  const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
     const fetchAboutData = async () => {
@@ -58,12 +59,35 @@ export const About: React.FC = () => {
           </div>
 
           {/* Paragraphs */}
-          <div className="space-y-6 text-brand-charcoal text-sm md:text-base leading-relaxed">
-            {data.paragraphs.map((paragraph, index) => (
-              <p key={index}>
-                {paragraph}
-              </p>
-            ))}
+          <div className="relative">
+            <div 
+              className={`space-y-6 text-brand-charcoal text-sm md:text-base leading-relaxed transition-all duration-700 ease-in-out overflow-hidden text-justify md:text-left ${
+                isExpanded ? 'max-h-[3000px]' : 'max-h-[300px] md:max-h-none'
+              }`}
+            >
+              {data.paragraphs.map((paragraph, index) => (
+                <p key={index}>
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+
+            {/* Gradient Fade Overlay on Mobile when not expanded */}
+            {!isExpanded && (
+              <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-brand-cream via-brand-cream/90 to-transparent pointer-events-none md:hidden" />
+            )}
+
+            {/* Expand Button on Mobile when not expanded */}
+            {!isExpanded && (
+              <div className="flex justify-center mt-6 md:hidden">
+                <button
+                  onClick={() => setIsExpanded(true)}
+                  className="inline-flex items-center gap-1.5 text-xs font-bold tracking-[0.2em] text-brand-blue uppercase py-2.5 px-6 border border-brand-blue/20 rounded-full bg-white/60 backdrop-blur-sm shadow-sm hover:bg-white transition-colors duration-300 cursor-pointer"
+                >
+                  Saiba Mais +
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
