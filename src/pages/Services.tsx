@@ -15,7 +15,10 @@ export const Services: React.FC = () => {
         const querySnapshot = await getDocs(collection(db, 'services'));
         const list: ServiceItem[] = [];
         querySnapshot.forEach((doc) => {
-          list.push(doc.data() as ServiceItem);
+          const data = doc.data() as ServiceItem;
+          if (data.version === 3) {
+            list.push(data);
+          }
         });
         
         if (list.length > 0) {
@@ -73,16 +76,18 @@ export const Services: React.FC = () => {
               </p>
 
               {/* Bullet Points */}
-              <ul className="space-y-3 mt-auto border-t border-black/5 pt-6">
-                {service.bullets.map((bullet) => (
-                  <li key={bullet} className="flex items-start gap-3 text-xs md:text-sm text-brand-charcoal/90 leading-normal">
-                    <span className="mt-1 flex-shrink-0 text-brand-blue">
-                      <Check size={12} strokeWidth={3} />
-                    </span>
-                    <span>{bullet}</span>
-                  </li>
-                ))}
-              </ul>
+              {service.bullets && Array.isArray(service.bullets) && (
+                <ul className="space-y-3 mt-auto border-t border-black/5 pt-6">
+                  {service.bullets.map((bullet) => (
+                    <li key={bullet} className="flex items-start gap-3 text-xs md:text-sm text-brand-charcoal/90 leading-normal">
+                      <span className="mt-1 flex-shrink-0 text-brand-blue">
+                        <Check size={12} strokeWidth={3} />
+                      </span>
+                      <span>{bullet}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           ))}
         </section>

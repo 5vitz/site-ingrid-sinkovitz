@@ -17,10 +17,12 @@ export const About: React.FC = () => {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const fetched = docSnap.data();
-          setData({
-            tagline: fetched.tagline || aboutData.tagline,
-            paragraphs: fetched.paragraphs || aboutData.paragraphs
-          });
+          if (fetched.version === 3) {
+            setData({
+              tagline: fetched.tagline || aboutData.tagline,
+              paragraphs: fetched.paragraphs || aboutData.paragraphs
+            });
+          }
         }
       } catch (err) {
         console.error('Failed to fetch settings from Firestore, using fallback:', err);

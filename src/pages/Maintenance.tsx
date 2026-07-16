@@ -48,16 +48,16 @@ export const Maintenance: React.FC = () => {
       {/* Main Content */}
       <div className="flex flex-col items-center text-center max-w-lg z-10 animate-fade-in">
         {/* Logo Circular */}
-        <div className="mb-8 relative group">
+        <div className="mb-10 relative group">
           <img 
             src="/logos/LogoCirculo.png" 
             alt="Ingrid Sinkovitz Logo" 
-            className="w-24 h-24 md:w-32 md:h-32 object-contain filter drop-shadow-[0_4px_10px_rgba(0,0,0,0.05)] transition-transform duration-700 group-hover:rotate-12"
+            className="w-36 h-36 md:w-48 md:h-48 object-contain filter drop-shadow-[0_4px_10px_rgba(0,0,0,0.05)] transition-transform duration-700 group-hover:rotate-12"
           />
         </div>
 
         {/* Text Logo */}
-        <h1 className="font-serif text-3xl md:text-4xl tracking-[0.2em] font-medium text-black uppercase mb-4">
+        <h1 className="font-serif text-xl md:text-2xl tracking-[0.3em] font-medium text-black uppercase mb-4">
           INGRID SINKOVITZ
         </h1>
         

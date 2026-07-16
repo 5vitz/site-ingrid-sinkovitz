@@ -22,12 +22,14 @@ export interface Project {
   coverImage: string;
   media: ProjectMedia[];
   order: number;
+  version?: number;
 }
 
 export interface ServiceItem {
   title: string;
   description: string;
   bullets: string[];
+  version?: number;
 }
 
 export interface SiteSettings {

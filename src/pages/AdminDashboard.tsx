@@ -97,7 +97,10 @@ export const AdminDashboard: React.FC = () => {
       const querySnapshot = await getDocs(collection(db, 'projects'));
       const list: Project[] = [];
       querySnapshot.forEach((doc) => {
-        list.push(doc.data() as Project);
+        const data = doc.data() as Project;
+        if (data.version === 3) {
+          list.push(data);
+        }
       });
       setProjects(list.sort((a, b) => a.order - b.order));
     } catch (err) {
@@ -263,12 +266,13 @@ export const AdminDashboard: React.FC = () => {
 
       // 3. Seed Settings
       log('📂 Sincronizando Configurações Gerais...');
-      const settings: SiteSettings = {
+      const settings = {
         name: aboutData.name,
         role: aboutData.role,
         tagline: aboutData.tagline,
         email: 'contato@ingridsinkovitz.com.br',
-        linkedin: 'https://www.linkedin.com/in/ingrid-sinkovitz-00507a22/'
+        linkedin: 'https://www.linkedin.com/in/ingrid-sinkovitz-00507a22/',
+        version: 3
       };
       
       await setDoc(doc(db, 'settings', 'mainSettings'), {
@@ -335,7 +339,8 @@ export const AdminDashboard: React.FC = () => {
       ],
       coverImage: '',
       media: [],
-      order: projects.length + 1
+      order: projects.length + 1,
+      version: 3
     };
     setSelectedProject(newProj);
   };

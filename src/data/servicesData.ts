@@ -9,7 +9,8 @@ export const servicesData: ServiceItem[] = [
       "Construção de narrativa, tom de voz e storytelling da marca",
       "Desenvolvimento de linha editorial alinhada ao posicionamento",
       "Pesquisa, benchmarking e análise de mercado"
-    ]
+    ],
+    version: 3
   },
   {
     title: "Planejamento & Execução",
@@ -18,7 +19,8 @@ export const servicesData: ServiceItem[] = [
       "Planejamento e gestão de calendário editorial",
       "Criação de pautas, roteiros e briefings para produção de conteúdo",
       "Desenvolvimento e coordenação de campanhas digitais"
-    ]
+    ],
+    version: 3
   },
   {
     title: "Gestão & Coordenação",
@@ -28,7 +30,8 @@ export const servicesData: ServiceItem[] = [
       "Organização de fluxos de trabalho e processos de produção de conteúdo",
       "Monitoramento da qualidade das entregas, garantindo consistência e alinhamento estratégico",
       "Gestão de múltiplos projetos e prazos simultaneamente"
-    ]
+    ],
+    version: 3
   },
   {
     title: "Acompanhamento & Otimização",
@@ -37,7 +40,8 @@ export const servicesData: ServiceItem[] = [
       "Acompanhamento de métricas e performance de conteúdo",
       "Análise de resultados e otimização estratégica contínua",
       "Identificação de oportunidades de melhoria na comunicação"
-    ]
+    ],
+    version: 3
   },
   {
     title: "Relacionamento & Gestão de Projetos",
@@ -46,6 +50,7 @@ export const servicesData: ServiceItem[] = [
       "Condução de reuniões, alinhamentos e apresentações estratégicas",
       "Interface entre cliente e equipe criativa",
       "Gestão de feedbacks e acompanhamento de demandas"
-    ]
+    ],
+    version: 3
   }
 ];

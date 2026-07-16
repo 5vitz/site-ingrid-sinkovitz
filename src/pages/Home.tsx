@@ -16,7 +16,10 @@ export const Home: React.FC = () => {
         const querySnapshot = await getDocs(collection(db, 'projects'));
         const list: Project[] = [];
         querySnapshot.forEach((doc) => {
-          list.push(doc.data() as Project);
+          const data = doc.data() as Project;
+          if (data.version === 3) {
+            list.push(data);
+          }
         });
         
         if (list.length > 0) {
