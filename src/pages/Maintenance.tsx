@@ -52,11 +52,18 @@ export const Maintenance: React.FC = () => {
       {/* Main Content */}
       <div className="flex flex-col items-center text-center max-w-lg z-10 animate-fade-in">
         {/* Logo Circular */}
-        <div className="mb-10 relative group">
+        <div className="mb-10 relative group w-36 h-36 md:w-48 md:h-48">
+          {/* Logo Terracota (Default) */}
+          <img 
+            src="/logos/LogoCirculoMarron.png" 
+            alt="Ingrid Sinkovitz Logo" 
+            className="absolute inset-0 w-full h-full object-contain filter drop-shadow-[0_4px_10px_rgba(0,0,0,0.05)] transition-all duration-700 ease-in-out group-hover:opacity-0 group-hover:rotate-12"
+          />
+          {/* Logo Padrão / Escura (Hover) */}
           <img 
             src="/logos/LogoCirculo.png" 
-            alt="Ingrid Sinkovitz Logo" 
-            className="w-36 h-36 md:w-48 md:h-48 object-contain filter drop-shadow-[0_4px_10px_rgba(0,0,0,0.05)] transition-transform duration-700 group-hover:rotate-12"
+            alt="Ingrid Sinkovitz Logo Hover" 
+            className="absolute inset-0 w-full h-full object-contain filter drop-shadow-[0_4px_10px_rgba(0,0,0,0.05)] opacity-0 transition-all duration-700 ease-in-out group-hover:opacity-100 group-hover:rotate-12"
           />
         </div>
 
